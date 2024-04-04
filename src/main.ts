@@ -18,7 +18,7 @@ async function bootstrap ()
     app.useLogger(customLogger);
 
     // Config the filter for the exceptions
-    // app.useGlobalFilters(new ExceptionsFilter());
+    app.useGlobalFilters(new ExceptionsFilter());
 
     //Get the value from the environment variables
     const configService = app.get(ConfigService<ConfigsModule>);

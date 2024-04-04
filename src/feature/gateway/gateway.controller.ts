@@ -23,7 +23,7 @@ export class GatewayController
     };
   }
 
-  @Post(':service/*')
+  @All(':service/*')
   async handleRequest (
     @Param('service') service: string,
     @Req() req: Request,
@@ -36,36 +36,43 @@ export class GatewayController
       res.status(404).send('Service not found');
       return;
     }
-    // console.log(req.headers);
+    // console.log(req.headers, req.body);
     const path = req.url.substring(`/api/gateway/${ service }`.length + 1);
     const axiosResponse$ = this.httpService.request({
       method: req.method,
       url: `${ serviceUrl }${ path }`,
       data: req.body,
       headers: {
-        accept: req.headers['content-type']
+        accept: req.headers['content-type'],
+        authorization: req.headers['authorization'] ? req.headers['authorization'] : undefined
       }
     }).pipe(
       catchError(error =>
       {
-        // console.error('Error during HTTP request:', error);
+        console.error('Error during HTTP request:', error);
         throw error;
       }),
     );
-    let axiosResponse: AxiosResponse;
+    // let axiosResponse: AxiosResponse;
     try
     {
-      axiosResponse = await firstValueFrom(axiosResponse$);
+      const axiosResponse = await firstValueFrom(axiosResponse$);
+      // console.log(axiosResponse)
+      res.send(axiosResponse.data);
+      return axiosResponse.data;
     } catch (error)
     {
-      // console.error('Error during HTTP request:', error);
+      console.error('Error during HTTP request:', error);
       if (error.response)
       {
         // If the error is an HTTP error, send the error response from the service
+        // console.log('error');
         res.status(error.response.status).send(error.response.data);
+        // console.log('error')
       } else
       {
         // If the error is not an HTTP error, send a generic error message
+        // console.log('error 500');
         res.status(500).send('Error during HTTP request');
       }
       return;
