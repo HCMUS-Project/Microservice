@@ -6,12 +6,19 @@ import {ConfigsModule} from './configs/config.module';
 import NestjsLoggerServiceAdapter from './core/logger/modules/logger.adapter';
 import {ExceptionsFilter} from './core/responses/filter/exception.filter';
 import {DocumentBuilder, SwaggerModule} from '@nestjs/swagger';
+import rateLimit from '@fastify/rate-limit'
 
 async function bootstrap ()
 {
     const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(), {
         bufferLogs: true,
     });
+
+    // // Config rate-limit
+    // app.register(rateLimit, {
+    //     max: 10,
+    //     timeWindow: '10 second',
+    // })
 
     // Config the logger
     const customLogger = app.get(NestjsLoggerServiceAdapter);

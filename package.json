@@ -23,6 +23,7 @@
         "test:e2e": "jest --config ./test/jest-e2e.json"
     },
     "dependencies": {
+        "@fastify/rate-limit": "^9.1.0",
         "@fastify/static": "^7.0.1",
         "@fsouza/prettierd": "^0.25.2",
         "@nestjs-modules/mailer": "^1.11.2",
@@ -39,6 +40,7 @@
         "@nestjs/platform-express": "^10.0.0",
         "@nestjs/platform-fastify": "^10.3.3",
         "@nestjs/swagger": "^7.3.0",
+        "@nestjs/throttler": "^5.1.2",
         "@types/cache-manager": "^4.0.6",
         "@types/cache-manager-redis-store": "^2.0.4",
         "argon2": "^0.40.1",
