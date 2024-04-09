@@ -17,8 +17,9 @@ import { DatabaseModule } from './core/database/modules/database.module';
 // import { UsersModule } from './feature/user/users/users.module';
 import { CacheModule } from './core/cache/modules/cache.module';
 import { CacheInterceptor } from '@nestjs/cache-manager';
-import {GatewayModule} from './feature/gateway/gateway.module';
-import {LoggerModule} from './core/logger/modules/logger.module';
+import { GatewayModule } from './feature/gateway/gateway.module';
+import { LoggerModule } from './core/logger/modules/logger.module';
+import { ClientsModule } from '@nestjs/microservices';
 // import {OtpModule} from "./feature/auth/otp/otp.module";
 
 @Module({
@@ -27,8 +28,9 @@ import {LoggerModule} from './core/logger/modules/logger.module';
         ConfigsModule,
         ContextModule,
         DatabaseModule,
-        LoggerModule, 
-        GatewayModule
+        LoggerModule,
+        GatewayModule,
+        ClientsModule,
         // CacheModule.registerAsync(RedisOptions)
     ],
     controllers: [AppController],

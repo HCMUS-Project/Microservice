@@ -1,0 +1,91 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+package myservice;
+
+service AuthService {
+  rpc SignIn(SignInRequest) returns (SignInResponse);
+  rpc SignUp(SignUpRequest) returns (SignUpResponse);
+  rpc SignOut(SignOutRequest) returns (SignOutResponse);
+  rpc RefreshTokens(RefreshTokensRequest) returns (RefreshTokensResponse);
+}
+
+message User {
+  string _id = 1;
+  string email = 2;
+  string password = 3;
+  bool is_deleted = 4;
+  bool is_active = 5;
+  string user_id = 6;
+  google.protobuf.Timestamp createdAt = 7;
+  google.protobuf.Timestamp updatedAt = 8;
+  int32 __v = 9;
+}
+
+message ShortToken {
+  string accessToken = 1;
+  string refreshToken = 2;
+  google.protobuf.Timestamp accessTokenExpiresAt = 3;
+  google.protobuf.Timestamp refreshTokenExpiresAt = 4;
+}
+
+message FullyToken {
+  string access_token = 1;
+  string refresh_token = 2;
+  google.protobuf.Timestamp access_token_expired_at = 3;
+  google.protobuf.Timestamp refresh_token_expired_at = 4;
+  string user_id = 5;
+  string device_id = 6;
+  string id = 7;
+  google.protobuf.Timestamp createdAt = 8;
+  google.protobuf.Timestamp updatedAt = 9;
+  int32 __v = 10;
+}
+
+message SignInRequest {
+  string email = 1;
+  string password = 2;
+  string device = 3;
+}
+
+message SignInResponse {
+  int32 statusCode = 1;
+  string message = 2;
+  User user = 3;
+  ShortToken short_token = 4;
+  FullyToken fully_token = 5;
+}
+
+message SignUpRequest {
+  string email = 1;
+  string password = 2;
+  string device = 3;
+}
+
+message SignUpResponse {
+  int32 statusCode = 1;
+  string message = 2;
+  User user = 3;
+  ShortToken short_token = 4;
+  FullyToken fully_token = 5;
+}
+
+message SignOutRequest {
+  string token = 1;
+}
+
+message SignOutResponse {
+  int32 statusCode = 1;
+  string message = 2;
+  FullyToken token = 3;
+}
+
+message RefreshTokensRequest {
+  string refresh_token = 1;
+}
+
+message RefreshTokensResponse {
+  int32 statusCode = 1;
+  string message = 2;
+  ShortToken short_token = 3;
+}
