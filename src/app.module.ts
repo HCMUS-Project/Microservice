@@ -17,9 +17,17 @@ import { DatabaseModule } from './core/database/modules/database.module';
 // import { UsersModule } from './feature/user/users/users.module';
 import { CacheModule } from './core/cache/modules/cache.module';
 import { CacheInterceptor } from '@nestjs/cache-manager';
-import { GatewayModule } from './feature/gateway/gateway.module';
 import { LoggerModule } from './core/logger/modules/logger.module';
-import { ClientsModule } from '@nestjs/microservices';
+import { ClientProxyFactory, ClientsModule, Transport } from '@nestjs/microservices';
+import { join } from 'path';
+import {SignUpController} from './feature/auth/sign-up/sign-up.controller';
+import {AuthServiceSignUp} from './feature/auth/sign-up/sign-up.service';
+import {AuthServiceSignIn} from './feature/auth/sign-in/sign-in.service';
+import {SignInController} from './feature/auth/sign-in/sign-in.controller';
+import {VerifyAccountController} from './feature/auth/verify-account/verify-account.controller';
+import {AuthServiceVerifyAccount} from './feature/auth/verify-account/verify-account.service';
+import {AccessTokenStrategy} from './common/strategies/token/accessToken.strategy';
+import {RefreshTokenStrategy} from './common/strategies/token/refreshToken.strategy';
 // import {OtpModule} from "./feature/auth/otp/otp.module";
 
 @Module({
@@ -29,18 +37,44 @@ import { ClientsModule } from '@nestjs/microservices';
         ContextModule,
         DatabaseModule,
         LoggerModule,
-        GatewayModule,
         ClientsModule,
         // CacheModule.registerAsync(RedisOptions)
     ],
-    controllers: [AppController],
+    controllers: [AppController, SignUpController, SignInController, VerifyAccountController],
     providers: [
         AppService,
-        { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor },
-        // {
-        //     provide: APP_INTERCEPTOR,
-        //     useClass: CacheInterceptor,
-        // },
+        AccessTokenStrategy,
+        RefreshTokenStrategy,
+        {
+            provide: 'GRPC_AUTH_SERVICE',
+            useFactory: () => {
+                return ClientProxyFactory.create({
+                    transport: Transport.GRPC,
+                    options: {
+                        package: ['main', 'sign_up', 'sign_in', 'verify_account'], // ['hero', 'hero2']
+                        protoPath: join(__dirname, '../src/proto/main.proto'),
+                        url: 'localhost:3001',
+                        loader:{
+                            enums: String,
+                            objects: true,
+                            arrays: true,
+                        }
+                    },
+                });
+            },
+        },
+        {
+            provide: 'GRPC_AUTH_SERVICE_SIGN_UP',
+            useClass: AuthServiceSignUp,
+        },
+        {
+            provide: 'GRPC_AUTH_SERVICE_SIGN_IN',
+            useClass: AuthServiceSignIn,
+        },
+        {
+            provide: 'GRPC_AUTH_SERVICE_VERIFY_ACCOUNT',
+            useClass: AuthServiceVerifyAccount,
+        },
     ],
 })
 export class AppModule {}

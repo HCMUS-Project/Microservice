@@ -7,7 +7,7 @@ import NestjsLoggerServiceAdapter from './core/logger/modules/logger.adapter';
 import { ExceptionsFilter } from './core/responses/filter/exception.filter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import rateLimit from '@fastify/rate-limit';
-import {Transport} from '@nestjs/microservices';
+import { Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
     // Implement NestFastify for application
@@ -42,16 +42,6 @@ async function bootstrap() {
         .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, document);
-
-    // Create microservice for gRPC communication
-    app.connectMicroservice({
-        transport: Transport.GRPC, // Use gRPC transport
-        options: {
-            // Define options for the gRPC microservice
-            package: 'myservice', // Package name generated from your .proto file
-            protoPath: 'src/feature/gateway/service/auth.proto', // Path to your .proto file
-        },
-    });
 
     // Start the microservice
     await app.startAllMicroservices();
