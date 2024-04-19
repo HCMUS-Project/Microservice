@@ -20,14 +20,14 @@ import { CacheInterceptor } from '@nestjs/cache-manager';
 import { LoggerModule } from './core/logger/modules/logger.module';
 import { ClientProxyFactory, ClientsModule, Transport } from '@nestjs/microservices';
 import { join } from 'path';
-import {SignUpController} from './feature/auth/sign-up/sign-up.controller';
-import {AuthServiceSignUp} from './feature/auth/sign-up/sign-up.service';
-import {AuthServiceSignIn} from './feature/auth/sign-in/sign-in.service';
-import {SignInController} from './feature/auth/sign-in/sign-in.controller';
-import {VerifyAccountController} from './feature/auth/verify-account/verify-account.controller';
-import {AuthServiceVerifyAccount} from './feature/auth/verify-account/verify-account.service';
-import {AccessTokenStrategy} from './common/strategies/token/accessToken.strategy';
-import {RefreshTokenStrategy} from './common/strategies/token/refreshToken.strategy';
+import { SignUpController } from './feature/auth/sign-up/sign-up.controller';
+import { AuthServiceSignUp } from './feature/auth/sign-up/sign-up.service';
+import { AuthServiceSignIn } from './feature/auth/sign-in/sign-in.service';
+import { SignInController } from './feature/auth/sign-in/sign-in.controller';
+import { VerifyAccountController } from './feature/auth/verify-account/verify-account.controller';
+import { AuthServiceVerifyAccount } from './feature/auth/verify-account/verify-account.service';
+import { AccessTokenStrategy } from './common/strategies/token/accessToken.strategy';
+import { RefreshTokenStrategy } from './common/strategies/token/refreshToken.strategy';
 // import {OtpModule} from "./feature/auth/otp/otp.module";
 
 @Module({
@@ -46,19 +46,31 @@ import {RefreshTokenStrategy} from './common/strategies/token/refreshToken.strat
         AccessTokenStrategy,
         RefreshTokenStrategy,
         {
+            provide: APP_INTERCEPTOR,
+            useClass: ResponseInterceptor,
+        },
+        {
             provide: 'GRPC_AUTH_SERVICE',
             useFactory: () => {
                 return ClientProxyFactory.create({
                     transport: Transport.GRPC,
                     options: {
-                        package: ['main', 'sign_up', 'sign_in', 'verify_account'], // ['hero', 'hero2']
+                        package: [
+                            'main',
+                            'signUp',
+                            'signIn',
+                            'verifyAccount',
+                            // 'refresh_token',
+                            // 'sign_out',
+                            // 'user_token',
+                        ], // ['hero', 'hero2']
                         protoPath: join(__dirname, '../src/proto/main.proto'),
                         url: 'localhost:3001',
-                        loader:{
+                        loader: {
                             enums: String,
                             objects: true,
                             arrays: true,
-                        }
+                        },
                     },
                 });
             },

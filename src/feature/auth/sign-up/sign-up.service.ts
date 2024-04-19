@@ -1,8 +1,8 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { Observable, firstValueFrom } from 'rxjs';
 import { ClientGrpc } from '@nestjs/microservices';
-import {SignUpRequest} from 'src/proto-build/sign_up/SignUpRequest';
-import {SignUpResponse} from 'src/proto-build/sign_up/SignUpResponse';
+import { SignUpRequest } from 'src/proto-build/signUp/SignUpRequest';
+import { SignUpResponse } from 'src/proto-build/signUp/SignUpResponse';
 
 interface SignUpService {
     signUp(data: SignUpRequest): Observable<SignUpResponse>;
@@ -19,7 +19,9 @@ export class AuthServiceSignUp implements OnModuleInit {
     }
 
     async signUp(data: SignUpRequest): Promise<SignUpResponse> {
-        const signUpResponse: SignUpResponse = await firstValueFrom(this.iSignUpService.signUp(data));
+        const signUpResponse: SignUpResponse = await firstValueFrom(
+            this.iSignUpService.signUp(data),
+        );
         return signUpResponse;
     }
 }

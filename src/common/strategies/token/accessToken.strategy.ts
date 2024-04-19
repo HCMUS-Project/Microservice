@@ -18,16 +18,16 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             secretOrKey: process.env.JWT_ACCESS_SECRET,
-            passReqToCallback: true
+            passReqToCallback: true,
         });
     }
-    
+
     async validate(req, payload: JwtPayload) {
         var accessToken = await this.cacheManager.get(
             `access_token:${payload.email}/${payload.domain}/${req.headers.authorization.split(' ')[1]}`,
-        ); 
+        );
         // console.log(req.headers.authorization.split(' ')[1])
-        console.log(accessToken, payload)
+        console.log(accessToken, payload);
         return payload;
     }
 }
