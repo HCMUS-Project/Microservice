@@ -3,7 +3,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { Role } from 'src/common/guards/role/role.enum';
+import { UserNotFoundException, ValidationFailedException } from 'src/common/exceptions/exceptions';
+import { Role } from 'src/common/enums/role.enum';
 
 type JwtPayload = {
     user_id: string;
@@ -26,8 +27,10 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
         var accessToken = await this.cacheManager.get(
             `access_token:${payload.email}/${payload.domain}/${req.headers.authorization.split(' ')[1]}`,
         );
-        // console.log(req.headers.authorization.split(' ')[1])
-        console.log(accessToken, payload);
+        if (!accessToken) {
+            throw new UserNotFoundException('Access Token not found');
+        }
+        // console.log(accessToken, payload);
         return payload;
     }
 }

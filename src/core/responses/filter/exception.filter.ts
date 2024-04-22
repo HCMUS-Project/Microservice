@@ -1,45 +1,39 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
-import {error} from 'console';
 
 @Catch()
 export class ExceptionsFilter implements ExceptionFilter {
     catch(exception: unknown, host: ArgumentsHost): void {
         const ctx = host.switchToHttp();
 
-        const httpStatus =
+        const status =
             exception instanceof HttpException
                 ? exception.getStatus()
                 : HttpStatus.INTERNAL_SERVER_ERROR;
 
-        let errorMessage = (exception as HttpException).message;
-        const errorObject = parseErrorMessage(errorMessage);
-
-        // Modify the response body if errorObject is not null
-        if (errorObject) {
-            errorMessage = errorObject.error;
-        }
-
-        const responseBody = {
-            statusCode: httpStatus,
+        // console.log(exception);
+        
+        const errorResponse = {
+            statusCode: status,
             timestamp: new Date().toISOString(),
             path: ctx.getRequest().url,
-            errorMessage: errorMessage,
+            message:
+                exception instanceof HttpException
+                    ? this.formatMessage((exception.getResponse() as { message: string }).message)
+                    : 'Internal Server Error',
+            error:
+                exception instanceof HttpException
+                    ? this.formatMessage((exception.getResponse() as { error: string }).error)
+                    : 'Internal Server Error',
+            data: null,
         };
-
-        ctx.getResponse().status(httpStatus).send(responseBody);
+        // console.log(typeof errorResponse.message)
+        ctx.getResponse().status(status).send(errorResponse);
     }
-}
 
-function parseErrorMessage(errorMessage: string) {
-    // Extracting the JSON part of the string
-    const jsonStartIndex = errorMessage.indexOf('{');
-    const jsonString = errorMessage.substring(jsonStartIndex);
-
-    try {
-        // Parsing the JSON string
-        return JSON.parse(jsonString);
-    } catch (error) {
-        console.error('Error parsing JSON:', error);
-        return null;
-    }
+    private formatMessage(message: string | string[]): string {
+        if (Array.isArray(message)) {
+          return message.join(', ');
+        }
+        return message;
+      }
 }

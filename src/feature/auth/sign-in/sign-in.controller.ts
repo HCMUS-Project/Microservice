@@ -1,7 +1,6 @@
 import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
 import { AuthServiceSignIn } from './sign-in.service';
-import { SignInRequest } from 'src/proto-build/signIn/SignInRequest';
-import { AccessTokenGuard } from 'src/common/guards/token/accessToken.guard';
+import {SignInRequestDTO} from './sign-in.dto'; 
 
 @Controller('/auth')
 export class SignInController {
@@ -11,13 +10,7 @@ export class SignInController {
     ) {}
 
     @Post('sign-in')
-    async signIn(@Body() signInRequest: SignInRequest) {
-        return await this.authServiceSignIn.signIn(signInRequest);
-    }
-
-    @UseGuards(AccessTokenGuard)
-    @Post('test-token')
-    testToken(@Body() hi: string): string {
-        return 'success test-token';
+    async signIn(@Body() data: SignInRequestDTO) {
+        return await this.authServiceSignIn.signIn(data); 
     }
 }

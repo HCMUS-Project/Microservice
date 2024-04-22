@@ -2,7 +2,7 @@ import { CACHE_MANAGER, CacheStore } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { Role } from 'src/common/guards/role/role.enum';
+import { Role } from 'src/common/enums/role.enum';
 
 @Injectable()
 export class Jwt {

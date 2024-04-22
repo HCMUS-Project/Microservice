@@ -8,6 +8,7 @@ import { ExceptionsFilter } from './core/responses/filter/exception.filter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import rateLimit from '@fastify/rate-limit';
 import { Transport } from '@nestjs/microservices';
+import {ValidationPipe} from '@nestjs/common';
 
 async function bootstrap() {
     // Implement NestFastify for application
@@ -45,6 +46,9 @@ async function bootstrap() {
 
     // Start the microservice
     await app.startAllMicroservices();
+
+    // Config validation pipe
+    app.useGlobalPipes(new ValidationPipe())
 
     // Listen on the port
     await app.listen(port, async () => {

@@ -1,7 +1,6 @@
 import { Body, Controller, Inject, Post, Res } from '@nestjs/common';
 import { AuthServiceSignUp } from './sign-up.service';
-import { SignUpRequest } from 'src/proto-build/signUp/SignUpRequest';
-import {Response} from 'express';
+import {SignUpRequestDto} from './sign-up.dto';
 
 @Controller('/auth')
 export class SignUpController {
@@ -11,13 +10,7 @@ export class SignUpController {
     ) {}
 
     @Post('sign-up')
-    async signUp(@Body() signUpRequest: SignUpRequest) {
-        const result = await this.authServiceSignUp.signUp(signUpRequest);
-        // if (result.result){
-        //     return res.status(200).json({
-        //         'message': 
-        //     })
-        // }
-        return result
+    async signUp(@Body() data: SignUpRequestDto) {
+        return await this.authServiceSignUp.signUp(data); 
     }
 }

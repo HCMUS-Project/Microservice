@@ -8,7 +8,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigsModule } from './configs/config.module';
 import { ContextModule } from './configs/context/modules/contextStorage.module';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './core/responses/interceptors/response.interceptor';
 import { DatabaseModule } from './core/database/modules/database.module';
 // import { SignUpModule } from './feature/auth/sign_up/sign_up.module';
@@ -28,6 +28,7 @@ import { VerifyAccountController } from './feature/auth/verify-account/verify-ac
 import { AuthServiceVerifyAccount } from './feature/auth/verify-account/verify-account.service';
 import { AccessTokenStrategy } from './common/strategies/token/accessToken.strategy';
 import { RefreshTokenStrategy } from './common/strategies/token/refreshToken.strategy';
+import {ExceptionsFilter} from './core/responses/filter/exception.filter';
 // import {OtpModule} from "./feature/auth/otp/otp.module";
 
 @Module({
@@ -50,6 +51,11 @@ import { RefreshTokenStrategy } from './common/strategies/token/refreshToken.str
             useClass: ResponseInterceptor,
         },
         {
+            provide: APP_FILTER,
+            useClass: ExceptionsFilter,
+          },
+
+        {
             provide: 'GRPC_AUTH_SERVICE',
             useFactory: () => {
                 return ClientProxyFactory.create({
@@ -60,9 +66,9 @@ import { RefreshTokenStrategy } from './common/strategies/token/refreshToken.str
                             'signUp',
                             'signIn',
                             'verifyAccount',
-                            // 'refresh_token',
-                            // 'sign_out',
-                            // 'user_token',
+                            'refreshToken',
+                            'signOut',
+                            'userToken',
                         ], // ['hero', 'hero2']
                         protoPath: join(__dirname, '../src/proto/main.proto'),
                         url: 'localhost:3001',
