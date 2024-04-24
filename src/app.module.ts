@@ -28,7 +28,8 @@ import { VerifyAccountController } from './feature/auth/verify-account/verify-ac
 import { AuthServiceVerifyAccount } from './feature/auth/verify-account/verify-account.service';
 import { AccessTokenStrategy } from './common/strategies/token/accessToken.strategy';
 import { RefreshTokenStrategy } from './common/strategies/token/refreshToken.strategy';
-import {ExceptionsFilter} from './core/responses/filter/exception.filter';
+import { ExceptionsFilter } from './core/responses/filter/exception.filter';
+import { AuthModule } from './feature/auth/auth.module';
 // import {OtpModule} from "./feature/auth/otp/otp.module";
 
 @Module({
@@ -39,9 +40,10 @@ import {ExceptionsFilter} from './core/responses/filter/exception.filter';
         DatabaseModule,
         LoggerModule,
         ClientsModule,
+        AuthModule,
         // CacheModule.registerAsync(RedisOptions)
     ],
-    controllers: [AppController, SignUpController, SignInController, VerifyAccountController],
+    controllers: [AppController],
     providers: [
         AppService,
         AccessTokenStrategy,
@@ -53,45 +55,6 @@ import {ExceptionsFilter} from './core/responses/filter/exception.filter';
         {
             provide: APP_FILTER,
             useClass: ExceptionsFilter,
-          },
-
-        {
-            provide: 'GRPC_AUTH_SERVICE',
-            useFactory: () => {
-                return ClientProxyFactory.create({
-                    transport: Transport.GRPC,
-                    options: {
-                        package: [
-                            'main',
-                            'signUp',
-                            'signIn',
-                            'verifyAccount',
-                            'refreshToken',
-                            'signOut',
-                            'userToken',
-                        ], // ['hero', 'hero2']
-                        protoPath: join(__dirname, '../src/proto/main.proto'),
-                        url: 'localhost:3001',
-                        loader: {
-                            enums: String,
-                            objects: true,
-                            arrays: true,
-                        },
-                    },
-                });
-            },
-        },
-        {
-            provide: 'GRPC_AUTH_SERVICE_SIGN_UP',
-            useClass: AuthServiceSignUp,
-        },
-        {
-            provide: 'GRPC_AUTH_SERVICE_SIGN_IN',
-            useClass: AuthServiceSignIn,
-        },
-        {
-            provide: 'GRPC_AUTH_SERVICE_VERIFY_ACCOUNT',
-            useClass: AuthServiceVerifyAccount,
         },
     ],
 })

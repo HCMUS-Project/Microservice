@@ -68,7 +68,7 @@ export class ForbiddenException extends HttpException {
  */
 export class ConflictException extends HttpException {
     constructor(message: string, error: string) {
-        super({message, error}, HttpStatus.CONFLICT);
+        super({ message, error }, HttpStatus.CONFLICT);
     }
 }
 
@@ -80,7 +80,7 @@ export class ConflictException extends HttpException {
  */
 export class UnprocessableEntityException extends HttpException {
     constructor(message: string, error: string) {
-        super({message, error}, HttpStatus.UNPROCESSABLE_ENTITY);
+        super({ message, error }, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 }
 
@@ -91,7 +91,7 @@ export class UnprocessableEntityException extends HttpException {
  */
 export class TooManyRequestsException extends HttpException {
     constructor(message: string, error: string) {
-        super({message, error}, HttpStatus.TOO_MANY_REQUESTS);
+        super({ message, error }, HttpStatus.TOO_MANY_REQUESTS);
     }
 }
 
@@ -101,7 +101,7 @@ export class TooManyRequestsException extends HttpException {
  */
 export class ServiceUnavailableException extends HttpException {
     constructor(message: string, error: string) {
-        super({message, error}, HttpStatus.SERVICE_UNAVAILABLE);
+        super({ message, error }, HttpStatus.SERVICE_UNAVAILABLE);
     }
 }
 
@@ -112,6 +112,6 @@ export class ServiceUnavailableException extends HttpException {
  */
 export class GatewayTimeoutException extends HttpException {
     constructor(message: string, error: string) {
-        super({message, error}, HttpStatus.GATEWAY_TIMEOUT);
+        super({ message, error }, HttpStatus.GATEWAY_TIMEOUT);
     }
 }

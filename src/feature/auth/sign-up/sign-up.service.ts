@@ -3,10 +3,15 @@ import { Observable, firstValueFrom } from 'rxjs';
 import { ClientGrpc } from '@nestjs/microservices';
 import { SignUpRequest } from 'src/proto-build/signUp/SignUpRequest';
 import { SignUpResponse } from 'src/proto-build/signUp/SignUpResponse';
-import { ForbiddenException, NotFoundException, UserNotFoundException } from 'src/common/exceptions/exceptions';
+import {
+    ForbiddenException,
+    NotFoundException,
+    UserNotFoundException,
+} from 'src/common/exceptions/exceptions';
+import { SignUpRequestDto } from './sign-up.dto';
 
 interface SignUpService {
-    signUp(data: SignUpRequest): Observable<SignUpResponse>;
+    signUp(data: SignUpRequestDto): Observable<SignUpResponse>;
 }
 
 @Injectable()
@@ -19,7 +24,7 @@ export class AuthServiceSignUp implements OnModuleInit {
         this.iSignUpService = this.client.getService<SignUpService>('SignUpService');
     }
 
-    async signUp(data: SignUpRequest): Promise<SignUpResponse> {
+    async signUp(data: SignUpRequestDto): Promise<SignUpResponse> {
         try {
             const signUpResponse: SignUpResponse = await firstValueFrom(
                 this.iSignUpService.signUp(data),

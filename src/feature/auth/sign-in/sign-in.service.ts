@@ -1,13 +1,13 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { Observable, firstValueFrom } from 'rxjs';
-import { ClientGrpc, RpcException } from '@nestjs/microservices'; 
-import { SignInResponse } from 'src/proto-build/signIn/SignInResponse'; 
+import { ClientGrpc, RpcException } from '@nestjs/microservices';
+import { SignInResponse } from 'src/proto-build/signIn/SignInResponse';
 import {
     InvalidPasswordException,
     NotFoundException,
     UserNotFoundException,
 } from 'src/common/exceptions/exceptions';
-import {SignInRequestDTO} from './sign-in.dto';
+import { SignInRequestDTO } from './sign-in.dto';
 
 interface SignInService {
     signIn(data: SignInRequestDTO): Observable<SignInResponse>;
@@ -31,7 +31,7 @@ export class AuthServiceSignIn implements OnModuleInit {
             );
             return signInResponse;
         } catch (e) {
-            // console.log(e); 
+            // console.log(e);
             const errorDetails = JSON.parse(e.details);
             // console.log(errorDetails);
             if (errorDetails.error == 'USER_NOT_FOUND') {

@@ -10,10 +10,11 @@ import { SendMailRequest } from 'src/proto-build/verifyAccount/SendMailRequest';
 import { SendMailResponse } from 'src/proto-build/verifyAccount/SendMailResponse';
 import { VerifyAccountRequest } from 'src/proto-build/verifyAccount/VerifyAccountRequest';
 import { VerifyAccountResponse } from 'src/proto-build/verifyAccount/VerifyAccountResponse';
+import { SendMailRequestDto, VerifyAccountRequestDto } from './verify-account.dto';
 
 interface VerifyAccountService {
-    verifyAccount(data: VerifyAccountRequest): Observable<VerifyAccountResponse>;
-    sendMailOtp(data: SendMailRequest): Observable<SendMailResponse>;
+    verifyAccount(data: VerifyAccountRequestDto): Observable<VerifyAccountResponse>;
+    sendMailOtp(data: SendMailRequestDto): Observable<SendMailResponse>;
 }
 
 @Injectable()
@@ -27,7 +28,7 @@ export class AuthServiceVerifyAccount implements OnModuleInit {
             this.client.getService<VerifyAccountService>('VerifyAccountService');
     }
 
-    async verifyAccount(data: VerifyAccountRequest): Promise<VerifyAccountResponse> {
+    async verifyAccount(data: VerifyAccountRequestDto): Promise<VerifyAccountResponse> {
         try {
             const signUpResponse: VerifyAccountResponse = await firstValueFrom(
                 this.iVerifyAccountService.verifyAccount(data),
@@ -37,34 +38,31 @@ export class AuthServiceVerifyAccount implements OnModuleInit {
             // console.log(e);
             const errorDetails = JSON.parse(e.details);
             if (errorDetails.error == 'USER_NOT_FOUND') {
-                throw new UserNotFoundException(); 
-            } else if (errorDetails.error == 'USER_NOT_VERIFIED') {
-                throw new UserNotFoundException('User not verified');
-            } else if (errorDetails.error == 'OTP_EXPIRED'){
-                throw new ForbiddenException('Otp already expired', 'Forbidden')
-            } else if (errorDetails.error == 'OTP_INVALID'){
-                throw new ForbiddenException('Otp invalid', 'Forbidden')
-            }
-            else {
+                throw new UserNotFoundException();
+            } else if (errorDetails.error == 'USER_ALREADY_VERIFIED') {
+                throw new ForbiddenException('User already verified', 'Forbidden');
+            } else if (errorDetails.error == 'OTP_EXPIRED') {
+                throw new ForbiddenException('Otp already expired', 'Forbidden');
+            } else if (errorDetails.error == 'OTP_INVALID') {
+                throw new ForbiddenException('Otp invalid', 'Forbidden');
+            } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }
         }
     }
 
-    async sendMailOtp(data: SendMailRequest): Promise<SendMailResponse> {
+    async sendMailOtp(data: SendMailRequestDto): Promise<SendMailResponse> {
         try {
-            const signUpResponse: SendMailResponse = await firstValueFrom(
+            const sendMailResponse: SendMailResponse = await firstValueFrom(
                 this.iVerifyAccountService.sendMailOtp(data),
             );
-            return signUpResponse;
+            return sendMailResponse;
         } catch (e) {
             const errorDetails = JSON.parse(e.details);
             if (errorDetails.error == 'USER_NOT_FOUND') {
                 throw new UserNotFoundException();
             } else if (errorDetails.error == 'USER_ALREADY_VERIFIED') {
-                throw new ForbiddenException('User already registered', 'Forbidden');
-            } else if (errorDetails.error == 'USER_NOT_VERIFIED') {
-                throw new UserNotFoundException('User not verified');
+                throw new ForbiddenException('User already verified', 'Forbidden');
             } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }

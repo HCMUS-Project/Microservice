@@ -8,7 +8,7 @@ import { ExceptionsFilter } from './core/responses/filter/exception.filter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import rateLimit from '@fastify/rate-limit';
 import { Transport } from '@nestjs/microservices';
-import {ValidationPipe} from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
     // Implement NestFastify for application
@@ -25,6 +25,12 @@ async function bootstrap() {
     //     timeWindow: '10 second',
     // })
 
+    // Set default prefix for all routes
+    app.setGlobalPrefix('api');
+
+    // Enable CORS
+    app.enableCors();
+
     // Config the logger
     const customLogger = app.get(NestjsLoggerServiceAdapter);
     app.useLogger(customLogger);
@@ -37,18 +43,36 @@ async function bootstrap() {
     const port = configService.get<number>('port');
 
     const config = new DocumentBuilder()
-        .setTitle('Your API')
-        .setDescription('API description')
+        .setTitle('SAAS BOOKING API')
+        .setDescription('## API description') 
+        .addSecurity('JWT-access-token', {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+            name: 'JWT Access Token',
+            description: 'Enter JWT access token',
+            in: 'header',
+        })
+        .addSecurity('JWT-refresh-token', {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+            name: 'JWT Refresh Token',
+            description: 'Enter JWT refresh token',
+            in: 'header',
+        })
         .setVersion('1.0')
         .build();
     const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('api', app, document);
+    SwaggerModule.setup('api', app, document, {
+        swaggerOptions: { persistAuthorization: true },
+    });
 
     // Start the microservice
     await app.startAllMicroservices();
 
     // Config validation pipe
-    app.useGlobalPipes(new ValidationPipe())
+    app.useGlobalPipes(new ValidationPipe());
 
     // Listen on the port
     await app.listen(port, async () => {
