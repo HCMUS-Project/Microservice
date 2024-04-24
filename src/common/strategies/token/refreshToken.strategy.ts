@@ -24,7 +24,7 @@ export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refres
         }
         // console.log(accessToken, payload);
         payload.accessToken = accessToken
-        console.log(payload)
+        // console.log('refreshToken: ', payload)
         return payload;
     }
 }

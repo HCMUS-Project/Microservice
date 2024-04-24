@@ -19,8 +19,8 @@ async function bootstrap() {
     // To config microservice
     const app = await NestFactory.create(AppModule);
 
-    // // Config rate-limit
-    // app.register(rateLimit, {
+    // Config rate-limit
+    // app.(rateLimit, {
     //     max: 10,
     //     timeWindow: '10 second',
     // })
