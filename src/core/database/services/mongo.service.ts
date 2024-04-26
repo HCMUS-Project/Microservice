@@ -28,7 +28,7 @@ export class MongoService {
                 user: this.user,
                 pass: this.pass,
             } as mongoose.ConnectOptions);
-
+            console.log(mongoUrl, connect)
             this.logger.info('MongoDB connected: ' + mongoUrl);
             return connect;
         } catch (error) {
