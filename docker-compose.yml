@@ -40,26 +40,20 @@ services:
       context: ./ServiceAuth
     ports:
       - "3001:3001"
-    environment:
-      MONGO_URI: mongodb://admin:datn@2024@localhost:27017/nest
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-    depends_on:
-      - mongodb
-      - redis
+    env_file:
+      - path: ./.env 
+        required: true
 
   gateway:
     build:
       context: ./Microservice
     ports:
       - "3000:3000"
-    environment:
-      MONGO_URI: mongodb://admin:datn@2024@localhost:27017/nest
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-    depends_on:
-      - mongodb
-      - redis
+    networks:
+      - app-network
+    env_file:
+      - path: ./.env 
+        required: true
 
   mongodb:
     image: mongo
