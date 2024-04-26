@@ -43,6 +43,9 @@ services:
     env_file:
       - path: ./.env 
         required: true
+    depends_on:
+      - mongodb
+      - redis
 
   gateway:
     build:
@@ -54,6 +57,9 @@ services:
     env_file:
       - path: ./.env 
         required: true
+    depends_on:
+      - mongodb
+      - redis
 
   mongodb:
     image: mongo
