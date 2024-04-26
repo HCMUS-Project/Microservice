@@ -6,6 +6,7 @@ import NestjsLoggerServiceAdapter from './logger.adapter';
 import { ServiceConfig } from 'src/configs/service/service.config';
 import * as morgan from 'morgan';
 import ConsoleTransport from 'src/utils/winston/consoleTransport';
+import { ElasticsearchTransport } from 'winston-elasticsearch';
 
 @Global()
 @Module({
@@ -38,6 +39,11 @@ import ConsoleTransport from 'src/utils/winston/consoleTransport';
 
                 // TODO: Add file transport
                 // transports.push(FileTransport.create());
+                // transports.push(new ElasticsearchTransport({
+                //     level: 'debug',
+                //     index: 'logs',
+                //     clientOpts: { node: 'http://localhost:9200' }
+                // }))
 
                 // if (configService.isProduction) {
                 //     if (configService.slackWebhookUrl) {

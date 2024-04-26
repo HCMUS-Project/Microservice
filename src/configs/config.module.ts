@@ -14,22 +14,26 @@ import { APP_GUARD } from '@nestjs/core';
 @Global()
 @Module({
     imports: [
-        ThrottlerModule.forRoot([{ 
-            ttl: 60000, 
-            limit: 100,  
-          }]),
+        ThrottlerModule.forRoot([
+            {
+                ttl: 60000,
+                limit: 100,
+            },
+        ]),
         NestConfigModule.forRoot({
             envFilePath: ['.env'],
             isGlobal: true,
             load: [appConfig, mongoConfig, cacheConfig],
         }),
-        
     ],
     controllers: [],
-    providers: [ServiceConfig, {
-        provide: APP_GUARD,
-        useClass: ThrottlerGuard,
-    }],
+    providers: [
+        ServiceConfig,
+        {
+            provide: APP_GUARD,
+            useClass: ThrottlerGuard,
+        },
+    ],
     exports: [ServiceConfig],
 })
 export class ConfigsModule {}

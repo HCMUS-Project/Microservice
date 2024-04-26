@@ -3,6 +3,11 @@
 /node_modules
 /build
 
+src/**/*.proto.js
+src/**/*.proto.d.ts
+src/proto_build
+src/proto-build
+
 # Logs
 logs
 *.log
