@@ -11,8 +11,7 @@ COPY . .
 RUN yarn install
 
 # Gen proto
-RUN yarn gen:proto_folder
-RUN yarn gen:proto
+RUN yarn gen:proto_ts
 
 # Creates a "dist" folder with the production build
 RUN yarn build
