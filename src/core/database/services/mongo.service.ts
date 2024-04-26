@@ -23,13 +23,13 @@ export class MongoService {
     public async connect(): Promise<typeof mongoose> {
         try {
             const mongoUrl: string = this.uri + '/' + this.database;
-            console.log(mongoUrl, this.user, this.pass)
+            // console.log(mongoUrl, this.user, this.pass)
             const connect = await mongoose.connect(mongoUrl, {
                 authSource: 'admin',
                 user: this.user,
                 pass: this.pass,
             } as mongoose.ConnectOptions);
-            console.log(mongoUrl, connect)
+            // console.log(mongoUrl, connect)
             this.logger.info('MongoDB connected: ' + mongoUrl);
             return connect;
         } catch (error) {

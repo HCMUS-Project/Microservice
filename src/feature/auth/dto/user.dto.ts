@@ -1,3 +1,4 @@
+import {ApiProperty} from '@nestjs/swagger';
 import { IsEmail, IsEnum, IsFQDN, IsJWT, IsNotEmpty } from 'class-validator';
 import { Role } from 'src/common/enums/role.enum';
 import { Role__Output } from 'src/proto-build/userToken/Role';
@@ -6,18 +7,22 @@ import { User } from 'src/proto-build/userToken/User';
 export class UserDto implements User {
     @IsEmail()
     @IsNotEmpty()
+    @ApiProperty()
     'email': string;
 
     @IsFQDN()
     @IsNotEmpty()
+    @ApiProperty()
     'domain': string;
 
     @IsEnum(Role)
     @IsNotEmpty()
+    @ApiProperty()
     'role': Role__Output;
 
     @IsJWT()
     @IsNotEmpty()
+    @ApiProperty()
     'accessToken': string;
 
     // constructor(dto: Partial<UserDto>) {

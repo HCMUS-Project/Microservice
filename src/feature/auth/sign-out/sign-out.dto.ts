@@ -10,5 +10,6 @@ import { UserDto } from '../dto/user.dto';
 export class SignOutRequestDTO implements SignOutRequest {
     @IsObject()
     @IsNotEmpty()
+    @ApiProperty()
     user: UserDto;
 }
