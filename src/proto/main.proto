@@ -6,6 +6,7 @@ import "auth/verify_account.proto";
 import "auth/refresh_token.proto";
 import "auth/sign_out.proto";
 import "auth/user_token.proto";
+import "auth/profile.proto";
 
 package main;
 

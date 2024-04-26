@@ -23,7 +23,7 @@ export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refres
             throw new UserNotFoundException('Refresh Token not found');
         }
         // console.log(accessToken, payload);
-        payload.accessToken = accessToken
+        payload.accessToken = accessToken;
         // console.log('refreshToken: ', payload)
         return payload;
     }

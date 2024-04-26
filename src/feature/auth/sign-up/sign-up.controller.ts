@@ -32,18 +32,22 @@ export class SignUpController {
         examples: {
             user_1: {
                 value: {
-                    device: 'web',
-                    domain: '30shine.com',
                     email: 'nguyenvukhoi150402@gmail.com',
+                    username: 'vukhoi5a',
+                    phone: '84931056895',
                     password: 'A@a123456',
+                    domain: '30shine.com',
+                    device: 'web',
                 } as SignUpRequestDto,
             },
             user_2: {
                 value: {
-                    device: 'mobile',
-                    domain: '24shine.com',
-                    email: 'nguyenvukhoi150402@gmail.com',
+                    email: 'volehoai070902@gmail.com',
+                    username: 'vukhoi123',
+                    phone: '84944236565',
                     password: '1232@asdS',
+                    domain: '24shine.com',
+                    device: 'mobile',
                 } as SignUpRequestDto,
             },
         },
@@ -79,10 +83,10 @@ export class SignUpController {
                         summary: 'Response if all field missing and not valid with request',
                         value: {
                             statusCode: 400,
-                            timestamp: '2024-04-24T06:57:40.893Z',
+                            timestamp: '2024-04-26T06:55:35.138Z',
                             path: '/api/auth/sign-up',
                             message:
-                                'email should not be empty, email must be an email, Password must have at least 8 characters, 1 lowercase letters, 1 uppercase letters, 1 numbers, 1 symbols., domain should not be empty, domain must be a valid domain name, device should not be empty',
+                                'email should not be empty, email must be an email, username should not be empty, phone should not be empty, Must be VietNam Phone Number (84..), Password must have at least 8 characters, 1 lowercase letters, 1 uppercase letters, 1 numbers, 1 symbols., domain should not be empty, domain must be a valid domain name, device should not be empty',
                             error: 'Bad Request',
                             data: null,
                         },

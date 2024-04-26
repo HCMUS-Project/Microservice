@@ -119,7 +119,7 @@ export class VerifyAccountController {
                         value: {
                             statusCode: 403,
                             timestamp: '2024-04-24T07:42:57.623Z',
-                            path: '/api/auth/send-mail-otp',
+                            path: '/api/auth/verify-account',
                             message: 'User already verified',
                             error: 'Forbidden',
                             data: null,

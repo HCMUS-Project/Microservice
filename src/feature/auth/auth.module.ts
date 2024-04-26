@@ -11,6 +11,8 @@ import { SignOutController } from './sign-out/sign-out.controller';
 import { AuthServiceSignOut } from './sign-out/sign-out.service';
 import { AuthServiceRefreshToken } from './refresh-token/refresh-token.service';
 import { RefreshTokenController } from './refresh-token/refresh-token.controller';
+import {AuthServiceProfile} from './profile/profile.service';
+import {ProfileController} from './profile/profile.controller';
 
 @Module({
     imports: [ClientsModule],
@@ -20,6 +22,7 @@ import { RefreshTokenController } from './refresh-token/refresh-token.controller
         VerifyAccountController,
         SignOutController,
         RefreshTokenController,
+        ProfileController
     ],
     providers: [
         {
@@ -43,6 +46,10 @@ import { RefreshTokenController } from './refresh-token/refresh-token.controller
             useClass: AuthServiceRefreshToken,
         },
         {
+            provide: 'GRPC_AUTH_SERVICE_PROFILE',
+            useClass: AuthServiceProfile,
+        },
+        {
             provide: 'GRPC_AUTH_SERVICE',
             useFactory: () => {
                 return ClientProxyFactory.create({
@@ -56,6 +63,7 @@ import { RefreshTokenController } from './refresh-token/refresh-token.controller
                             'refreshToken',
                             'signOut',
                             'userToken',
+                            'profile',
                         ], // ['hero', 'hero2']
                         protoPath: join(__dirname, '../../../src/proto/main.proto'),
                         url: 'localhost:3001',

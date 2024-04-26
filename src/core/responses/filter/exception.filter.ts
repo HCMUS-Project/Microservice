@@ -18,12 +18,16 @@ export class ExceptionsFilter implements ExceptionFilter {
             path: ctx.getRequest().url,
             message:
                 exception instanceof HttpException
-                    ? this.formatMessage((exception.getResponse() as { message: string }).message || null)
+                    ? this.formatMessage(
+                          (exception.getResponse() as { message: string }).message || null,
+                      )
                     : 'Internal Server Error',
             error:
                 exception instanceof HttpException
-                    ? this.formatMessage((exception.getResponse() as { error: string }).error || null)
-                    : 'Internal Server Error' ,
+                    ? this.formatMessage(
+                          (exception.getResponse() as { error: string }).error || null,
+                      )
+                    : 'Internal Server Error',
             data: null,
         };
         // console.log(typeof errorResponse.message)

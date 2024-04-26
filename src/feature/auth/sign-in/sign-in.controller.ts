@@ -10,11 +10,11 @@ import {
     ApiTags,
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import {AccessTokenGuard} from 'src/common/guards/token/accessToken.guard';
-import {RolesGuard} from 'src/common/guards/role/role.guard';
-import {Roles} from 'src/common/decorator/role.decorator';
-import {Role} from 'src/common/enums/role.enum';
-import {RefreshTokenGuard} from 'src/common/guards/token/refreshToken.guard';
+import { AccessTokenGuard } from 'src/common/guards/token/accessToken.guard';
+import { RolesGuard } from 'src/common/guards/role/role.guard';
+import { Roles } from 'src/common/decorator/role.decorator';
+import { Role } from 'src/common/enums/role.enum';
+import { RefreshTokenGuard } from 'src/common/guards/token/refreshToken.guard';
 
 @Controller('/auth')
 @ApiTags('auth')
@@ -141,8 +141,8 @@ export class SignInController {
     }
 
     // @Post('test-role')
-    // @UseGuards(RefreshTokenGuard, RolesGuard) 
-    // @Roles(Role.TENANT)
+    // @UseGuards(RefreshTokenGuard, RolesGuard)
+    // @Roles(Role.USER)
     // async testRole(@Request() req: Request){
     //     console.log('testRole', req.headers)
     //     return 'access'

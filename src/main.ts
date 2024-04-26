@@ -44,7 +44,7 @@ async function bootstrap() {
 
     const config = new DocumentBuilder()
         .setTitle('SAAS BOOKING API')
-        .setDescription('## API description') 
+        .setDescription('## API description')
         .addSecurity('JWT-access-token', {
             type: 'http',
             scheme: 'bearer',

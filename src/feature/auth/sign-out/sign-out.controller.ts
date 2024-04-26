@@ -26,7 +26,7 @@ export class SignOutController {
         summary: 'Sign out at user site',
         description: `
 ## Mustn't have body,
-## Using access token (to test add in the right corner)`
+## Using access token (to test add in the right corner)`,
     })
     @ApiBearerAuth('JWT-access-token')
     @ApiCreatedResponse({
@@ -77,7 +77,7 @@ export class SignOutController {
                             error: 'Unauthorized',
                             data: null,
                         },
-                    }, 
+                    },
                 },
             },
         },
