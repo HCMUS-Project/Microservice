@@ -13,6 +13,7 @@ import { AuthServiceRefreshToken } from './refresh-token/refresh-token.service';
 import { RefreshTokenController } from './refresh-token/refresh-token.controller';
 import {AuthServiceProfile} from './profile/profile.service';
 import {ProfileController} from './profile/profile.controller';
+import {ConfigService} from '@nestjs/config';
 
 @Module({
     imports: [ClientsModule],
@@ -51,7 +52,7 @@ import {ProfileController} from './profile/profile.controller';
         },
         {
             provide: 'GRPC_AUTH_SERVICE',
-            useFactory: () => {
+            useFactory: (configService: ConfigService) => {
                 return ClientProxyFactory.create({
                     transport: Transport.GRPC,
                     options: {
@@ -66,7 +67,7 @@ import {ProfileController} from './profile/profile.controller';
                             'profile',
                         ], // ['hero', 'hero2']
                         protoPath: join(__dirname, '../../../src/proto/main.proto'),
-                        url: 'localhost:3001',
+                        url: configService.get<string>('AUTH_SERVICE_URL'),
                         loader: {
                             enums: String,
                             objects: true,
@@ -75,6 +76,7 @@ import {ProfileController} from './profile/profile.controller';
                     },
                 });
             },
+            inject: [ConfigService]
         },
     ],
 })
