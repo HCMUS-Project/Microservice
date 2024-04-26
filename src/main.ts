@@ -75,7 +75,7 @@ async function bootstrap() {
     app.useGlobalPipes(new ValidationPipe());
 
     // Listen on the port
-    await app.listen(port,'0.0.0.0' ,async () => {
+    await app.listen(port, async () => {
         const url = await app.getUrl();
         customLogger.log(`Server running on ${url}`);
     });

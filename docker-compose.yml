@@ -36,32 +36,25 @@ version: '3'
 
 services:
   service-auth:
+    container_name: service-auth-container
     build:
       context: ./ServiceAuth
     ports:
-      - "3001:3001"
-    env_file:
-      - path: ./.env 
-        required: true
-    depends_on:
-      - mongodb
-      - redis
+      - "3001:3001" 
+    networks:
+      - app-network
 
   gateway:
+    container_name: service-gateway-container
     build:
       context: ./Microservice
     ports:
       - "3000:3000"
     networks:
       - app-network
-    env_file:
-      - path: ./.env 
-        required: true
-    depends_on:
-      - mongodb
-      - redis
 
   mongodb:
+    container_name: mongo-container
     image: mongo
     restart: always
     environment:
@@ -72,6 +65,7 @@ services:
       - "27017:27017"
 
   redis:
+    container_name: redis-container
     image: redis
     restart: always
     ports:
