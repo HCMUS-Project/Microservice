@@ -23,6 +23,7 @@ export class MongoService {
     public async connect(): Promise<typeof mongoose> {
         try {
             const mongoUrl: string = this.uri + '/' + this.database;
+            console.log(mongoUrl, this.user, this.pass)
             const connect = await mongoose.connect(mongoUrl, {
                 authSource: 'admin',
                 user: this.user,
