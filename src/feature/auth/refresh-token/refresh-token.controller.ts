@@ -8,7 +8,7 @@ import {
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/common/guards/token/accessToken.guard';
-import { UserDto } from '../dto/user.dto';
+import { UserDto } from '../../commonDTO/user.dto';
 import { AuthServiceRefreshToken } from './refresh-token.service';
 import { RefreshTokenGuard } from 'src/common/guards/token/refreshToken.guard';
 

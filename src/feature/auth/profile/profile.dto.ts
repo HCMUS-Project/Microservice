@@ -1,9 +1,19 @@
-import { IsEnum, IsInt, IsJWT, IsMobilePhone, IsNotEmpty, IsNumber, IsObject, IsString, Min } from 'class-validator';
-import { UserDto } from '../dto/user.dto';
+import {
+    IsEnum,
+    IsInt,
+    IsJWT,
+    IsMobilePhone,
+    IsNotEmpty,
+    IsNumber,
+    IsObject,
+    IsString,
+    Min,
+} from 'class-validator';
+import { UserDto } from '../../commonDTO/user.dto';
 import { GetProfileRequest } from 'src/proto-build/profile/GetProfileRequest';
 import { UpdateProfileRequest } from 'src/proto-build/profile/UpdateProfileRequest';
-import {Gender} from 'src/common/enums/gender.enum';
-import {ApiProperty} from '@nestjs/swagger';
+import { Gender } from 'src/common/enums/gender.enum';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class GetProfileRequestDTO implements GetProfileRequest {
     @IsObject()
@@ -12,19 +22,18 @@ export class GetProfileRequestDTO implements GetProfileRequest {
     user: UserDto;
 }
 
-export class UpdateProfileRequestDTO implements UpdateProfileRequest {
-    @IsObject()
-    @IsNotEmpty()
-    @ApiProperty()
-    user: UserDto;
-
+export class UpdateProfileDto implements UpdateProfileRequest {
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
     username: string;
 
     @IsString()
-    @IsMobilePhone('vi-VN',{strictMode: false} ,{message: 'Must be VietNam Phone Number (84..)'})
+    @IsMobilePhone(
+        'vi-VN',
+        { strictMode: false },
+        { message: 'Must be VietNam Phone Number (84..)' },
+    )
     @IsNotEmpty()
     @ApiProperty()
     phone: string;
@@ -32,7 +41,6 @@ export class UpdateProfileRequestDTO implements UpdateProfileRequest {
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
-
     address: string;
 
     @IsString()
@@ -41,7 +49,7 @@ export class UpdateProfileRequestDTO implements UpdateProfileRequest {
     name: string;
 
     @IsString()
-    @IsEnum(Gender, {message: 'Must be a valid gender: male, female, other'})
+    @IsEnum(Gender, { message: 'Must be a valid gender: male, female, other' })
     @IsNotEmpty()
     @ApiProperty()
     gender: string;
@@ -51,4 +59,11 @@ export class UpdateProfileRequestDTO implements UpdateProfileRequest {
     @IsNotEmpty()
     @ApiProperty()
     age: number;
+}
+
+export class UpdateProfileRequestDTO extends UpdateProfileDto {
+    @IsObject()
+    @IsNotEmpty()
+    @ApiProperty()
+    user: UserDto;
 }

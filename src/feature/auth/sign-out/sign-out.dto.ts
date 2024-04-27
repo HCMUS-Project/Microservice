@@ -4,7 +4,7 @@ import { IsStrongPassword } from '../../../common/validator/is-strong-password.v
 import { ApiProperty } from '@nestjs/swagger';
 import { SignOutRequest } from 'src/proto-build/signOut/SignOutRequest';
 import { User } from 'src/proto-build/userToken/User';
-import { UserDto } from '../dto/user.dto';
+import { UserDto } from '../../commonDTO/user.dto';
 
 // Define a class that implements the SignOutRequest interface
 export class SignOutRequestDTO implements SignOutRequest {

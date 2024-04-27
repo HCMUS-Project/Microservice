@@ -11,12 +11,12 @@ import {
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { AuthServiceProfile } from './profile.service';
-import { GetProfileRequestDTO, UpdateProfileRequestDTO } from './profile.dto';
+import { GetProfileRequestDTO, UpdateProfileDto, UpdateProfileRequestDTO } from './profile.dto';
 import { AccessTokenGuard } from 'src/common/guards/token/accessToken.guard';
 import { RolesGuard } from 'src/common/guards/role/role.guard';
 import { Roles } from 'src/common/decorator/role.decorator';
 import { Role } from 'src/common/enums/role.enum';
-import { UserDto } from '../dto/user.dto';
+import { UserDto } from 'src/feature/commonDTO/user.dto';
 
 @Controller('/auth')
 @ApiTags('auth')
@@ -187,7 +187,7 @@ export class ProfileController {
                             timestamp: '2024-04-26T20:11:28.852Z',
                             path: '/api/auth/update-profile',
                             message:
-                                'user should not be empty, user must be an object, username should not be empty, phone should not be empty, Must be VietNam Phone Number (84..), address should not be empty, name should not be empty, gender should not be empty, Must be a valid gender: male, female, other, age should not be empty, age must not be less than 0, age must be an integer number',
+                                'username should not be empty, phone should not be empty, Must be VietNam Phone Number (84..), address should not be empty, name should not be empty, gender should not be empty, Must be a valid gender: male, female, other, age should not be empty, age must not be less than 0, age must be an integer number',
                             error: 'Bad Request',
                             data: null,
                         },
@@ -269,7 +269,7 @@ export class ProfileController {
             },
         },
     })
-    async updateProfile(@Req() req: Request, @Body() updateData: UpdateProfileRequestDTO) {
+    async updateProfile(@Req() req: Request, @Body() updateData: UpdateProfileDto) {
         // console.log(req['user'], req.headers, req.body)
         // return 'success'
         const payloadToken = req['user'];
@@ -282,8 +282,8 @@ export class ProfileController {
         } as UserDto;
 
         return await this.authServiceProfile.updateProfile({
-            user: userData,
             ...updateData,
+            user: userData,
         } as UpdateProfileRequestDTO);
     }
 }

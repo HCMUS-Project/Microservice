@@ -10,7 +10,7 @@ import {
 import { SignOutRequestDTO } from './sign-out.dto';
 import { AuthServiceSignOut } from './sign-out.service';
 import { AccessTokenGuard } from 'src/common/guards/token/accessToken.guard';
-import { UserDto } from '../dto/user.dto';
+import { UserDto } from '../../commonDTO/user.dto';
 
 @Controller('/auth')
 @ApiTags('auth')
