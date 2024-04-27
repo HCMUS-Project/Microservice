@@ -1,12 +1,26 @@
-import { Observable, firstValueFrom } from 'rxjs';
-import { CreateCategoryRequestDTO } from './category.dto';
+import { Observable, firstValueFrom, lastValueFrom, take, toArray } from 'rxjs';
+import {
+    CreateCategoryRequestDTO,
+    FindAllCategoriesRequestDTO,
+    FindOneCategoryRequestDTO,
+    RemoveCategoryRequestDTO,
+    UpdateCategoryRequestDTO,
+} from './category.dto';
 import { CreateCategoryResponse } from 'src/proto-build/category/CreateCategoryResponse';
 import { Inject, Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { ForbiddenException, UserNotFoundException } from 'src/common/exceptions/exceptions';
+import { FindAllCategoriesResponse } from 'src/proto-build/category/FindAllCategoriesResponse';
+import { FindOneCategoryResponse } from 'src/proto-build/category/FindOneCategoryResponse';
+import {UpdateCategoryResponse} from 'src/proto-build/category/UpdateCategoryResponse';
+import {RemoveCategoryResponse} from 'src/proto-build/category/RemoveCategoryResponse';
 
 interface CategoryService {
-    create(data: CreateCategoryRequestDTO): Observable<CreateCategoryResponse>;
+    createCategory(data: CreateCategoryRequestDTO): Observable<CreateCategoryResponse>;
+    findAllCategories(data: FindAllCategoriesRequestDTO): Observable<FindAllCategoriesResponse>;
+    findOneCategory(data: FindOneCategoryRequestDTO): Observable<FindOneCategoryResponse>;
+    updateCategory(data: UpdateCategoryRequestDTO): Observable<UpdateCategoryResponse>
+    removeCategory(data: RemoveCategoryRequestDTO): Observable<RemoveCategoryResponse>
 }
 
 @Injectable()
@@ -19,10 +33,11 @@ export class EcommerceCategoryService implements OnModuleInit {
         this.iCategoryService = this.client.getService<CategoryService>('CategoryService');
     }
 
-    async create(data: CreateCategoryRequestDTO): Promise<CreateCategoryResponse> {
+    async createCategory(data: CreateCategoryRequestDTO): Promise<CreateCategoryResponse> {
         try {
+            console.log(this.iCategoryService.createCategory(data));
             const createCategoryResponse: CreateCategoryResponse = await firstValueFrom(
-                this.iCategoryService.create(data),
+                this.iCategoryService.createCategory(data),
             );
             return createCategoryResponse;
         } catch (e) {
@@ -30,9 +45,78 @@ export class EcommerceCategoryService implements OnModuleInit {
             const errorDetails = JSON.parse(e.details);
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
-                throw new ForbiddenException('Unauthorized Role', 'Forbidden');
+                throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'CATEGORY_ALREADY_EXISTS') {
                 throw new ForbiddenException('Category already exists', 'Forbidden');
+            } else {
+                throw new NotFoundException(errorDetails, 'Not found');
+            }
+        }
+    }
+
+    async findAllCategories(data: FindAllCategoriesRequestDTO): Promise<FindAllCategoriesResponse> {
+        try {
+            const findAllCategoriesResponse: FindAllCategoriesResponse = await firstValueFrom(
+                this.iCategoryService.findAllCategories(data),
+            );
+            return findAllCategoriesResponse;
+        } catch (e) {
+            // console.log(e);
+            const errorDetails = JSON.parse(e.details);
+            // console.log(errorDetails);
+
+            throw new NotFoundException(errorDetails, 'Not found');
+        }
+    }
+
+    async findOneCategory(data: FindOneCategoryRequestDTO): Promise<FindOneCategoryResponse> {
+        try {
+            const findOneCategoryResponse: FindOneCategoryResponse = await firstValueFrom(
+                this.iCategoryService.findOneCategory(data),
+            );
+            return findOneCategoryResponse;
+        } catch (e) {
+            console.log(e);
+            const errorDetails = JSON.parse(e.details);
+            console.log(errorDetails);
+            if (errorDetails.error == 'CATEGORY_NOT_FOUND') {
+                throw new UserNotFoundException('Category not found', 'Unauthorized');
+            } else {
+                throw new NotFoundException(errorDetails, 'Not found');
+            }
+        }
+    }
+
+    async updateCategory(data: UpdateCategoryRequestDTO): Promise<UpdateCategoryResponse> {
+        try {
+            const updateCategoryResponse: UpdateCategoryResponse = await firstValueFrom(
+                this.iCategoryService.updateCategory(data),
+            );
+            return updateCategoryResponse;
+        } catch (e) {
+            console.log(e);
+            const errorDetails = JSON.parse(e.details);
+            console.log(errorDetails);
+            if (errorDetails.error == 'CATEGORY_NOT_FOUND') {
+                throw new UserNotFoundException('Category not found', 'Unauthorized');
+            } else {
+                throw new NotFoundException(errorDetails, 'Not found');
+            }
+        }
+    }
+
+    async removeCategory(data: RemoveCategoryRequestDTO): Promise<RemoveCategoryResponse> {
+        try {
+            const removeCategoryResponse: RemoveCategoryResponse = await firstValueFrom(
+                this.iCategoryService.removeCategory(data),
+            );
+            return removeCategoryResponse;
+        } catch (e) {
+            console.log(e);
+            const errorDetails = JSON.parse(e.details);
+            console.log(errorDetails);
+            if (errorDetails.error == 'CATEGORY_NOT_FOUND') {
+                throw new UserNotFoundException('Category not found', 'Unauthorized');
             } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }

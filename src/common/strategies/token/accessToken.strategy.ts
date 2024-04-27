@@ -23,14 +23,15 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
         });
     }
 
-    async validate(req, payload: JwtPayload) {
-        var accessToken = await this.cacheManager.get(
+    async validate(req, payload: any) {
+        var refreshToken = await this.cacheManager.get(
             `access_token:${payload.email}/${payload.domain}/${req.headers.authorization.split(' ')[1]}`,
         );
-        if (!accessToken) {
+        if (!refreshToken) {
             throw new UserNotFoundException('Access Token not found');
         }
         // console.log(accessToken, payload);
+        payload.accessToken = req.headers.authorization.split(' ')[1]
         return payload;
     }
 }

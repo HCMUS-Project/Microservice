@@ -30,6 +30,7 @@ import { AccessTokenStrategy } from './common/strategies/token/accessToken.strat
 import { RefreshTokenStrategy } from './common/strategies/token/refreshToken.strategy';
 import { ExceptionsFilter } from './core/responses/filter/exception.filter';
 import { AuthModule } from './feature/auth/auth.module';
+import {EcommerceModule} from './feature/ecommerce/ecommerce.module';
 // import {OtpModule} from "./feature/auth/otp/otp.module";
 
 @Module({
@@ -41,6 +42,7 @@ import { AuthModule } from './feature/auth/auth.module';
         LoggerModule,
         ClientsModule,
         AuthModule,
+        EcommerceModule
         // CacheModule.registerAsync(RedisOptions)
     ],
     controllers: [AppController],
