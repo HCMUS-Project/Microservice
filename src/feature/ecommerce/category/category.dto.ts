@@ -1,11 +1,11 @@
 import {ApiProperty} from "@nestjs/swagger";
 import {IsNotEmpty, IsObject, IsString} from "class-validator";
-import {UserDto} from "src/feature/commonDTO/user.dto";
-import {CreateCategoryRequest} from "src/proto-build/category/CreateCategoryRequest";
-import {FindAllCategoriesRequest} from "src/proto-build/category/FindAllCategoriesRequest";
-import {FindOneCategoryRequest} from "src/proto-build/category/FindOneCategoryRequest";
-import {RemoveCategoryRequest} from "src/proto-build/category/RemoveCategoryRequest";
-import {UpdateCategoryRequest} from "src/proto-build/category/UpdateCategoryRequest";
+import {UserDto} from "src/feature/commonDTO/user.dto"; 
+import {CreateCategoryRequest} from "src/proto_build/e_commerce/category/CreateCategoryRequest";
+import {FindAllCategoriesRequest} from "src/proto_build/e_commerce/category/FindAllCategoriesRequest";
+import {FindOneCategoryRequest} from "src/proto_build/e_commerce/category/FindOneCategoryRequest";
+import {RemoveCategoryRequest} from "src/proto_build/e_commerce/category/RemoveCategoryRequest";
+import {UpdateCategoryRequest} from "src/proto_build/e_commerce/category/UpdateCategoryRequest";
 
 export class CreateCategory implements CreateCategoryRequest{
     @IsString()

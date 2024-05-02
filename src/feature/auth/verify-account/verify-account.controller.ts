@@ -1,7 +1,5 @@
 import { Body, Controller, Inject, Post } from '@nestjs/common';
 import { AuthServiceVerifyAccount } from './verify-account.service';
-import { VerifyAccountRequest } from 'src/proto-build/verifyAccount/VerifyAccountRequest';
-import { SendMailRequest } from 'src/proto-build/verifyAccount/SendMailRequest';
 import {
     ApiBadRequestResponse,
     ApiBody,
@@ -13,7 +11,7 @@ import {
 } from '@nestjs/swagger';
 import { SendMailRequestDto, VerifyAccountRequestDto } from './verify-account.dto';
 
-@Controller('/auth')
+@Controller('auth')
 @ApiTags('auth')
 export class VerifyAccountController {
     constructor(

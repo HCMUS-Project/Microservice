@@ -6,15 +6,14 @@ import {
     RemoveCategoryRequestDTO,
     UpdateCategoryRequestDTO,
 } from './category.dto';
-import { CreateCategoryResponse } from 'src/proto-build/category/CreateCategoryResponse';
 import { Inject, Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { ForbiddenException, UserNotFoundException } from 'src/common/exceptions/exceptions';
-import { FindAllCategoriesResponse } from 'src/proto-build/category/FindAllCategoriesResponse';
-import { FindOneCategoryResponse } from 'src/proto-build/category/FindOneCategoryResponse';
-import {UpdateCategoryResponse} from 'src/proto-build/category/UpdateCategoryResponse';
-import {RemoveCategoryResponse} from 'src/proto-build/category/RemoveCategoryResponse';
-
+import {CreateCategoryResponse} from 'src/proto_build/e_commerce/category/CreateCategoryResponse';
+import {FindAllCategoriesResponse} from 'src/proto_build/e_commerce/category/FindAllCategoriesResponse';
+import {FindOneCategoryResponse} from 'src/proto_build/e_commerce/category/FindOneCategoryResponse';
+import {UpdateCategoryResponse} from 'src/proto_build/e_commerce/category/UpdateCategoryResponse';
+import {RemoveCategoryResponse} from 'src/proto_build/e_commerce/category/RemoveCategoryResponse';
 interface CategoryService {
     createCategory(data: CreateCategoryRequestDTO): Observable<CreateCategoryResponse>;
     findAllCategories(data: FindAllCategoriesRequestDTO): Observable<FindAllCategoriesResponse>;

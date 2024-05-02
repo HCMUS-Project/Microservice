@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-import "../auth/user_token.proto";
+import "../auth/user_token.proto";  // Assuming the path is correct for the user_token.proto import
 
 package category;
 

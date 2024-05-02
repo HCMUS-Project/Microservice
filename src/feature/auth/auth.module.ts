@@ -57,7 +57,7 @@ import {ConfigService} from '@nestjs/config';
                     transport: Transport.GRPC,
                     options: {
                         package: [
-                            'main',
+                            'auth',
                             'signUp',
                             'signIn',
                             'verifyAccount',
@@ -66,12 +66,13 @@ import {ConfigService} from '@nestjs/config';
                             'userToken',
                             'profile',
                         ], // ['hero', 'hero2']
-                        protoPath: join(__dirname, '../../../src/proto/main.proto'),
+                        protoPath: join(__dirname, '../../../src/proto/auth/auth.proto'),
                         url: configService.get<string>('AUTH_SERVICE_URL'),
                         loader: {
                             enums: String,
                             objects: true,
                             arrays: true,
+                            // includeDirs: [join(__dirname, '../../../src/proto/')],
                         },
                     },
                 });

@@ -16,7 +16,7 @@ import { Roles } from 'src/common/decorator/role.decorator';
 import { Role } from 'src/common/enums/role.enum';
 import { RefreshTokenGuard } from 'src/common/guards/token/refreshToken.guard';
 
-@Controller('/auth')
+@Controller('auth')
 @ApiTags('auth')
 export class SignInController {
     constructor(

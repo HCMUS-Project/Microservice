@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+import "sign_in.proto";
+import "sign_up.proto";
+import "verify_account.proto";
+import "refresh_token.proto";
+import "sign_out.proto";
+import "user_token.proto";
+import "profile.proto";
+
+
+package auth;
+
+service AppService {
+  rpc FindOne (HeroById) returns (Hero) {}
+}
+
+message HeroById {
+  int32 id = 1;
+}
+
+message Hero {
+  int32 id = 1;
+  string name = 2;
+}

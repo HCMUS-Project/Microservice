@@ -1,14 +1,13 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { Observable, firstValueFrom } from 'rxjs';
 import { ClientGrpc } from '@nestjs/microservices';
-import { SignUpRequest } from 'src/proto-build/signUp/SignUpRequest';
-import { SignUpResponse } from 'src/proto-build/signUp/SignUpResponse';
 import {
     ForbiddenException,
     NotFoundException,
     UserNotFoundException,
 } from 'src/common/exceptions/exceptions';
 import { SignUpRequestDto } from './sign-up.dto';
+import {SignUpResponse} from 'src/proto_build/auth/signUp/SignUpResponse';
 
 interface SignUpService {
     signUp(data: SignUpRequestDto): Observable<SignUpResponse>;

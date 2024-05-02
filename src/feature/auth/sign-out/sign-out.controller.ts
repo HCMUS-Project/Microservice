@@ -12,7 +12,7 @@ import { AuthServiceSignOut } from './sign-out.service';
 import { AccessTokenGuard } from 'src/common/guards/token/accessToken.guard';
 import { UserDto } from '../../commonDTO/user.dto';
 
-@Controller('/auth')
+@Controller('auth')
 @ApiTags('auth')
 export class SignOutController {
     constructor(

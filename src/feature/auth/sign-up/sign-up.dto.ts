@@ -12,7 +12,7 @@ import {
 } from 'class-validator';
 import { Gender } from 'src/common/enums/gender.enum';
 import { IsStrongPassword } from 'src/common/validator/is-strong-password.validator';
-import { SignUpRequest } from 'src/proto-build/signUp/SignUpRequest';
+import {SignUpRequest} from 'src/proto_build/auth/signUp/SignUpRequest';
 
 export class SignUpRequestDto implements SignUpRequest {
     @IsEmail()

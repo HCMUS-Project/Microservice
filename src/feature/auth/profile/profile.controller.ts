@@ -18,7 +18,7 @@ import { Roles } from 'src/common/decorator/role.decorator';
 import { Role } from 'src/common/enums/role.enum';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
 
-@Controller('/auth')
+@Controller('auth')
 @ApiTags('auth')
 export class ProfileController {
     constructor(

@@ -25,22 +25,22 @@ import {
 import { UserDto } from 'src/feature/commonDTO/user.dto';
 import { UpdateProfileDto } from 'src/feature/auth/profile/profile.dto';
 
-@Controller('/ecommerce')
-@ApiTags('ecommerce')
+@Controller('/ecommerce/category')
+@ApiTags('ecommerce/category')
 export class CategoryController {
     constructor(
         @Inject('GRPC_ECOMMERCE_SERVICE_CATEGORY')
         private readonly ecommerceCategoryService: EcommerceCategoryService,
     ) {}
 
-    @Post('create-category')
+    @Post('create')
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.TENANT)
     @ApiOperation({
         summary: 'Create category of domain',
         description: `
 ## Use access token
-## Must have name and decription of category`,
+## Must use tenant account`,
     })
     @ApiBearerAuth('JWT-access-token')
     @ApiBody({
@@ -48,17 +48,10 @@ export class CategoryController {
         examples: {
             category_1: {
                 value: {
-                    name: 'Cosmestic',
-                    description: 'Using for make beauty and hahahaahahaha haahaa',
+                    name: 'Esport',
+                    description: 'Lien Minh Huyen Thoai',
                 } as CreateCategory,
             },
-            // user_2: {
-            //     value: {
-            //         domain: '24shine.com',
-            //         email: 'nguyenvukhoi150402@gmail.com',
-            //         password: '1232@asdS',
-            //     } as SignInRequestDTO,
-            // },
         },
     })
     @ApiCreatedResponse({
@@ -70,13 +63,13 @@ export class CategoryController {
                         summary: 'Response after Create category successfully',
                         value: {
                             statusCode: 201,
-                            timestamp: '2024-04-27T12:20:54.477Z',
-                            path: '/api/ecommerce/create-category',
+                            timestamp: '2024-05-02T10:51:03.295Z',
+                            path: '/api/ecommerce/category/create',
                             message: null,
                             error: null,
                             data: {
-                                id: '93f55388-cd92-4f76-8ece-60fcf16f6806',
-                                name: 'Cosmestic',
+                                id: '6553fcfc-f8ad-400c-971f-dfd2670193d2',
+                                name: 'Esport',
                             },
                         },
                     },
@@ -94,7 +87,7 @@ export class CategoryController {
                         value: {
                             statusCode: 401,
                             timestamp: '2024-04-27T12:31:30.700Z',
-                            path: '/api/ecommerce/create-category',
+                            path: '/api/ecommerce/category/create',
                             message: 'Unauthorized',
                             error: null,
                             data: null,
@@ -105,8 +98,19 @@ export class CategoryController {
                         value: {
                             statusCode: 401,
                             timestamp: '2024-04-27T12:31:30.700Z',
-                            path: '/api/ecommerce/create-category',
+                            path: '/api/ecommerce/category/create',
                             message: 'Unauthorized Role',
+                            error: 'Unauthorized',
+                            data: null,
+                        },
+                    },
+                    token_not_found: {
+                        summary: 'Token not found',
+                        value: {
+                            statusCode: 401,
+                            timestamp: '2024-05-02T10:55:28.511Z',
+                            path: '/api/ecommerce/category/create',
+                            message: 'Access Token not found',
                             error: 'Unauthorized',
                             data: null,
                         },
@@ -123,9 +127,9 @@ export class CategoryController {
                     user_not_verified: {
                         summary: 'Category already exists',
                         value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-24T07:21:33.501Z',
-                            path: '/api/auth/get-profile',
+                            statusCode: 403,
+                            timestamp: '2024-05-02T11:24:03.152Z',
+                            path: '/api/ecommerce/category/create',
                             message: 'Category already exists',
                             error: 'Forbidden',
                             data: null,
@@ -151,7 +155,7 @@ export class CategoryController {
         } as CreateCategoryRequestDTO);
     }
 
-    @Get('find-all-categories')
+    @Get('find/all')
     @UseGuards(AccessTokenGuard)
     @ApiOperation({
         summary: 'Find all categories',
@@ -168,8 +172,8 @@ export class CategoryController {
                         summary: 'Response after get all categories successfully',
                         value: {
                             statusCode: 200,
-                            timestamp: '2024-04-27T17:39:25.039Z',
-                            path: '/api/ecommerce/find-all-categories',
+                            timestamp: '2024-05-02T11:29:59.962Z',
+                            path: '/api/ecommerce/category/find/all',
                             message: null,
                             error: null,
                             data: {
@@ -187,22 +191,33 @@ export class CategoryController {
                                         domain: '30shine.com',
                                     },
                                     {
-                                        id: 'f3072e87-2954-4435-82ec-a40afda8f57d',
-                                        name: 'Skincare',
-                                        description: 'Skin care will fun',
+                                        id: '840316ea-7675-4c18-8a40-795ee361b5b5',
+                                        name: 'Learning',
+                                        description: 'Learning many thing',
                                         createdAt: {
-                                            low: 532444540,
+                                            low: 533115864,
                                             high: 399,
                                             unsigned: false,
                                         },
                                         domain: '30shine.com',
                                     },
                                     {
-                                        id: '840316ea-7675-4c18-8a40-795ee361b5b5',
-                                        name: 'Learning',
-                                        description: 'Learning many thing',
+                                        id: '1decb08d-1aee-4aba-a0a8-9b039d9072f6',
+                                        name: 'Skincare00000',
+                                        description: 'Skin care will 0000 fun',
                                         createdAt: {
-                                            low: 533115864,
+                                            low: 553990192,
+                                            high: 399,
+                                            unsigned: false,
+                                        },
+                                        domain: '30shine.com',
+                                    },
+                                    {
+                                        id: '6553fcfc-f8ad-400c-971f-dfd2670193d2',
+                                        name: 'Esport',
+                                        description: 'Lien Minh Huyen Thoai',
+                                        createdAt: {
+                                            low: 955112174,
                                             high: 399,
                                             unsigned: false,
                                         },
@@ -225,8 +240,8 @@ export class CategoryController {
                         summary: 'Token not verified',
                         value: {
                             statusCode: 401,
-                            timestamp: '2024-04-27T17:42:40.039Z',
-                            path: '/api/ecommerce/find-all-categories',
+                            timestamp: '2024-05-02T11:30:43.976Z',
+                            path: '/api/ecommerce/category/find/all',
                             message: 'Unauthorized',
                             error: null,
                             data: null,
@@ -251,7 +266,7 @@ export class CategoryController {
         } as FindAllCategoriesRequestDTO);
     }
 
-    @Get('find-one-category/:id')
+    @Get('find/:id')
     @UseGuards(AccessTokenGuard)
     @ApiOperation({
         summary: 'Find one category',
@@ -269,16 +284,16 @@ export class CategoryController {
                         summary: 'Response after get one category successfully',
                         value: {
                             statusCode: 200,
-                            timestamp: '2024-04-27T18:22:07.925Z',
-                            path: '/api/ecommerce/find-one-category/f3072e87-2954-4435-82ec-a40afda8f57d',
+                            timestamp: '2024-05-02T11:42:19.469Z',
+                            path: '/api/ecommerce/category/find/93f55388-cd92-4f76-8ece-60fcf16f6806',
                             message: null,
                             error: null,
                             data: {
-                                id: 'f3072e87-2954-4435-82ec-a40afda8f57d',
-                                name: 'Skincare',
-                                description: 'Skin care will fun',
+                                id: '93f55388-cd92-4f76-8ece-60fcf16f6806',
+                                name: 'Cosmestic',
+                                description: 'Using for make beauty and hahahaahahaha haahaa',
                                 createdAt: {
-                                    low: 532444540,
+                                    low: 528503348,
                                     high: 399,
                                     unsigned: false,
                                 },
@@ -300,7 +315,7 @@ export class CategoryController {
                         value: {
                             statusCode: 401,
                             timestamp: '2024-04-27T17:42:40.039Z',
-                            path: '/api/ecommerce/find-one-category/f3072e87-2954-4435-82ec-a40afda8f57d',
+                            path: '/api/ecommerce/category/find/93f55388-cd92-4f76-8ece-60fcf16f6806',
                             message: 'Unauthorized',
                             error: null,
                             data: null,
@@ -310,10 +325,10 @@ export class CategoryController {
                         summary: 'Category not found',
                         value: {
                             statusCode: 401,
-                            timestamp: '2024-04-27T17:42:40.039Z',
-                            path: '/api/ecommerce/find-one-category/f3072e87-2954-4435-82ec-a40afda8f57d',
-                            message: 'Unauthorized',
-                            error: null,
+                            timestamp: '2024-05-02T11:43:05.882Z',
+                            path: '/api/ecommerce/category/find/93f55388-cd92-4f76-8ece-60fcf16f680',
+                            message: 'Category not found',
+                            error: 'Unauthorized',
                             data: null,
                         },
                     },
@@ -337,8 +352,9 @@ export class CategoryController {
         } as FindOneCategoryRequestDTO);
     }
 
-    @Post('update-category')
-    @UseGuards(AccessTokenGuard)
+    @Post('update')
+    @UseGuards(AccessTokenGuard, RolesGuard)
+    @Roles(Role.TENANT)
     async updateCategory(@Req() req: Request, @Body() updateCategory: UpdateCategory) {
         const payloadToken = req['user'];
         // const header = req.headers;
@@ -351,12 +367,13 @@ export class CategoryController {
         // console.log(userData, dataCategory)
         return await this.ecommerceCategoryService.updateCategory({
             user: userData,
-            ...updateCategory
+            ...updateCategory,
         } as UpdateCategoryRequestDTO);
     }
 
-    @Delete('delete-category/:id')
-    @UseGuards(AccessTokenGuard)
+    @Delete('delete/:id')
+    @UseGuards(AccessTokenGuard, RolesGuard)
+    @Roles(Role.TENANT)
     async deleteCategory(@Req() req: Request, @Param('id') id: string) {
         const payloadToken = req['user'];
         // const header = req.headers;
@@ -369,7 +386,7 @@ export class CategoryController {
         // console.log(userData, dataCategory)
         return await this.ecommerceCategoryService.removeCategory({
             user: userData,
-            id
+            id,
         } as RemoveCategoryRequestDTO);
     }
 }

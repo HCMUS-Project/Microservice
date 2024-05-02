@@ -10,10 +10,10 @@ import {
     Min,
 } from 'class-validator';
 import { UserDto } from '../../commonDTO/user.dto';
-import { GetProfileRequest } from 'src/proto-build/profile/GetProfileRequest';
-import { UpdateProfileRequest } from 'src/proto-build/profile/UpdateProfileRequest';
 import { Gender } from 'src/common/enums/gender.enum';
 import { ApiProperty } from '@nestjs/swagger';
+import {GetProfileRequest} from 'src/proto_build/auth/profile/GetProfileRequest';
+import {UpdateProfileRequest} from 'src/proto_build/auth/profile/UpdateProfileRequest';
 
 export class GetProfileRequestDTO implements GetProfileRequest {
     @IsObject()

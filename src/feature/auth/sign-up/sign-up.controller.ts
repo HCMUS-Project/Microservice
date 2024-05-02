@@ -12,7 +12,7 @@ import {
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
-@Controller('/auth')
+@Controller('auth')
 @ApiTags('auth')
 export class SignUpController {
     constructor(

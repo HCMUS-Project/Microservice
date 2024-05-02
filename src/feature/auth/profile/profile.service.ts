@@ -13,8 +13,8 @@ import {
     UserNotFoundException,
 } from 'src/common/exceptions/exceptions';
 import { GetProfileRequestDTO, UpdateProfileRequestDTO } from './profile.dto';
-import { GetProfileResponse } from 'src/proto-build/profile/GetProfileResponse';
-import { UpdateProfileResponse } from 'src/proto-build/profile/UpdateProfileResponse';
+import {GetProfileResponse} from 'src/proto_build/auth/profile/GetProfileResponse';
+import {UpdateProfileResponse} from 'src/proto_build/auth/profile/UpdateProfileResponse';
 
 interface ProfileService {
     getProfile(data: GetProfileRequestDTO): Observable<GetProfileResponse>;

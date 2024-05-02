@@ -12,7 +12,7 @@ import { UserDto } from '../../commonDTO/user.dto';
 import { AuthServiceRefreshToken } from './refresh-token.service';
 import { RefreshTokenGuard } from 'src/common/guards/token/refreshToken.guard';
 
-@Controller('/auth')
+@Controller('auth')
 @ApiTags('auth')
 export class RefreshTokenController {
     constructor(

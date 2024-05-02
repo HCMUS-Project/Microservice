@@ -6,11 +6,10 @@ import {
     NotFoundException,
     UserNotFoundException,
 } from 'src/common/exceptions/exceptions';
-import { SendMailRequest } from 'src/proto-build/verifyAccount/SendMailRequest';
-import { SendMailResponse } from 'src/proto-build/verifyAccount/SendMailResponse';
-import { VerifyAccountRequest } from 'src/proto-build/verifyAccount/VerifyAccountRequest';
-import { VerifyAccountResponse } from 'src/proto-build/verifyAccount/VerifyAccountResponse';
+
 import { SendMailRequestDto, VerifyAccountRequestDto } from './verify-account.dto';
+import {VerifyAccountResponse} from 'src/proto_build/auth/verifyAccount/VerifyAccountResponse';
+import {SendMailResponse} from 'src/proto_build/auth/verifyAccount/SendMailResponse';
 
 interface VerifyAccountService {
     verifyAccount(data: VerifyAccountRequestDto): Observable<VerifyAccountResponse>;

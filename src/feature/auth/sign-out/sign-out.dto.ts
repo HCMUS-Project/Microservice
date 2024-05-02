@@ -1,10 +1,7 @@
-import { IsEmail, IsFQDN, IsNotEmpty, IsObject } from 'class-validator';
-import { SignInRequest } from 'src/proto-build/signIn/SignInRequest';
-import { IsStrongPassword } from '../../../common/validator/is-strong-password.validator';
+import { IsNotEmpty, IsObject } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { SignOutRequest } from 'src/proto-build/signOut/SignOutRequest';
-import { User } from 'src/proto-build/userToken/User';
 import { UserDto } from '../../commonDTO/user.dto';
+import {SignOutRequest} from 'src/proto_build/auth/signOut/SignOutRequest';
 
 // Define a class that implements the SignOutRequest interface
 export class SignOutRequestDTO implements SignOutRequest {
