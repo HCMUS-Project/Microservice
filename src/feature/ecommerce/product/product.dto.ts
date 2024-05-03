@@ -9,11 +9,14 @@ import {
     IsOptional,
 } from 'class-validator';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
+import {AddProductQuantityRequest} from 'src/proto_build/e_commerce/product/AddProductQuantityRequest';
 import { CreateProductRequest } from 'src/proto_build/e_commerce/product/CreateProductRequest';
 import { DeleteProductRequest } from 'src/proto_build/e_commerce/product/DeleteProductRequest';
 import { FindAllProductsRequest } from 'src/proto_build/e_commerce/product/FindAllProductsRequest';
 import { FindProductByIdRequest } from 'src/proto_build/e_commerce/product/FindProductByIdRequest';
+import {IncreaseProductViewRequest, IncreaseProductViewRequest__Output} from 'src/proto_build/e_commerce/product/IncreaseProductViewRequest';
 import { ProductResponse } from 'src/proto_build/e_commerce/product/ProductResponse';
+import {SearchProductsRequest} from 'src/proto_build/e_commerce/product/SearchProductsRequest';
 import { UpdateProductRequest } from 'src/proto_build/e_commerce/product/UpdateProductRequest';
 
 export class CreateProductRequestDTO implements CreateProductRequest {
@@ -139,7 +142,79 @@ export class DeleteProductRequestDTO extends DeleteProduct {
     @IsObject()
     @IsNotEmpty()
     @ApiProperty()
-    user: UserDto
+    user: UserDto;
 }
 
+export class SearchProduct implements SearchProductsRequest {
+    @IsString()
+    @IsOptional()
+    @ApiProperty()
+    name: string;
+
+    @IsString()
+    @IsOptional()
+    @ApiProperty()
+    category: string;
+
+    @IsNumber()
+    @IsOptional()
+    @ApiProperty()
+    minPrice: number;
+
+    @IsNumber()
+    @IsOptional()
+    @ApiProperty()
+    maxPrice: number;
+
+    @IsInt()
+    @IsOptional()
+    @ApiProperty()
+    rating: number;
+
+    @IsInt()
+    @IsOptional()
+    @ApiProperty()
+    sold: number; 
+}
+
+export class SearchProductRequestDTO extends SearchProduct {
+    @IsObject()
+    @IsNotEmpty()
+    @ApiProperty()
+    user: UserDto;
+}
+
+
+export class IncreaseProductView implements IncreaseProductViewRequest {
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty()
+    id: string;
+}
+
+export class IncreaseProductViewDTO extends IncreaseProductView {
+    @IsObject()
+    @IsNotEmpty()
+    @ApiProperty()
+    user: UserDto;
+}
+
+export class AddProductQuantity implements AddProductQuantityRequest {
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty()
+    id: string;
+
+    @IsNumber()
+    @IsNotEmpty()
+    @ApiProperty()
+    quantity: number;
+}
+
+export class AddProductQuantityDTO extends AddProductQuantity {
+    @IsObject()
+    @IsNotEmpty()
+    @ApiProperty()
+    user: UserDto;
+}
 // Continue this pattern for the remaining methods in your controller

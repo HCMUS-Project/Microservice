@@ -8,8 +8,8 @@ import {
 } from 'src/common/exceptions/exceptions';
 
 import { SendMailRequestDto, VerifyAccountRequestDto } from './verify-account.dto';
-import {VerifyAccountResponse} from 'src/proto_build/auth/verifyAccount/VerifyAccountResponse';
-import {SendMailResponse} from 'src/proto_build/auth/verifyAccount/SendMailResponse';
+import { VerifyAccountResponse } from 'src/proto_build/auth/verifyAccount/VerifyAccountResponse';
+import { SendMailResponse } from 'src/proto_build/auth/verifyAccount/SendMailResponse';
 
 interface VerifyAccountService {
     verifyAccount(data: VerifyAccountRequestDto): Observable<VerifyAccountResponse>;

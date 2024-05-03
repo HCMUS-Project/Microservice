@@ -7,7 +7,7 @@ import {
     UserNotFoundException,
 } from 'src/common/exceptions/exceptions';
 import { SignInRequestDTO } from './sign-in.dto';
-import {SignInResponse} from 'src/proto_build/auth/signIn/SignInResponse';
+import { SignInResponse } from 'src/proto_build/auth/signIn/SignInResponse';
 
 interface SignInService {
     signIn(data: SignInRequestDTO): Observable<SignInResponse>;

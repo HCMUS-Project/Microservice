@@ -1,10 +1,22 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Req, UseGuards } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Inject,
+    Param,
+    Post,
+    Query,
+    Req,
+    UseGuards,
+} from '@nestjs/common';
 import {
     ApiBearerAuth,
     ApiBody,
     ApiCreatedResponse,
     ApiForbiddenResponse,
     ApiOperation,
+    ApiQuery,
     ApiTags,
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -15,15 +27,17 @@ import { Role } from 'src/common/enums/role.enum';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
 import { EcommerceProductService } from './product.service';
 import {
+    AddProductQuantity,
+    AddProductQuantityDTO,
     CreateProductRequestDTO,
     DeleteProductRequestDTO,
     FindAllProductsRequestDTO,
     FindProductByIdRequestDTO,
+    IncreaseProductViewDTO,
+    SearchProductRequestDTO,
     UpdateProduct,
     UpdateProductRequestDTO,
 } from './product.dto';
-import { CreateCategory, CreateCategoryRequestDTO } from '../category/category.dto';
-import { UpdateProductRequest } from 'src/proto_build/e_commerce/product/UpdateProductRequest';
 
 @Controller('/ecommerce/product')
 @ApiTags('ecommerce/product')
@@ -597,5 +611,361 @@ export class ProductController {
             user: userData,
             id,
         } as DeleteProductRequestDTO);
+    }
+
+    @Get('search')
+    @UseGuards(AccessTokenGuard)
+    @ApiQuery({
+        name: 'name',
+        description: 'Product name',
+        required: false,
+        example: 'Kem',
+    })
+    @ApiQuery({
+        name: 'category',
+        description: 'Product category name',
+        required: false,
+        example: 'Esport',
+    })
+    @ApiQuery({ name: 'minPrice', description: 'Minimum price', required: false, example: 20 })
+    @ApiQuery({ name: 'maxPrice', description: 'Maximum price', required: false, example: 100 })
+    @ApiQuery({ name: 'rating', description: 'Product rating', required: false, example: 1 })
+    @ApiOperation({
+        summary: 'Search one product',
+        description: `
+## Use access token
+## Search one product base on query
+## Dont use body`,
+    })
+    @ApiBearerAuth('JWT-access-token')
+    @ApiCreatedResponse({
+        description: 'Search one product successfully!!',
+        content: {
+            'application/json': {
+                examples: {
+                    signin: {
+                        summary: 'Response after Search product successfully',
+                        value: {
+                            statusCode: 201,
+                            timestamp: '2024-05-03T16:48:02.487Z',
+                            path: '/api/ecommerce/product/search/?name=Kem&category=Esport&minPrice=20&maxPrice=100&rating=1',
+                            message: null,
+                            error: null,
+                            data: {
+                                products: [
+                                    {
+                                        images: [
+                                            'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.product/service/44487cfb-d3b0-47c8-b998-78580e8fe889',
+                                        ],
+                                        categories: [
+                                            {
+                                                id: '6553fcfc-f8ad-400c-971f-dfd2670193d2',
+                                                name: 'Esport',
+                                            },
+                                            {
+                                                id: '840316ea-7675-4c18-8a40-795ee361b5b5',
+                                                name: 'Learning',
+                                            },
+                                        ],
+                                        id: 'ebe267f1-2f6c-416b-ac24-d713838ea92f',
+                                        domain: '30shine.com',
+                                        name: 'Kem chống nắng',
+                                        price: 40,
+                                        quantity: 42,
+                                        tenantId: 'nguyenvukhoi150402@gmail.com',
+                                        description: 'abcde',
+                                        views: 0,
+                                        rating: 1,
+                                        numberRating: 0,
+                                        sold: 0,
+                                        createdAt: '2024-05-03T15:36:59.337Z',
+                                        updatedAt: '2024-05-03T16:32:45.963Z',
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    })
+    @ApiUnauthorizedResponse({
+        description: 'Authorization failed',
+        content: {
+            'application/json': {
+                examples: {
+                    token_not_verified: {
+                        summary: 'Token not verified',
+                        value: {
+                            statusCode: 401,
+                            timestamp: '2024-04-27T17:42:40.039Z',
+                            path: '/api/ecommerce/product/search/?name=Kem&category=Esport&minPrice=20&maxPrice=100&rating=1',
+                            message: 'Unauthorized',
+                            error: null,
+                            data: null,
+                        },
+                    },
+                    category_not_found: {
+                        summary: 'Category not found',
+                        value: {
+                            statusCode: 401,
+                            timestamp: '2024-04-27T17:42:40.039Z',
+                            path: '/api/ecommerce/product/search/?name=Kem&category=Esport&minPrice=20&maxPrice=100&rating=1',
+                            message: 'Unauthorized',
+                            error: null,
+                            data: null,
+                        },
+                    },
+                },
+            },
+        },
+    })
+    async searchProducts(
+        @Req() req: Request,
+        @Query()
+        query: {
+            name?: string;
+            category?: string;
+            minPrice?: number;
+            maxPrice?: number;
+            rating?: number;
+        },
+    ) {
+        const payloadToken = req['user'];
+        // const header = req.headers;
+        const userData = {
+            email: payloadToken.email,
+            domain: payloadToken.domain,
+            role: payloadToken.role,
+            accessToken: payloadToken.accessToken,
+        } as UserDto;
+        return await this.ecommerceProductService.searchProducts({
+            user: userData,
+            ...query,
+        } as SearchProductRequestDTO);
+    }
+
+    @Post('add/view/:id')
+    @UseGuards(AccessTokenGuard)
+    @ApiOperation({
+        summary: 'Increase product view',
+        description: `
+## Use access token
+## Use id in path`,
+    })
+    @ApiBearerAuth('JWT-access-token')
+    @ApiCreatedResponse({
+        description: 'Increase view one product successfully!!',
+        content: {
+            'application/json': {
+                examples: {
+                    signin: {
+                        summary: 'Response after increase product view successfully',
+                        value: {
+                            statusCode: 201,
+                            timestamp: '2024-05-03T17:10:55.614Z',
+                            path: '/api/ecommerce/product/add/view/ebe267f1-2f6c-416b-ac24-d713838ea92f',
+                            message: null,
+                            error: null,
+                            data: {
+                                images: [
+                                    'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.product/service/44487cfb-d3b0-47c8-b998-78580e8fe889',
+                                ],
+                                categories: [
+                                    {
+                                        id: '6553fcfc-f8ad-400c-971f-dfd2670193d2',
+                                        name: 'Esport',
+                                    },
+                                    {
+                                        id: '840316ea-7675-4c18-8a40-795ee361b5b5',
+                                        name: 'Learning',
+                                    },
+                                ],
+                                id: 'ebe267f1-2f6c-416b-ac24-d713838ea92f',
+                                domain: '30shine.com',
+                                name: 'Kem chống nắng',
+                                price: 40,
+                                quantity: 42,
+                                tenantId: 'nguyenvukhoi150402@gmail.com',
+                                description: 'abcde',
+                                views: 2,
+                                rating: 1,
+                                numberRating: 0,
+                                sold: 0,
+                                createdAt: '2024-05-03T15:36:59.337Z',
+                                updatedAt: '2024-05-03T17:10:55.602Z',
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    })
+    @ApiUnauthorizedResponse({
+        description: 'Authorization failed',
+        content: {
+            'application/json': {
+                examples: {
+                    token_not_verified: {
+                        summary: 'Token not verified',
+                        value: {
+                            statusCode: 401,
+                            timestamp: '2024-04-27T17:42:40.039Z',
+                            path: '/api/ecommerce/product/delete/c3437006-c9d3-473b-97b5-7660a45ea8b4',
+                            message: 'Unauthorized',
+                            error: null,
+                            data: null,
+                        },
+                    },
+                    category_not_found: {
+                        summary: 'Category not found',
+                        value: {
+                            statusCode: 401,
+                            timestamp: '2024-04-27T17:42:40.039Z',
+                            path: '/api/ecommerce/product/delete/c3437006-c9d3-473b-97b5-7660a45ea8b4',
+                            message: 'Unauthorized',
+                            error: null,
+                            data: null,
+                        },
+                    },
+                },
+            },
+        },
+    })
+    async increaseProductView(@Req() req: Request, @Param('id') id: string) {
+        const payloadToken = req['user'];
+        // const header = req.headers;
+        const userData = {
+            email: payloadToken.email,
+            domain: payloadToken.domain,
+            role: payloadToken.role,
+            accessToken: payloadToken.accessToken,
+        } as UserDto;
+        // console.log(userData, dataCategory)
+        return await this.ecommerceProductService.increaseProductView({
+            user: userData,
+            id,
+        } as IncreaseProductViewDTO);
+    }
+
+    @Post('add/quantity')
+    @UseGuards(AccessTokenGuard, RolesGuard)
+    @Roles(Role.TENANT)
+    @ApiOperation({
+        summary: 'Add product quantity',
+        description: `
+## Use access token
+## Use id and quantity in body`,
+    })
+    @ApiBearerAuth('JWT-access-token')
+    @ApiBody({
+        type: AddProductQuantity,
+        examples: {
+            user_1: {
+                value: {
+                    id: 'ebe267f1-2f6c-416b-ac24-d713838ea92f',
+                    quantity: 20,
+                } as AddProductQuantity,
+            },
+            // user_2: {
+            //     value: {
+            //         domain: '24shine.com',
+            //         email: 'nguyenvukhoi150402@gmail.com',
+            //     } as AddProductQuantity,
+            // },
+        },
+    })
+    @ApiCreatedResponse({
+        description: 'Add product one product successfully!!',
+        content: {
+            'application/json': {
+                examples: {
+                    signin: {
+                        summary: 'Response after increase product view successfully',
+                        value: {
+                            statusCode: 201,
+                            timestamp: '2024-05-03T17:29:45.268Z',
+                            path: '/api/ecommerce/product/add/quantity',
+                            message: null,
+                            error: null,
+                            data: {
+                                images: [
+                                    'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.product/service/44487cfb-d3b0-47c8-b998-78580e8fe889',
+                                ],
+                                categories: [
+                                    {
+                                        id: '6553fcfc-f8ad-400c-971f-dfd2670193d2',
+                                        name: 'Esport',
+                                    },
+                                    {
+                                        id: '840316ea-7675-4c18-8a40-795ee361b5b5',
+                                        name: 'Learning',
+                                    },
+                                ],
+                                id: 'ebe267f1-2f6c-416b-ac24-d713838ea92f',
+                                domain: '30shine.com',
+                                name: 'Kem chống nắng',
+                                price: 40,
+                                quantity: 82,
+                                tenantId: 'nguyenvukhoi150402@gmail.com',
+                                description: 'abcde',
+                                views: 2,
+                                rating: 1,
+                                numberRating: 0,
+                                sold: 0,
+                                createdAt: '2024-05-03T15:36:59.337Z',
+                                updatedAt: '2024-05-03T17:29:45.256Z',
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    })
+    @ApiUnauthorizedResponse({
+        description: 'Authorization failed',
+        content: {
+            'application/json': {
+                examples: {
+                    token_not_verified: {
+                        summary: 'Token not verified',
+                        value: {
+                            statusCode: 401,
+                            timestamp: '2024-04-27T17:42:40.039Z',
+                            path: '/api/ecommerce/product/delete/c3437006-c9d3-473b-97b5-7660a45ea8b4',
+                            message: 'Unauthorized',
+                            error: null,
+                            data: null,
+                        },
+                    },
+                    category_not_found: {
+                        summary: 'Category not found',
+                        value: {
+                            statusCode: 401,
+                            timestamp: '2024-04-27T17:42:40.039Z',
+                            path: '/api/ecommerce/product/delete/c3437006-c9d3-473b-97b5-7660a45ea8b4',
+                            message: 'Unauthorized',
+                            error: null,
+                            data: null,
+                        },
+                    },
+                },
+            },
+        },
+    })
+    async addProductQuantity(@Req() req: Request, @Body() data) {
+        const payloadToken = req['user'];
+        // const header = req.headers;
+        const userData = {
+            email: payloadToken.email,
+            domain: payloadToken.domain,
+            role: payloadToken.role,
+            accessToken: payloadToken.accessToken,
+        } as UserDto;
+        // console.log(userData, dataCategory)
+        return await this.ecommerceProductService.addProductQuantity({
+            user: userData,
+            ...data,
+        } as AddProductQuantityDTO);
     }
 }

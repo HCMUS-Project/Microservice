@@ -7,7 +7,7 @@ import {
     UserNotFoundException,
 } from 'src/common/exceptions/exceptions';
 import { SignUpRequestDto } from './sign-up.dto';
-import {SignUpResponse} from 'src/proto_build/auth/signUp/SignUpResponse';
+import { SignUpResponse } from 'src/proto_build/auth/signUp/SignUpResponse';
 
 interface SignUpService {
     signUp(data: SignUpRequestDto): Observable<SignUpResponse>;

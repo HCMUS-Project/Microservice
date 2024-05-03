@@ -12,8 +12,8 @@ import {
 import { UserDto } from '../../commonDTO/user.dto';
 import { Gender } from 'src/common/enums/gender.enum';
 import { ApiProperty } from '@nestjs/swagger';
-import {GetProfileRequest} from 'src/proto_build/auth/profile/GetProfileRequest';
-import {UpdateProfileRequest} from 'src/proto_build/auth/profile/UpdateProfileRequest';
+import { GetProfileRequest } from 'src/proto_build/auth/profile/GetProfileRequest';
+import { UpdateProfileRequest } from 'src/proto_build/auth/profile/UpdateProfileRequest';
 
 export class GetProfileRequestDTO implements GetProfileRequest {
     @IsObject()

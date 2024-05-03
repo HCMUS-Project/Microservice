@@ -11,9 +11,9 @@ import { SignOutController } from './sign-out/sign-out.controller';
 import { AuthServiceSignOut } from './sign-out/sign-out.service';
 import { AuthServiceRefreshToken } from './refresh-token/refresh-token.service';
 import { RefreshTokenController } from './refresh-token/refresh-token.controller';
-import {AuthServiceProfile} from './profile/profile.service';
-import {ProfileController} from './profile/profile.controller';
-import {ConfigService} from '@nestjs/config';
+import { AuthServiceProfile } from './profile/profile.service';
+import { ProfileController } from './profile/profile.controller';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
     imports: [ClientsModule],
@@ -23,7 +23,7 @@ import {ConfigService} from '@nestjs/config';
         VerifyAccountController,
         SignOutController,
         RefreshTokenController,
-        ProfileController
+        ProfileController,
     ],
     providers: [
         {
@@ -77,7 +77,7 @@ import {ConfigService} from '@nestjs/config';
                     },
                 });
             },
-            inject: [ConfigService]
+            inject: [ConfigService],
         },
     ],
 })

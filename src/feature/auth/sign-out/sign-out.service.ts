@@ -7,7 +7,7 @@ import {
     UserNotFoundException,
 } from 'src/common/exceptions/exceptions';
 import { SignOutRequestDTO } from './sign-out.dto';
-import {SignOutResponse} from 'src/proto_build/auth/signOut/SignOutResponse';
+import { SignOutResponse } from 'src/proto_build/auth/signOut/SignOutResponse';
 
 interface SignOutService {
     signOut(data: SignOutRequestDTO): Observable<SignOutResponse>;

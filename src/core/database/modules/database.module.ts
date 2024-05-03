@@ -14,7 +14,6 @@ import { MongoService } from '../services/mongo.service';
                 configModule: ConfigService<ConfigsModule>,
                 logger: Logger,
             ): Promise<typeof mongoose> => {
-                
                 const mongoService = new MongoService(configModule, logger);
                 return await mongoService.connect();
             },

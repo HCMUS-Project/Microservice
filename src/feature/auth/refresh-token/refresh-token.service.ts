@@ -3,7 +3,7 @@ import { Observable, firstValueFrom } from 'rxjs';
 import { ClientGrpc } from '@nestjs/microservices';
 import { ForbiddenException, NotFoundException } from 'src/common/exceptions/exceptions';
 import { RefreshTokenRequestDTO } from './refresh-token.dto';
-import {RefreshTokenResponse} from 'src/proto_build/auth/refreshToken/RefreshTokenResponse';
+import { RefreshTokenResponse } from 'src/proto_build/auth/refreshToken/RefreshTokenResponse';
 
 interface RefreshTokenService {
     refreshToken(data: RefreshTokenRequestDTO): Observable<RefreshTokenResponse>;
@@ -22,7 +22,7 @@ export class AuthServiceRefreshToken implements OnModuleInit {
 
     async refreshToken(data: RefreshTokenRequestDTO): Promise<RefreshTokenResponse> {
         try {
-            console.log(data)
+            console.log(data);
             const refreshTokenResponse: RefreshTokenResponse = await firstValueFrom(
                 this.iRefreshTokenService.refreshToken(data),
             );

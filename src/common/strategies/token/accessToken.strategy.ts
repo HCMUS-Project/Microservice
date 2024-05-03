@@ -31,7 +31,7 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
             throw new UserNotFoundException('Access Token not found');
         }
         // console.log(accessToken, payload);
-        payload.accessToken = req.headers.authorization.split(' ')[1]
+        payload.accessToken = req.headers.authorization.split(' ')[1];
         return payload;
     }
 }
