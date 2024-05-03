@@ -5,11 +5,12 @@ import {join} from "path";
 import {EcommerceCategoryService} from "./category/category.service";
 import {CategoryController} from "./category/category.controller";
 import {EcommerceProductService} from "./product/product.service";
+import {ProductController} from "./product/product.controller";
 
 @Module({
     imports: [ClientsModule],
     controllers: [ 
-        CategoryController
+        CategoryController, ProductController
     ],
     providers: [
         {

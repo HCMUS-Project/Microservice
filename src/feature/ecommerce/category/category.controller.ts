@@ -355,6 +355,67 @@ export class CategoryController {
     @Post('update')
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.TENANT)
+    @ApiOperation({
+        summary: 'Update one category',
+        description: `
+## Use access token
+## Must be TENANT`,
+    })
+    @ApiBearerAuth('JWT-access-token')
+    @ApiCreatedResponse({
+        description: 'Update one category successfully!!',
+        content: {
+            'application/json': {
+                examples: {
+                    signin: {
+                        summary: 'Response after update category successfully',
+                        value: {
+                            statusCode: 201,
+                            timestamp: '2024-05-02T17:39:47.880Z',
+                            path: '/api/ecommerce/category/update',
+                            message: null,
+                            error: null,
+                            data: {
+                                id: '93f55388-cd92-4f76-8ece-60fcf16f6806',
+                                name: 'SKinCare Khang oi',
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    })
+    @ApiUnauthorizedResponse({
+        description: 'Authorization failed',
+        content: {
+            'application/json': {
+                examples: {
+                    token_not_verified: {
+                        summary: 'Token not verified',
+                        value: {
+                            statusCode: 401,
+                            timestamp: '2024-04-27T17:42:40.039Z',
+                            path: '/api/ecommerce/category/update',
+                            message: 'Unauthorized',
+                            error: null,
+                            data: null,
+                        },
+                    },
+                    category_not_found: {
+                        summary: 'Category not found',
+                        value: {
+                            statusCode: 401,
+                            timestamp: '2024-05-02T11:43:05.882Z',
+                            path: '/api/ecommerce/category/update',
+                            message: 'Category not found',
+                            error: 'Unauthorized',
+                            data: null,
+                        },
+                    },
+                },
+            },
+        },
+    })
     async updateCategory(@Req() req: Request, @Body() updateCategory: UpdateCategory) {
         const payloadToken = req['user'];
         // const header = req.headers;
@@ -374,6 +435,66 @@ export class CategoryController {
     @Delete('delete/:id')
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.TENANT)
+    @ApiOperation({
+        summary: 'Delete one category',
+        description: `
+## Use access token
+## Must be TENANT`,
+    })
+    @ApiBearerAuth('JWT-access-token')
+    @ApiCreatedResponse({
+        description: 'Delete one category successfully!!',
+        content: {
+            'application/json': {
+                examples: {
+                    signin: {
+                        summary: 'Response after delete category successfully',
+                        value: {
+                            statusCode: 200,
+                            timestamp: '2024-05-02T17:44:14.267Z',
+                            path: '/api/ecommerce/category/delete/93f55388-cd92-4f76-8ece-60fcf16f6806',
+                            message: null,
+                            error: null,
+                            data: {
+                                result: 'success',
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    })
+    @ApiUnauthorizedResponse({
+        description: 'Authorization failed',
+        content: {
+            'application/json': {
+                examples: {
+                    token_not_verified: {
+                        summary: 'Token not verified',
+                        value: {
+                            statusCode: 401,
+                            timestamp: '2024-04-27T17:42:40.039Z',
+                            path: '/api/ecommerce/category/update',
+                            message: 'Unauthorized',
+                            error: null,
+                            data: null,
+                        },
+                    },
+                    category_not_found: {
+                        summary: 'Category not found',
+                        value: {
+                            statusCode: 401,
+                            timestamp: '2024-05-02T11:43:05.882Z',
+                            path: '/api/ecommerce/category/update',
+                            message: 'Category not found',
+                            error: 'Unauthorized',
+                            data: null,
+                        },
+                    },
+                },
+            },
+        },
+    })
     async deleteCategory(@Req() req: Request, @Param('id') id: string) {
         const payloadToken = req['user'];
         // const header = req.headers;

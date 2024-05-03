@@ -25,6 +25,11 @@ async function bootstrap() {
     //     timeWindow: '10 second',
     // })
 
+    const bodyParser = require('body-parser');
+
+    // Increase the limit to 300KB
+    app.use(bodyParser.json({ limit: '1mb' }));
+
     // Set default prefix for all routes
     app.setGlobalPrefix('api');
 

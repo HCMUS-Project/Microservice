@@ -5,14 +5,15 @@ import { ForbiddenException, UserNotFoundException } from 'src/common/exceptions
 import {CreateCategoryRequestDTO} from '../category/category.dto';
 import {CreateProductRequest} from 'src/proto_build/e_commerce/product/CreateProductRequest';
 import {ProductResponse} from 'src/proto_build/e_commerce/product/ProductResponse';
-import {CreateProductRequestDTO} from './product.dto';
+import {CreateProductRequestDTO, DeleteProductRequestDTO, FindAllProductsRequestDTO, FindProductByIdRequestDTO, UpdateProductRequestDTO} from './product.dto';
+import {FindAllProductsResponse} from 'src/proto_build/e_commerce/product/FindAllProductsResponse';
 
 interface ProductService {
     createProduct(data: CreateProductRequest): Observable<ProductResponse>;
-    // findAllCategories(data: FindAllCategoriesRequestDTO): Observable<FindAllCategoriesResponse>;
-    // findOneCategory(data: FindOneCategoryRequestDTO): Observable<FindOneCategoryResponse>;
-    // updateCategory(data: UpdateCategoryRequestDTO): Observable<UpdateCategoryResponse>;
-    // removeCategory(data: RemoveCategoryRequestDTO): Observable<RemoveCategoryResponse>;
+    findAllProducts(data: FindAllProductsRequestDTO): Observable<FindAllProductsResponse>;
+    findProductById(data: FindProductByIdRequestDTO): Observable<ProductResponse>;
+    updateProduct(data: UpdateProductRequestDTO): Observable<ProductResponse>;
+    deleteProduct(data: DeleteProductRequestDTO): Observable<ProductResponse>;
 }
 
 @Injectable()
@@ -23,6 +24,7 @@ export class EcommerceProductService implements OnModuleInit {
 
     onModuleInit() {
         this.iProductService = this.client.getService<ProductService>('ProductService');
+        // console.log(this.iProductService)
     }
 
     async createProduct(data: CreateProductRequestDTO): Promise<ProductResponse> {
@@ -46,72 +48,72 @@ export class EcommerceProductService implements OnModuleInit {
         }
     }
 
-    // async findAllCategories(data: FindAllCategoriesRequestDTO): Promise<FindAllCategoriesResponse> {
-    //     try {
-    //         const findAllCategoriesResponse: FindAllCategoriesResponse = await firstValueFrom(
-    //             this.iCategoryService.findAllCategories(data),
-    //         );
-    //         return findAllCategoriesResponse;
-    //     } catch (e) {
-    //         // console.log(e);
-    //         const errorDetails = JSON.parse(e.details);
-    //         // console.log(errorDetails);
+    async findAllProducts(data: FindAllProductsRequestDTO): Promise<FindAllProductsResponse> {
+        try {
+            const findAllProductsResponse: FindAllProductsResponse = await firstValueFrom(
+                this.iProductService.findAllProducts(data),
+            );
+            return findAllProductsResponse;
+        } catch (e) {
+            // console.log(e);
+            const errorDetails = JSON.parse(e.details);
+            // console.log(errorDetails);
 
-    //         throw new NotFoundException(errorDetails, 'Not found');
-    //     }
-    // }
+            throw new NotFoundException(errorDetails, 'Not found');
+        }
+    }
 
-    // async findOneCategory(data: FindOneCategoryRequestDTO): Promise<FindOneCategoryResponse> {
-    //     try {
-    //         const findOneCategoryResponse: FindOneCategoryResponse = await firstValueFrom(
-    //             this.iCategoryService.findOneCategory(data),
-    //         );
-    //         return findOneCategoryResponse;
-    //     } catch (e) {
-    //         console.log(e);
-    //         const errorDetails = JSON.parse(e.details);
-    //         console.log(errorDetails);
-    //         if (errorDetails.error == 'CATEGORY_NOT_FOUND') {
-    //             throw new UserNotFoundException('Category not found', 'Unauthorized');
-    //         } else {
-    //             throw new NotFoundException(errorDetails, 'Not found');
-    //         }
-    //     }
-    // }
+    async findOneProduct(data: FindProductByIdRequestDTO): Promise<ProductResponse> {
+        try {
+            const productResponse: ProductResponse = await firstValueFrom(
+                this.iProductService.findProductById(data),
+            );
+            return productResponse;
+        } catch (e) {
+            // console.log(e);
+            const errorDetails = JSON.parse(e.details);
+            // console.log(errorDetails);
+            if (errorDetails.error == 'CATEGORY_NOT_FOUND') {
+                throw new UserNotFoundException('Category not found', 'Unauthorized');
+            } else {
+                throw new NotFoundException(errorDetails, 'Not found');
+            }
+        }
+    }
 
-    // async updateCategory(data: UpdateCategoryRequestDTO): Promise<UpdateCategoryResponse> {
-    //     try {
-    //         const updateCategoryResponse: UpdateCategoryResponse = await firstValueFrom(
-    //             this.iCategoryService.updateCategory(data),
-    //         );
-    //         return updateCategoryResponse;
-    //     } catch (e) {
-    //         console.log(e);
-    //         const errorDetails = JSON.parse(e.details);
-    //         console.log(errorDetails);
-    //         if (errorDetails.error == 'CATEGORY_NOT_FOUND') {
-    //             throw new UserNotFoundException('Category not found', 'Unauthorized');
-    //         } else {
-    //             throw new NotFoundException(errorDetails, 'Not found');
-    //         }
-    //     }
-    // }
+    async updateProduct(data: UpdateProductRequestDTO): Promise<ProductResponse> {
+        try {
+            const productResponse: ProductResponse = await firstValueFrom(
+                this.iProductService.updateProduct(data),
+            );
+            return productResponse;
+        } catch (e) {
+            console.log(e);
+            const errorDetails = JSON.parse(e.details);
+            console.log(errorDetails);
+            if (errorDetails.error == 'CATEGORY_NOT_FOUND') {
+                throw new UserNotFoundException('Category not found', 'Unauthorized');
+            } else {
+                throw new NotFoundException(errorDetails, 'Not found');
+            }
+        }
+    }
 
-    // async removeCategory(data: RemoveCategoryRequestDTO): Promise<RemoveCategoryResponse> {
-    //     try {
-    //         const removeCategoryResponse: RemoveCategoryResponse = await firstValueFrom(
-    //             this.iCategoryService.removeCategory(data),
-    //         );
-    //         return removeCategoryResponse;
-    //     } catch (e) {
-    //         console.log(e);
-    //         const errorDetails = JSON.parse(e.details);
-    //         console.log(errorDetails);
-    //         if (errorDetails.error == 'CATEGORY_NOT_FOUND') {
-    //             throw new UserNotFoundException('Category not found', 'Unauthorized');
-    //         } else {
-    //             throw new NotFoundException(errorDetails, 'Not found');
-    //         }
-    //     }
-    // }
+    async removeProduct(data: DeleteProductRequestDTO): Promise<ProductResponse> {
+        try {
+            const removeCategoryResponse: ProductResponse = await firstValueFrom(
+                this.iProductService.deleteProduct(data),
+            );
+            return removeCategoryResponse;
+        } catch (e) {
+            console.log(e);
+            const errorDetails = JSON.parse(e.details);
+            console.log(errorDetails);
+            if (errorDetails.error == 'CATEGORY_NOT_FOUND') {
+                throw new UserNotFoundException('Category not found', 'Unauthorized');
+            } else {
+                throw new NotFoundException(errorDetails, 'Not found');
+            }
+        }
+    }
 }
