@@ -9,14 +9,17 @@ import {
     IsOptional,
 } from 'class-validator';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
-import {AddProductQuantityRequest} from 'src/proto_build/e_commerce/product/AddProductQuantityRequest';
+import { AddProductQuantityRequest } from 'src/proto_build/e_commerce/product/AddProductQuantityRequest';
 import { CreateProductRequest } from 'src/proto_build/e_commerce/product/CreateProductRequest';
 import { DeleteProductRequest } from 'src/proto_build/e_commerce/product/DeleteProductRequest';
 import { FindAllProductsRequest } from 'src/proto_build/e_commerce/product/FindAllProductsRequest';
 import { FindProductByIdRequest } from 'src/proto_build/e_commerce/product/FindProductByIdRequest';
-import {IncreaseProductViewRequest, IncreaseProductViewRequest__Output} from 'src/proto_build/e_commerce/product/IncreaseProductViewRequest';
+import {
+    IncreaseProductViewRequest,
+    IncreaseProductViewRequest__Output,
+} from 'src/proto_build/e_commerce/product/IncreaseProductViewRequest';
 import { ProductResponse } from 'src/proto_build/e_commerce/product/ProductResponse';
-import {SearchProductsRequest} from 'src/proto_build/e_commerce/product/SearchProductsRequest';
+import { SearchProductsRequest } from 'src/proto_build/e_commerce/product/SearchProductsRequest';
 import { UpdateProductRequest } from 'src/proto_build/e_commerce/product/UpdateProductRequest';
 
 export class CreateProductRequestDTO implements CreateProductRequest {
@@ -174,7 +177,7 @@ export class SearchProduct implements SearchProductsRequest {
     @IsInt()
     @IsOptional()
     @ApiProperty()
-    sold: number; 
+    sold: number;
 }
 
 export class SearchProductRequestDTO extends SearchProduct {
@@ -183,7 +186,6 @@ export class SearchProductRequestDTO extends SearchProduct {
     @ApiProperty()
     user: UserDto;
 }
-
 
 export class IncreaseProductView implements IncreaseProductViewRequest {
     @IsString()

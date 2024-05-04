@@ -25,7 +25,7 @@ interface ProductService {
     deleteProduct(data: DeleteProductRequestDTO): Observable<ProductResponse>;
     searchProducts(data: SearchProductRequestDTO): Observable<FindAllProductsResponse>;
     increaseProductView(data: IncreaseProductViewDTO): Observable<ProductResponse>;
-    addProductQuantity(data: AddProductQuantityDTO): Observable<ProductResponse>
+    addProductQuantity(data: AddProductQuantityDTO): Observable<ProductResponse>;
 }
 
 @Injectable()
@@ -131,7 +131,7 @@ export class EcommerceProductService implements OnModuleInit {
 
     async searchProducts(data: SearchProductRequestDTO): Promise<FindAllProductsResponse> {
         try {
-            console.log(data)
+            console.log(data);
             const findAllProductsResponse: FindAllProductsResponse = await firstValueFrom(
                 this.iProductService.searchProducts(data),
             );
