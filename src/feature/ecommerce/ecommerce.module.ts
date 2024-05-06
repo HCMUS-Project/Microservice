@@ -10,10 +10,18 @@ import { VoucherController } from './voucher/voucher.controller';
 import { EcommerceVoucherService } from './voucher/voucher.service';
 import { EcommerceCartService } from './cart/cart.service';
 import { CartController } from './cart/cart.controller';
+import { OrderController } from './order/order.controller';
+import { EcommerceOrderService } from './order/order.service';
 
 @Module({
     imports: [ClientsModule],
-    controllers: [CategoryController, ProductController, VoucherController, CartController],
+    controllers: [
+        CategoryController,
+        ProductController,
+        VoucherController,
+        CartController,
+        OrderController,
+    ],
     providers: [
         {
             provide: 'GRPC_ECOMMERCE_SERVICE_CATEGORY',
@@ -30,6 +38,10 @@ import { CartController } from './cart/cart.controller';
         {
             provide: 'GRPC_ECOMMERCE_SERVICE_CART',
             useClass: EcommerceCartService,
+        },
+        {
+            provide: 'GRPC_ECOMMERCE_SERVICE_ORDER',
+            useClass: EcommerceOrderService,
         },
         {
             provide: 'GRPC_ECOMMERCE_SERVICE',
