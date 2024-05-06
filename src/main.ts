@@ -50,12 +50,20 @@ async function bootstrap() {
     const config = new DocumentBuilder()
         .setTitle('SAAS BOOKING API')
         .setDescription('## API description')
-        .addSecurity('JWT-access-token', {
+        .addSecurity('JWT-access-token-user', {
             type: 'http',
             scheme: 'bearer',
             bearerFormat: 'JWT',
-            name: 'JWT Access Token',
-            description: 'Enter JWT access token',
+            name: 'JWT Access Token User',
+            description: 'Enter JWT access token for User',
+            in: 'header',
+        })
+        .addSecurity('JWT-access-token-tenant', {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+            name: 'JWT Access Token Tenant',
+            description: 'Enter JWT access token for Tenant',
             in: 'header',
         })
         .addSecurity('JWT-refresh-token', {

@@ -27,14 +27,17 @@ export class ProfileController {
     ) {}
 
     @Get('get-profile')
-    @UseGuards(AccessTokenGuard, RolesGuard)
-    @Roles(Role.USER)
+    // @UseGuards(AccessTokenGuard, RolesGuard)
+    // @Roles(Role.USER)
+    @UseGuards(AccessTokenGuard)
+    @ApiBearerAuth('JWT-access-token-user')
+    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiOperation({
         summary: 'Get profile of user',
         description: `
 ## Use access token`,
     })
-    @ApiBearerAuth('JWT-access-token')
+    @ApiBearerAuth('JWT-access-token-user')
     @ApiCreatedResponse({
         description: 'Get profile successfully!!',
         content: {
@@ -123,15 +126,18 @@ export class ProfileController {
     }
 
     @Post('update-profile')
-    @UseGuards(AccessTokenGuard, RolesGuard)
-    @Roles(Role.USER)
+    // @UseGuards(AccessTokenGuard, RolesGuard)
+    // @Roles(Role.USER)
+    @UseGuards(AccessTokenGuard)
+    @ApiBearerAuth('JWT-access-token-user')
+    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiOperation({
         summary: 'Update profile of user',
         description: `
 ## Must use access token
 ## Must have body to update`,
     })
-    @ApiBearerAuth('JWT-access-token')
+    @ApiBearerAuth('JWT-access-token-user')
     @ApiBody({
         type: UpdateProfileRequestDTO,
         examples: {

@@ -28,7 +28,8 @@ export class SignOutController {
 ## Mustn't have body,
 ## Using access token (to test add in the right corner)`,
     })
-    @ApiBearerAuth('JWT-access-token')
+    @ApiBearerAuth('JWT-access-token-user')
+    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiCreatedResponse({
         description: 'User SignOut successfully!!',
         content: {

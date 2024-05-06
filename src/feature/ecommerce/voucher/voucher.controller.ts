@@ -52,13 +52,13 @@ export class VoucherController {
     @Post('create')
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.TENANT)
+    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiOperation({
         summary: 'Create voucher of domain',
         description: `
 ## Use access token
 ## Must use tenant account`,
     })
-    @ApiBearerAuth('JWT-access-token')
     @ApiBody({
         type: CreateVoucher,
         examples: {
@@ -192,7 +192,8 @@ export class VoucherController {
         description: `
 ## Use access token`,
     })
-    @ApiBearerAuth('JWT-access-token')
+    @ApiBearerAuth('JWT-access-token-user')
+    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiCreatedResponse({
         description: 'Get all vouchers successfully!!',
         content: {
@@ -298,14 +299,20 @@ export class VoucherController {
 
     @Get('find/:id')
     @UseGuards(AccessTokenGuard)
+    @ApiBearerAuth('JWT-access-token-user')
+    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiOperation({
         summary: 'Find one voucher by ID',
         description: `
 ## Use access token
 ## Use id to path`,
     })
-    @ApiParam({ name: 'id', description: 'ID of the voucher', required: true })
-    @ApiBearerAuth('JWT-access-token')
+    @ApiParam({
+        name: 'id',
+        description: 'ID of the voucher',
+        example: '3bb423de-2b81-4526-a1d3-9c3ca84633df',
+        required: true,
+    })
     @ApiCreatedResponse({
         description: 'Get one voucher successfully!!',
         content: {
@@ -389,6 +396,7 @@ export class VoucherController {
     @Post('update')
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.TENANT)
+    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiOperation({
         summary: 'Update one voucher',
         description: `
@@ -411,7 +419,6 @@ export class VoucherController {
             },
         },
     })
-    @ApiBearerAuth('JWT-access-token')
     @ApiCreatedResponse({
         description: 'Update one voucher successfully!!',
         content: {
@@ -495,13 +502,19 @@ export class VoucherController {
     @Delete('delete/:id')
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.TENANT)
+    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiOperation({
         summary: 'Delete one voucher',
         description: `
 ## Use access token
 ## Must be TENANT`,
     })
-    @ApiBearerAuth('JWT-access-token')
+    @ApiParam({
+        name: 'id',
+        description: 'ID of the voucher',
+        example: 'eefdb88b-de10-4d14-b1a9-b762ffb0982a',
+        required: true,
+    })
     @ApiCreatedResponse({
         description: 'Delete one voucher successfully!!',
         content: {
@@ -590,13 +603,14 @@ export class VoucherController {
         example: 'GIAM70',
     })
     @UseGuards(AccessTokenGuard)
+    @ApiBearerAuth('JWT-access-token-user')
+    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiOperation({
         summary: 'Search one voucher by voucher code',
         description: `
 ## Use access token
 ## Must be TENANT`,
     })
-    @ApiBearerAuth('JWT-access-token')
     @ApiCreatedResponse({
         description: 'Search one voucher successfully!!',
         content: {

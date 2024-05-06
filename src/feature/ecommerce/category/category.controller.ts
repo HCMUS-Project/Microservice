@@ -5,6 +5,7 @@ import {
     ApiCreatedResponse,
     ApiForbiddenResponse,
     ApiOperation,
+    ApiParam,
     ApiTags,
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -36,13 +37,13 @@ export class CategoryController {
     @Post('create')
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.TENANT)
+    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiOperation({
         summary: 'Create category of domain',
         description: `
 ## Use access token
 ## Must use tenant account`,
     })
-    @ApiBearerAuth('JWT-access-token')
     @ApiBody({
         type: CreateCategory,
         examples: {
@@ -157,12 +158,13 @@ export class CategoryController {
 
     @Get('find/all')
     @UseGuards(AccessTokenGuard)
+    @ApiBearerAuth('JWT-access-token-user')
+    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiOperation({
         summary: 'Find all categories',
         description: `
 ## Use access token`,
     })
-    @ApiBearerAuth('JWT-access-token')
     @ApiCreatedResponse({
         description: 'Get all categories successfully!!',
         content: {
@@ -268,13 +270,20 @@ export class CategoryController {
 
     @Get('find/:id')
     @UseGuards(AccessTokenGuard)
+    @ApiBearerAuth('JWT-access-token-user')
+    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiOperation({
         summary: 'Find one category',
         description: `
 ## Use access token
 ## Use id to path`,
     })
-    @ApiBearerAuth('JWT-access-token')
+    @ApiParam({
+        name: 'id',
+        description: 'ID of category in DB',
+        example: '93f55388-cd92-4f76-8ece-60fcf16f6806',
+        required: true,
+    })
     @ApiCreatedResponse({
         description: 'Get one category successfully!!',
         content: {
@@ -355,13 +364,13 @@ export class CategoryController {
     @Post('update')
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.TENANT)
+    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiOperation({
         summary: 'Update one category',
         description: `
 ## Use access token
 ## Must be TENANT`,
     })
-    @ApiBearerAuth('JWT-access-token')
     @ApiCreatedResponse({
         description: 'Update one category successfully!!',
         content: {
@@ -435,13 +444,19 @@ export class CategoryController {
     @Delete('delete/:id')
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.TENANT)
+    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiOperation({
         summary: 'Delete one category',
         description: `
 ## Use access token
 ## Must be TENANT`,
     })
-    @ApiBearerAuth('JWT-access-token')
+    @ApiParam({
+        name: 'id',
+        description: 'ID of category in DB',
+        example: '93f55388-cd92-4f76-8ece-60fcf16f6806',
+        required: true,
+    })
     @ApiCreatedResponse({
         description: 'Delete one category successfully!!',
         content: {

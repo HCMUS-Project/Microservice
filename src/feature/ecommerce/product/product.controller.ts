@@ -16,6 +16,7 @@ import {
     ApiCreatedResponse,
     ApiForbiddenResponse,
     ApiOperation,
+    ApiParam,
     ApiQuery,
     ApiTags,
     ApiUnauthorizedResponse,
@@ -50,12 +51,12 @@ export class ProductController {
     @Post('create')
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.TENANT)
+    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiOperation({
         summary: 'Create product of domain',
         description: `
 ## Use access token `,
     })
-    @ApiBearerAuth('JWT-access-token')
     @ApiBody({
         type: CreateProductRequestDTO,
         examples: {
@@ -197,12 +198,13 @@ export class ProductController {
 
     @Get('find/all')
     @UseGuards(AccessTokenGuard)
+    @ApiBearerAuth('JWT-access-token-user')
+    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiOperation({
         summary: 'Find all products',
         description: `
 ## Use access token`,
     })
-    @ApiBearerAuth('JWT-access-token')
     @ApiCreatedResponse({
         description: 'Get all products successfully!!',
         content: {
@@ -311,13 +313,20 @@ export class ProductController {
 
     @Get('find/:id')
     @UseGuards(AccessTokenGuard)
+    @ApiBearerAuth('JWT-access-token-user')
+    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiOperation({
         summary: 'Find one product',
         description: `
 ## Use access token
 ## Use id to path`,
     })
-    @ApiBearerAuth('JWT-access-token')
+    @ApiParam({
+        name: 'id',
+        description: 'ID of product in DB',
+        example: 'a83854d9-b3db-49b8-b5bc-5fac19042b91',
+        required: true,
+    })
     @ApiCreatedResponse({
         description: 'Get one product successfully!!',
         content: {
@@ -407,6 +416,7 @@ export class ProductController {
     @Post('update')
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.TENANT)
+    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiOperation({
         summary: 'Update one product',
         description: `
@@ -414,7 +424,6 @@ export class ProductController {
 ## Use id in body
 ## Must use field the example`,
     })
-    @ApiBearerAuth('JWT-access-token')
     @ApiCreatedResponse({
         description: 'Get one product successfully!!',
         content: {
@@ -512,13 +521,19 @@ export class ProductController {
     @Delete('delete/:id')
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.TENANT)
+    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiOperation({
         summary: 'Delete one product',
         description: `
 ## Use access token
 ## Use id in path`,
     })
-    @ApiBearerAuth('JWT-access-token')
+    @ApiParam({
+        name: 'id',
+        description: 'ID of product in DB',
+        example: 'c3437006-c9d3-473b-97b5-7660a45ea8b4',
+        required: true,
+    })
     @ApiCreatedResponse({
         description: 'Delete one product successfully!!',
         content: {
@@ -615,6 +630,8 @@ export class ProductController {
 
     @Get('search')
     @UseGuards(AccessTokenGuard)
+    @ApiBearerAuth('JWT-access-token-user')
+    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiQuery({
         name: 'name',
         description: 'Product name',
@@ -637,7 +654,6 @@ export class ProductController {
 ## Search one product base on query
 ## Dont use body`,
     })
-    @ApiBearerAuth('JWT-access-token')
     @ApiCreatedResponse({
         description: 'Search one product successfully!!',
         content: {
@@ -747,13 +763,20 @@ export class ProductController {
 
     @Post('add/view/:id')
     @UseGuards(AccessTokenGuard)
+    @ApiBearerAuth('JWT-access-token-user')
+    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiOperation({
         summary: 'Increase product view',
         description: `
 ## Use access token
 ## Use id in path`,
     })
-    @ApiBearerAuth('JWT-access-token')
+    @ApiParam({
+        name: 'id',
+        description: 'ID of product in DB',
+        example: 'ebe267f1-2f6c-416b-ac24-d713838ea92f',
+        required: true,
+    })
     @ApiCreatedResponse({
         description: 'Increase view one product successfully!!',
         content: {
@@ -851,13 +874,13 @@ export class ProductController {
     @Post('add/quantity')
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.TENANT)
+    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiOperation({
         summary: 'Add product quantity',
         description: `
 ## Use access token
 ## Use id and quantity in body`,
     })
-    @ApiBearerAuth('JWT-access-token')
     @ApiBody({
         type: AddProductQuantity,
         examples: {
