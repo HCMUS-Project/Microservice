@@ -84,7 +84,7 @@ export class ListOrders implements ListOrdersRequest {
         message: 'Must be a valid stage: pending, shipping, completed, cancelled',
     })
     @IsOptional()
-    @ApiProperty({ enum: StageOrder, enumName: 'Stage of Order', example: StageOrder.SHIPPING})
+    @ApiProperty({ enum: StageOrder, enumName: 'Stage of Order', example: StageOrder.SHIPPING })
     stage: StageOrder;
 }
 
@@ -101,7 +101,7 @@ export class UpdateStageOrder implements UpdateStageOrderRequest {
         message: 'Must be a valid stage: pending, shipping, completed, cancelled',
     })
     @IsOptional()
-    @ApiProperty({ enum: StageOrder, enumName: 'Stage of Order', example: StageOrder.SHIPPING})
+    @ApiProperty({ enum: StageOrder, enumName: 'Stage of Order', example: StageOrder.SHIPPING })
     stage: StageOrder;
 
     @IsUUID()

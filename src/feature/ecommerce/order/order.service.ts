@@ -85,7 +85,7 @@ export class EcommerceOrderService implements OnModuleInit {
 
     async listOrders(data: ListOrdersRequestDTO): Promise<ListOrdersResponse> {
         try {
-            console.log(data)
+            // console.log(data);
             const listOrdersResponse: ListOrdersResponse = await firstValueFrom(
                 this.iOrderService.listOrders(data),
             );

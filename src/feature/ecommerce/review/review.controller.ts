@@ -27,25 +27,23 @@ import { AccessTokenGuard } from 'src/common/guards/token/accessToken.guard';
 import { RolesGuard } from 'src/common/guards/role/role.guard';
 import { Role } from 'src/proto_build/auth/userToken/Role';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
-import { EcommerceOrderService } from './order.service';
+import { EcommerceReviewService } from './review.service';
 import {
-    CancelOrderRequestDTO,
-    CreateOrder,
-    CreateOrderRequestDTO,
-    GetOrderRequestDTO,
-    ListOrders,
-    ListOrdersRequestDTO,
-    UpdateStageOrder,
-    UpdateStageOrderRequestDTO,
-} from './order.dto';
-import { StageOrder } from 'src/common/enums/stageOrder.enum';
+    CreateReview,
+    CreateReviewRequestDTO,
+    DeleteReviewRequestDTO,
+    FindAllReviews,
+    FindAllReviewsRequestDTO,
+    UpdateReview,
+    UpdateReviewRequestDTO,
+} from './review.dto';
 
-@Controller('/ecommerce/order')
-@ApiTags('ecommerce/order')
-export class OrderController {
+@Controller('/ecommerce/review')
+@ApiTags('ecommerce/review')
+export class ReviewController {
     constructor(
-        @Inject('GRPC_ECOMMERCE_SERVICE_ORDER')
-        private readonly ecommerceOrderService: EcommerceOrderService,
+        @Inject('GRPC_ECOMMERCE_SERVICE_REVIEW')
+        private readonly ecommerceReviewService: EcommerceReviewService,
     ) {}
 
     @Post('create')
@@ -53,45 +51,47 @@ export class OrderController {
     @Roles(Role.USER)
     @ApiBearerAuth('JWT-access-token-user')
     @ApiOperation({
-        summary: 'Create order of user in domain',
+        summary: 'Create review of user in domain',
         description: `
 ## Use access token
-## For user account
-## Parse email to user_id `,
+## For user account`,
     })
     @ApiBody({
-        type: CreateOrder,
+        type: CreateReview,
         examples: {
             category_1: {
                 value: {
-                    domain: '30shine.com',
-                    productsId: [
-                        'ebe267f1-2f6c-416b-ac24-d713838ea92f',
-                        'a83854d9-b3db-49b8-b5bc-5fac19042b91',
-                    ],
-                    quantities: [3, 5],
-                    phone: '+84912345678',
-                    address: '123 abc, def, gh',
-                    voucherId: '3bb423de-2b81-4526-a1d3-9c3ca84633df',
-                } as CreateOrder,
+                    productId: 'ebe267f1-2f6c-416b-ac24-d713838ea92f',
+                    rating: 3.5,
+                    review: 'San pham nay nhin chung cung duoc, ko nen mua',
+                } as CreateReview,
             },
         },
     })
     @ApiCreatedResponse({
-        description: 'Create order successfully!!',
+        description: 'Create review successfully!!',
         content: {
             'application/json': {
                 examples: {
                     signin: {
-                        summary: 'Response after Create order successfully',
+                        summary: 'Response after Create review successfully',
                         value: {
                             statusCode: 201,
-                            timestamp: '2024-05-06T17:50:16.435Z',
-                            path: '/api/ecommerce/order/create',
+                            timestamp: '2024-05-07T05:34:41.213Z',
+                            path: '/api/ecommerce/review/create',
                             message: null,
                             error: null,
                             data: {
-                                orderId: 'cd61a9d1-fcca-460c-875b-39e543fea679',
+                                review: {
+                                    id: 'fe06853b-8c7c-458c-b5f3-3a7571e11d5e',
+                                    domain: '30shine.com',
+                                    productId: 'ebe267f1-2f6c-416b-ac24-d713838ea92f',
+                                    user: 'volehoai070902@gmail.com',
+                                    rating: 3.5,
+                                    review: 'San pham nay nhin chung cung duoc, ko nen mua',
+                                    createdAt: '2024-05-07T04:41:29.232Z',
+                                    updatedAt: '2024-05-07T05:34:41.189Z',
+                                },
                             },
                         },
                     },
@@ -109,7 +109,7 @@ export class OrderController {
                         value: {
                             statusCode: 401,
                             timestamp: '2024-04-27T12:31:30.700Z',
-                            path: '/api/ecommerce/order/create',
+                            path: '/api/ecommerce/review/create',
                             message: 'Unauthorized',
                             error: null,
                             data: null,
@@ -120,7 +120,7 @@ export class OrderController {
                         value: {
                             statusCode: 401,
                             timestamp: '2024-04-27T12:31:30.700Z',
-                            path: '/api/ecommerce/order/create',
+                            path: '/api/ecommerce/review/create',
                             message: 'Unauthorized Role',
                             error: 'Unauthorized',
                             data: null,
@@ -131,7 +131,7 @@ export class OrderController {
                         value: {
                             statusCode: 401,
                             timestamp: '2024-05-02T10:55:28.511Z',
-                            path: '/api/ecommerce/order/create',
+                            path: '/api/ecommerce/review/create',
                             message: 'Access Token not found',
                             error: 'Unauthorized',
                             data: null,
@@ -141,7 +141,7 @@ export class OrderController {
             },
         },
     })
-    async createOrder(@Req() req: Request, @Body() data: CreateOrder) {
+    async createReview(@Req() req: Request, @Body() data: CreateReview) {
         const payloadToken = req['user'];
         // const header = req.headers;
         const userData = {
@@ -151,30 +151,43 @@ export class OrderController {
             accessToken: payloadToken.accessToken,
         } as UserDto;
         // console.log(userData, dataCategory)
-        return await this.ecommerceOrderService.creatOrder({
+        return await this.ecommerceReviewService.createReview({
             user: userData,
             ...data,
-        } as CreateOrderRequestDTO);
+        } as CreateReviewRequestDTO);
     }
 
-    @Get('find/:orderId')
+    @Get('find/all')
     @UseGuards(AccessTokenGuard)
     @ApiBearerAuth('JWT-access-token-user')
     @ApiBearerAuth('JWT-access-token-tenant')
     @ApiOperation({
-        summary: 'Find one order by ID',
+        summary: 'Find all review by productId',
         description: `
 ## Use access token
-## Use orderId to path`,
+## Use pageSize and page to limit result
+## Default is 10 and 1 if not pass value in`,
     })
-    @ApiParam({
-        name: 'orderId',
-        description: 'ID of the order',
-        example: 'cd61a9d1-fcca-460c-875b-39e543fea679',
-        required: true,
+    @ApiQuery({
+        name: 'productId',
+        description: 'Id of product want to get review',
+        required: false,
+        example: 'ebe267f1-2f6c-416b-ac24-d713838ea92f',
+    })
+    @ApiQuery({
+        name: 'pageSize',
+        description: 'Number of review per page',
+        required: false,
+        example: 10,
+    })
+    @ApiQuery({
+        name: 'page',
+        description: 'the order of page',
+        required: false,
+        example: 1,
     })
     @ApiCreatedResponse({
-        description: 'Get one order successfully!!',
+        description: 'Get all reviews successfully!!',
         content: {
             'application/json': {
                 examples: {
@@ -182,26 +195,26 @@ export class OrderController {
                         summary: 'Response after get one order successfully',
                         value: {
                             statusCode: 200,
-                            timestamp: '2024-05-06T17:58:07.050Z',
-                            path: '/api/ecommerce/order/find/cd61a9d1-fcca-460c-875b-39e543fea679',
+                            timestamp: '2024-05-07T05:39:56.138Z',
+                            path: '/api/ecommerce/review/find/all/?productId=ebe267f1-2f6c-416b-ac24-d713838ea92f',
                             message: null,
                             error: null,
                             data: {
-                                products: [
+                                reviews: [
                                     {
-                                        productId: 'a83854d9-b3db-49b8-b5bc-5fac19042b91',
-                                        quantity: 5,
-                                    },
-                                    {
+                                        id: 'fe06853b-8c7c-458c-b5f3-3a7571e11d5e',
+                                        domain: '30shine.com',
                                         productId: 'ebe267f1-2f6c-416b-ac24-d713838ea92f',
-                                        quantity: 3,
+                                        user: 'volehoai070902@gmail.com',
+                                        rating: 3.5,
+                                        review: 'San pham nay nhin chung cung duoc, ko nen mua',
+                                        createdAt: '2024-05-07T04:41:29.232Z',
+                                        updatedAt: '2024-05-07T05:34:41.189Z',
                                     },
                                 ],
-                                orderId: 'cd61a9d1-fcca-460c-875b-39e543fea679',
-                                phone: '+84912345678',
-                                address: '123 abc, def, gh',
-                                voucherId: '3bb423de-2b81-4526-a1d3-9c3ca84633df',
-                                stage: 'pending',
+                                totalPages: 1,
+                                page: 1,
+                                pageSize: 10,
                             },
                         },
                     },
@@ -240,103 +253,10 @@ export class OrderController {
             },
         },
     })
-    async getOrder(@Req() req: Request, @Param('orderId') orderId: string) {
-        const payloadToken = req['user'];
-        // const header = req.headers;
-        const userData = {
-            email: payloadToken.email,
-            domain: payloadToken.domain,
-            role: payloadToken.role,
-            accessToken: payloadToken.accessToken,
-        } as UserDto;
-        // console.log(userData, dataCategory)
-        return await this.ecommerceOrderService.getOrder({
-            user: userData,
-            orderId,
-        } as GetOrderRequestDTO);
-    }
-
-    @Get('search')
-    @ApiQuery({
-        name: 'stage',
-        description: 'Search all request Order by stage',
-        required: true,
-        example: 'pending',
-    })
-    @UseGuards(AccessTokenGuard)
-    @ApiBearerAuth('JWT-access-token-user')
-    @ApiBearerAuth('JWT-access-token-tenant')
-    @ApiOperation({
-        summary: 'Find all Order by stage',
-        description: `
-## Use access token
-## User query 'stage' to search
-## Can search by token of user and tenant`,
-    })
-    @ApiCreatedResponse({
-        description: 'Get all orders by stage successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after get all orders by stage successfully',
-                        value: {
-                            statusCode: 200,
-                            timestamp: '2024-05-06T18:36:24.256Z',
-                            path: '/api/ecommerce/order/search/?stage=shipping',
-                            message: null,
-                            error: null,
-                            data: {
-                                orders: [
-                                    {
-                                        products: [
-                                            {
-                                                productId: 'a83854d9-b3db-49b8-b5bc-5fac19042b91',
-                                                quantity: 5,
-                                            },
-                                            {
-                                                productId: 'ebe267f1-2f6c-416b-ac24-d713838ea92f',
-                                                quantity: 3,
-                                            },
-                                        ],
-                                        orderId: 'cd61a9d1-fcca-460c-875b-39e543fea679',
-                                        phone: '+84912345678',
-                                        address: '123 abc, def, gh',
-                                        voucherId: '3bb423de-2b81-4526-a1d3-9c3ca84633df',
-                                        stage: 'shipping',
-                                    },
-                                ],
-                            },
-                        },
-                    },
-                },
-            },
-        },
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    token_not_verified: {
-                        summary: 'Token not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-02T11:30:43.976Z',
-                            path: '/api/ecommerce/cart/search/?userId=khoi%20dep%20trai%20qua',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
-                        },
-                    },
-                },
-            },
-        },
-    })
-    async listOrders(
+    async findAllReviews(
         @Req() req: Request,
         @Query()
-        query: ListOrders,
+        query: FindAllReviews,
     ) {
         const payloadToken = req['user'];
         // const header = req.headers;
@@ -347,49 +267,61 @@ export class OrderController {
             accessToken: payloadToken.accessToken,
         } as UserDto;
         // console.log(userData, dataCategory)
-        return await this.ecommerceOrderService.listOrders({
+        return await this.ecommerceReviewService.findAllReviews({
             user: userData,
             ...query,
-        } as ListOrdersRequestDTO);
+        } as FindAllReviewsRequestDTO);
     }
 
-    @Post('update/stage')
+    @Post('update')
     @UseGuards(AccessTokenGuard, RolesGuard)
-    @Roles(Role.TENANT)
-    @ApiBearerAuth('JWT-access-token-tenant')
+    @Roles(Role.USER)
+    @ApiBearerAuth('JWT-access-token-user')
     @ApiOperation({
-        summary: 'Update stage of Order',
+        summary: 'Update Review',
         description: `
 ## Use access token
-## Must be TENANT`,
+## Must be USER`,
     })
     @ApiBody({
-        type: UpdateStageOrder,
+        type: UpdateReview,
         examples: {
             category_1: {
                 value: {
-                    orderId: 'cd61a9d1-fcca-460c-875b-39e543fea679',
-                    stage: StageOrder.CANCELLED,
-                } as UpdateStageOrder,
+                    id: 'fe06853b-8c7c-458c-b5f3-3a7571e11d5e',
+                    domain: '30shine.com',
+                    productId: 'ebe267f1-2f6c-416b-ac24-d713838ea92f',
+                    userId: 'volehoai070902@gmail.com',
+                    rating: 5,
+                    review: 'Toi nghi lai roi',
+                } as UpdateReview,
             },
         },
     })
     @ApiCreatedResponse({
-        description: 'Update one order successfully!!',
+        description: 'Update one review successfully!!',
         content: {
             'application/json': {
                 examples: {
                     signin: {
-                        summary: 'Response after update order successfully',
+                        summary: 'Response after update review successfully',
                         value: {
                             statusCode: 201,
-                            timestamp: '2024-05-06T18:50:43.731Z',
-                            path: '/api/ecommerce/order/update/stage',
+                            timestamp: '2024-05-07T06:00:47.990Z',
+                            path: '/api/ecommerce/review/update',
                             message: null,
                             error: null,
                             data: {
-                                orderId: 'cd61a9d1-fcca-460c-875b-39e543fea679',
-                                stage: 'cancelled',
+                                review: {
+                                    id: 'fe06853b-8c7c-458c-b5f3-3a7571e11d5e',
+                                    domain: '30shine.com',
+                                    productId: 'ebe267f1-2f6c-416b-ac24-d713838ea92f',
+                                    user: 'volehoai070902@gmail.com',
+                                    rating: 5,
+                                    review: 'Toi nghi lai roi',
+                                    createdAt: '2024-05-07T04:41:29.232Z',
+                                    updatedAt: '2024-05-07T06:00:47.971Z',
+                                },
                             },
                         },
                     },
@@ -407,7 +339,7 @@ export class OrderController {
                         value: {
                             statusCode: 401,
                             timestamp: '2024-04-27T17:42:40.039Z',
-                            path: '/api/ecommerce/order/update',
+                            path: '/api/ecommerce/review/update',
                             message: 'Unauthorized',
                             error: null,
                             data: null,
@@ -418,7 +350,7 @@ export class OrderController {
                         value: {
                             statusCode: 401,
                             timestamp: '2024-05-02T11:43:05.882Z',
-                            path: '/api/ecommerce/order/update',
+                            path: '/api/ecommerce/review/update',
                             message: 'Category not found',
                             error: 'Unauthorized',
                             data: null,
@@ -428,7 +360,7 @@ export class OrderController {
             },
         },
     })
-    async updateStageOrder(@Req() req: Request, @Body() updateStage: UpdateStageOrder) {
+    async updateReview(@Req() req: Request, @Body() updateReview: UpdateReview) {
         const payloadToken = req['user'];
         // const header = req.headers;
         const userData = {
@@ -438,41 +370,39 @@ export class OrderController {
             accessToken: payloadToken.accessToken,
         } as UserDto;
         // console.log(userData, dataCategory)
-        return await this.ecommerceOrderService.updateStageOrder({
+        return await this.ecommerceReviewService.updateReview({
             user: userData,
-            ...updateStage,
-        } as UpdateStageOrderRequestDTO);
+            ...updateReview,
+        } as UpdateReviewRequestDTO);
     }
 
-    @Patch('cancel/:id')
-    // @UseGuards(AccessTokenGuard, RolesGuard)
-    // @Roles(Role.USER)
-    @UseGuards(AccessTokenGuard)
+    @Delete('delete/:id')
+    @UseGuards(AccessTokenGuard, RolesGuard)
+    @Roles(Role.USER)
     @ApiBearerAuth('JWT-access-token-user')
-    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiOperation({
-        summary: 'Cancel one order',
+        summary: 'Delete one review',
         description: `
 ## Use access token
-## USER and TENANT`,
+## USER role`,
     })
     @ApiParam({
         name: 'id',
-        description: 'ID of order in DB',
-        example: '072360d7-0504-42da-bcfa-666282d5ad76',
+        description: 'ID of review in DB',
+        example: 'fe06853b-8c7c-458c-b5f3-3a7571e11d5e',
         required: true,
     })
     @ApiCreatedResponse({
-        description: 'Cancel one order successfully!!',
+        description: 'Cancel one review successfully!!',
         content: {
             'application/json': {
                 examples: {
                     signin: {
-                        summary: 'Response after cancel order successfully',
+                        summary: 'Response after delete one review successfully',
                         value: {
                             statusCode: 200,
-                            timestamp: '2024-05-06T19:18:18.672Z',
-                            path: '/api/ecommerce/order/cancel/cd61a9d1-fcca-460c-875b-39e543fea679',
+                            timestamp: '2024-05-07T06:02:16.618Z',
+                            path: '/api/ecommerce/review/delete/fe06853b-8c7c-458c-b5f3-3a7571e11d5e',
                             message: null,
                             error: null,
                             data: {
@@ -494,7 +424,7 @@ export class OrderController {
                         value: {
                             statusCode: 401,
                             timestamp: '2024-04-27T17:42:40.039Z',
-                            path: '/api/ecommerce/category/update',
+                            path: '/api/ecommerce/review/delete/fe06853b-8c7c-458c-b5f3-3a7571e11d5e',
                             message: 'Unauthorized',
                             error: null,
                             data: null,
@@ -505,7 +435,7 @@ export class OrderController {
                         value: {
                             statusCode: 401,
                             timestamp: '2024-05-02T11:43:05.882Z',
-                            path: '/api/ecommerce/category/update',
+                            path: '/api/ecommerce/review/delete/fe06853b-8c7c-458c-b5f3-3a7571e11d5e',
                             message: 'Category not found',
                             error: 'Unauthorized',
                             data: null,
@@ -515,7 +445,7 @@ export class OrderController {
             },
         },
     })
-    async cancelOrder(@Req() req: Request, @Param('id') id: string) {
+    async deleteReview(@Req() req: Request, @Param('id') id: string) {
         const payloadToken = req['user'];
         // const header = req.headers;
         const userData = {
@@ -525,9 +455,9 @@ export class OrderController {
             accessToken: payloadToken.accessToken,
         } as UserDto;
         // console.log(userData, dataCategory)
-        return await this.ecommerceOrderService.cancelOrder({
+        return await this.ecommerceReviewService.deleteReview({
             user: userData,
             id,
-        } as CancelOrderRequestDTO);
+        } as DeleteReviewRequestDTO);
     }
 }

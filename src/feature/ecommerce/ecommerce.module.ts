@@ -12,6 +12,8 @@ import { EcommerceCartService } from './cart/cart.service';
 import { CartController } from './cart/cart.controller';
 import { OrderController } from './order/order.controller';
 import { EcommerceOrderService } from './order/order.service';
+import {ReviewController} from './review/review.controller';
+import {EcommerceReviewService} from './review/review.service';
 
 @Module({
     imports: [ClientsModule],
@@ -21,6 +23,7 @@ import { EcommerceOrderService } from './order/order.service';
         VoucherController,
         CartController,
         OrderController,
+        ReviewController
     ],
     providers: [
         {
@@ -42,6 +45,10 @@ import { EcommerceOrderService } from './order/order.service';
         {
             provide: 'GRPC_ECOMMERCE_SERVICE_ORDER',
             useClass: EcommerceOrderService,
+        },
+        {
+            provide: 'GRPC_ECOMMERCE_SERVICE_REVIEW',
+            useClass: EcommerceReviewService,
         },
         {
             provide: 'GRPC_ECOMMERCE_SERVICE',

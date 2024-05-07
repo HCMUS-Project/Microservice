@@ -85,7 +85,13 @@ async function bootstrap() {
     await app.startAllMicroservices();
 
     // Config validation pipe
-    app.useGlobalPipes(new ValidationPipe());
+    app.useGlobalPipes(
+        new ValidationPipe({
+            transform: true, // Automatically transform payloads to be objects typed according to their DTO classes
+            whitelist: true, // Automatically remove non-whitelisted properties (those without any decorators in DTO)
+            forbidNonWhitelisted: true, // Throw errors if non-whitelisted values are provided
+        }),
+    );
 
     // Listen on the port
     await app.listen(port, async () => {
