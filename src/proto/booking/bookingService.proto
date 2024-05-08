@@ -1,0 +1,22 @@
+syntax="proto3";
+
+import "employee.proto";
+import "review.proto";
+import "services.proto";
+import "voucher.proto";
+import "booking.proto";
+
+package bookingService;
+
+service AppService {
+  rpc FindOne (HeroById) returns (Hero) {}
+}
+
+message HeroById {
+  int32 id = 1;
+}
+
+message Hero {
+  int32 id = 1;
+  string name = 2;
+}

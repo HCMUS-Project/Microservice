@@ -19,6 +19,7 @@ import { RefreshTokenStrategy } from './common/strategies/token/refreshToken.str
 import { ExceptionsFilter } from './core/responses/filter/exception.filter';
 import { AuthModule } from './feature/auth/auth.module';
 import { EcommerceModule } from './feature/ecommerce/ecommerce.module';
+import {BookingModule} from './feature/booking/booking.module';
 
 @Module({
     imports: [
@@ -30,6 +31,7 @@ import { EcommerceModule } from './feature/ecommerce/ecommerce.module';
         ClientsModule,
         AuthModule,
         EcommerceModule,
+        BookingModule
         // CacheModule.registerAsync(RedisOptions)
     ],
     controllers: [AppController],
