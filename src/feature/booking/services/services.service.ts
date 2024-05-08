@@ -5,15 +5,19 @@ import {
     NotFoundException,
     OnModuleInit,
 } from '@nestjs/common';
-import {CreateServiceRequestDTO, DeleteServiceRequestDTO, FindOneRequestDTO, FindServicesRequestDTO} from './services.dto';
-import {Observable, firstValueFrom} from 'rxjs';
-import {CreateServiceResponse} from 'src/proto_build/booking/services/CreateServiceResponse';
-import {FindOneResponse} from 'src/proto_build/booking/services/FindOneResponse';
-import {FindServicesResponse} from 'src/proto_build/booking/services/FindServicesResponse';
-import {DeleteServiceResponse} from 'src/proto_build/booking/services/DeleteServiceResponse';
-import {ClientGrpc} from '@nestjs/microservices';
-import {UserNotFoundException} from 'src/common/exceptions/exceptions';
- 
+import {
+    CreateServiceRequestDTO,
+    DeleteServiceRequestDTO,
+    FindOneRequestDTO,
+    FindServicesRequestDTO,
+} from './services.dto';
+import { Observable, firstValueFrom } from 'rxjs';
+import { CreateServiceResponse } from 'src/proto_build/booking/services/CreateServiceResponse';
+import { FindOneResponse } from 'src/proto_build/booking/services/FindOneResponse';
+import { FindServicesResponse } from 'src/proto_build/booking/services/FindServicesResponse';
+import { DeleteServiceResponse } from 'src/proto_build/booking/services/DeleteServiceResponse';
+import { ClientGrpc } from '@nestjs/microservices';
+import { UserNotFoundException } from 'src/common/exceptions/exceptions';
 
 interface ServicesService {
     createService(data: CreateServiceRequestDTO): Observable<CreateServiceResponse>;

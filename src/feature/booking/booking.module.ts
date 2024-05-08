@@ -4,14 +4,20 @@ import { ClientProxyFactory, ClientsModule, Transport } from '@nestjs/microservi
 import { join } from 'path';
 import { BookingServicesService } from './services/services.service';
 import { ServicesController } from './services/services.controller';
+import { EmployeeController } from './employee/employee.controller';
+import { BookingEmployeeService } from './employee/employee.service';
 
 @Module({
     imports: [ClientsModule],
-    controllers: [ServicesController],
+    controllers: [ServicesController, EmployeeController],
     providers: [
         {
             provide: 'GRPC_ECOMMERCE_BOOKING_SERVICES',
             useClass: BookingServicesService,
+        },
+        {
+            provide: 'GRPC_ECOMMERCE_BOOKING_EMPLOYEE',
+            useClass: BookingEmployeeService,
         },
         {
             provide: 'GRPC_ECOMMERCE_BOOKING',
@@ -28,7 +34,10 @@ import { ServicesController } from './services/services.controller';
                             'services',
                             'voucher',
                         ],
-                        protoPath: join(__dirname, '../../../src/proto/booking/bookingService.proto'),
+                        protoPath: join(
+                            __dirname,
+                            '../../../src/proto/booking/bookingService.proto',
+                        ),
                         url: configService.get<string>('BOOKING_SERVICE_URL'),
                         loader: {
                             enums: String,

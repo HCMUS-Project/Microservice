@@ -12,8 +12,8 @@ import { EcommerceCartService } from './cart/cart.service';
 import { CartController } from './cart/cart.controller';
 import { OrderController } from './order/order.controller';
 import { EcommerceOrderService } from './order/order.service';
-import {ReviewController} from './review/review.controller';
-import {EcommerceReviewService} from './review/review.service';
+import { ReviewController } from './review/review.controller';
+import { EcommerceReviewService } from './review/review.service';
 
 @Module({
     imports: [ClientsModule],
@@ -23,7 +23,7 @@ import {EcommerceReviewService} from './review/review.service';
         VoucherController,
         CartController,
         OrderController,
-        ReviewController
+        ReviewController,
     ],
     providers: [
         {
