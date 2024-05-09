@@ -9,8 +9,10 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, Response<T>> {
         return next.handle().pipe(
             map(data => {
                 // console.log(data)
+                const status = typeof data.status === 'string' ? context.switchToHttp().getResponse().statusCode : data.status;
                 return {
-                    statusCode: data.status || context.switchToHttp().getResponse().statusCode,
+                    // statusCode: data.status || context.switchToHttp().getResponse().statusCode,
+                    statusCode: status,
                     timestamp: new Date().toISOString(),
                     path: context.getArgs()[0].url,
                     // statusCode: 200,
