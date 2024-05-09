@@ -6,10 +6,12 @@ import { BookingServicesService } from './services/services.service';
 import { ServicesController } from './services/services.controller';
 import { EmployeeController } from './employee/employee.controller';
 import { BookingEmployeeService } from './employee/employee.service';
+import {BookingsController} from './booking/booking.controller';
+import {BookingBookingsService} from './booking/booking.service';
 
 @Module({
     imports: [ClientsModule],
-    controllers: [ServicesController, EmployeeController],
+    controllers: [ServicesController, EmployeeController, BookingsController],
     providers: [
         {
             provide: 'GRPC_ECOMMERCE_BOOKING_SERVICES',
@@ -18,6 +20,10 @@ import { BookingEmployeeService } from './employee/employee.service';
         {
             provide: 'GRPC_ECOMMERCE_BOOKING_EMPLOYEE',
             useClass: BookingEmployeeService,
+        },
+        {
+            provide: 'GRPC_ECOMMERCE_BOOKING_BOOKINGS',
+            useClass: BookingBookingsService,
         },
         {
             provide: 'GRPC_ECOMMERCE_BOOKING',
