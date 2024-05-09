@@ -38,8 +38,11 @@ import {
     FindOneRequestDTO,
     FindServices,
     FindServicesRequestDTO,
+    UpdateService,
+    UpdateServiceRequestDTO,
 } from './services.dto';
 import { FindOneVoucherRequest } from 'src/proto_build/booking/voucher/FindOneVoucherRequest';
+import {UpdateCartRequestDTO} from 'src/feature/ecommerce/cart/cart.dto';
 
 @Controller('/booking/services')
 @ApiTags('booking/services')
@@ -518,5 +521,118 @@ export class ServicesController {
             user: userData,
             ...param,
         } as DeleteServiceRequestDTO);
+    }
+
+    @Post('update')
+    @UseGuards(AccessTokenGuard, RolesGuard)
+    @Roles(Role.TENANT)
+    @ApiBearerAuth('JWT-access-token-tenant')
+    @ApiOperation({
+        summary: 'Update services of domain',
+        description: `
+## Use access token
+## Must use tenant account`,
+    })
+    @ApiBody({
+        type: CreateService,
+        examples: {
+            category_1: {
+                value: {
+                     
+                } as CreateService,
+            },
+        },
+    })
+    @ApiCreatedResponse({
+        description: 'Update services successfully!!',
+        content: {
+            'application/json': {
+                examples: {
+                    signin: {
+                        summary: 'Response after update services successfully',
+                        value: {
+                            
+                        },
+                    },
+                },
+            },
+        },
+    })
+    @ApiUnauthorizedResponse({
+        description: 'Authorization failed',
+        content: {
+            'application/json': {
+                examples: {
+                    token_not_verified: {
+                        summary: 'Token not verified',
+                        value: {
+                            statusCode: 401,
+                            timestamp: '2024-04-27T12:31:30.700Z',
+                            path: '/api/booking/services/update',
+                            message: 'Unauthorized',
+                            error: null,
+                            data: null,
+                        },
+                    },
+                    unauthorized_role: {
+                        summary: 'Role not verified',
+                        value: {
+                            statusCode: 401,
+                            timestamp: '2024-04-27T12:31:30.700Z',
+                            path: '/api/booking/services/update',
+                            message: 'Unauthorized Role',
+                            error: 'Unauthorized',
+                            data: null,
+                        },
+                    },
+                    token_not_found: {
+                        summary: 'Token not found',
+                        value: {
+                            statusCode: 401,
+                            timestamp: '2024-05-02T10:55:28.511Z',
+                            path: '/api/booking/services/update',
+                            message: 'Access Token not found',
+                            error: 'Unauthorized',
+                            data: null,
+                        },
+                    },
+                },
+            },
+        },
+    })
+    @ApiForbiddenResponse({
+        description: 'Forbidden',
+        content: {
+            'application/json': {
+                examples: {
+                    user_not_verified: {
+                        summary: 'Category already exists',
+                        value: {
+                            statusCode: 403,
+                            timestamp: '2024-05-02T11:24:03.152Z',
+                            path: '/api/booking/services/update',
+                            message: 'Category already exists',
+                            error: 'Forbidden',
+                            data: null,
+                        },
+                    },
+                },
+            },
+        },
+    })
+    async updateService(@Req() req: Request, @Body() data: UpdateService) {
+        const payloadToken = req['user'];
+        // const header = req.headers;
+        const userData = {
+            email: payloadToken.email,
+            domain: payloadToken.domain,
+            role: payloadToken.role,
+            accessToken: payloadToken.accessToken,
+        } as UserDto;
+        // console.log(userData, data)
+        return await this.bookingServicesService.updateService({
+            user: userData,
+            ...data,
+        } as UpdateServiceRequestDTO);
     }
 }

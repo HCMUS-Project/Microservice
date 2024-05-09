@@ -10,6 +10,7 @@ import {
     DeleteServiceRequestDTO,
     FindOneRequestDTO,
     FindServicesRequestDTO,
+    UpdateServiceRequestDTO,
 } from './services.dto';
 import { Observable, firstValueFrom } from 'rxjs';
 import { CreateServiceResponse } from 'src/proto_build/booking/services/CreateServiceResponse';
@@ -18,12 +19,14 @@ import { FindServicesResponse } from 'src/proto_build/booking/services/FindServi
 import { DeleteServiceResponse } from 'src/proto_build/booking/services/DeleteServiceResponse';
 import { ClientGrpc } from '@nestjs/microservices';
 import { UserNotFoundException } from 'src/common/exceptions/exceptions';
+import {UpdateServiceResponse} from 'src/proto_build/booking/services/UpdateServiceResponse';
 
 interface ServicesService {
     createService(data: CreateServiceRequestDTO): Observable<CreateServiceResponse>;
     findOne(data: FindOneRequestDTO): Observable<FindOneResponse>;
     findServices(data: FindServicesRequestDTO): Observable<FindServicesResponse>;
     deleteService(data: DeleteServiceRequestDTO): Observable<DeleteServiceResponse>;
+    updateService(data: UpdateServiceRequestDTO): Observable<UpdateServiceResponse>;
 }
 
 @Injectable()
@@ -107,6 +110,27 @@ export class BookingServicesService implements OnModuleInit {
                 this.iServicesService.deleteService(data),
             );
             return deleteServiceResponse;
+        } catch (e) {
+            // console.log(e)
+            const errorDetails = JSON.parse(e.details);
+            // console.log(errorDetails);
+            if (errorDetails.error == 'PERMISSION_DENIED') {
+                throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
+            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
+                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else {
+                throw new NotFoundException(errorDetails, 'Not found');
+            }
+        }
+    }
+
+    async updateService(data: UpdateServiceRequestDTO): Promise<UpdateServiceResponse> {
+        try {
+            // console.log(this.iProductService.createProduct(data));
+            const updateServiceResponse: UpdateServiceResponse = await firstValueFrom(
+                this.iServicesService.updateService(data),
+            );
+            return updateServiceResponse;
         } catch (e) {
             // console.log(e)
             const errorDetails = JSON.parse(e.details);

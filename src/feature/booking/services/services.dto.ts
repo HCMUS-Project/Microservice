@@ -26,14 +26,19 @@ import { DeleteServiceRequest } from 'src/proto_build/booking/services/DeleteSer
 import { FindOneRequest } from 'src/proto_build/booking/services/FindOneRequest';
 import { FindServicesRequest } from 'src/proto_build/booking/services/FindServicesRequest';
 import { ServiceTime } from 'src/proto_build/booking/services/ServiceTime';
+import {UpdateServiceRequest} from 'src/proto_build/booking/services/UpdateServiceRequest';
 
 export class IServiceTime implements ServiceTime {
     @IsNotEmpty()
-    @IsDateString()
+    @Matches(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, {
+        message: 'startTime must be a valid time in the format HH:mm (24-hour format)',
+    })
     @ApiProperty()
     startTime: string;
 
-    @IsDateString()
+    @Matches(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, {
+        message: 'endTime must be a valid time in the format HH:mm (24-hour format)',
+    })
     @IsNotEmpty()
     @ApiProperty()
     endTime: string;
@@ -44,12 +49,16 @@ export class IServiceTime implements ServiceTime {
     @ApiProperty()
     duration: number;
 
-    @IsDateString()
+    @Matches(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, {
+        message: 'breakStart must be a valid time in the format HH:mm (24-hour format)',
+    })
     @IsNotEmpty()
     @ApiProperty()
     breakStart: string;
 
-    @IsDateString()
+    @Matches(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, {
+        message: 'breakEnd must be a valid time in the format HH:mm (24-hour format)',
+    })
     @IsNotEmpty()
     @ApiProperty()
     breakEnd: string;
@@ -140,6 +149,48 @@ export class DeleteService implements DeleteServiceRequest {
 }
 
 export class DeleteServiceRequestDTO extends DeleteService {
+    @IsObject()
+    @IsNotEmpty()
+    @ApiProperty()
+    user: UserDto;
+}
+
+export class UpdateService implements UpdateServiceRequest {
+    @IsUUID()
+    @IsNotEmpty()
+    @ApiProperty()
+    id: string;
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty()
+    name: string;
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty()
+    description: string;
+
+    @IsPositive()
+    @IsNotEmpty()
+    @ApiProperty()
+    price: number;
+
+    @IsObject()
+    @IsNotEmpty()
+    @ValidateNested({ each: true })
+    @Type(() => IServiceTime)
+    @ApiProperty({ type: IServiceTime })
+    timeService: IServiceTime;
+
+    @IsArray()
+    @IsNotEmpty()
+    @IsBase64DataURI({ each: true, message: 'Each image must be a valid Base64 data URI.' })
+    @ApiProperty()
+    images: string[];
+}
+
+export class UpdateServiceRequestDTO extends UpdateService {
     @IsObject()
     @IsNotEmpty()
     @ApiProperty()
