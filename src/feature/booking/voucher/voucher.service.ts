@@ -5,48 +5,48 @@ import {
     NotFoundException,
     OnModuleInit,
 } from '@nestjs/common';
-import {
-    CreateServiceRequestDTO,
-    DeleteServiceRequestDTO,
-    FindOneRequestDTO,
-    FindServicesRequestDTO,
-    UpdateServiceRequestDTO,
-} from './services.dto';
-import { Observable, firstValueFrom } from 'rxjs';
-import { CreateServiceResponse } from 'src/proto_build/booking/services/CreateServiceResponse';
-import { FindOneResponse } from 'src/proto_build/booking/services/FindOneResponse';
-import { FindServicesResponse } from 'src/proto_build/booking/services/FindServicesResponse';
-import { DeleteServiceResponse } from 'src/proto_build/booking/services/DeleteServiceResponse';
 import { ClientGrpc } from '@nestjs/microservices';
 import { UserNotFoundException } from 'src/common/exceptions/exceptions';
-import { UpdateServiceResponse } from 'src/proto_build/booking/services/UpdateServiceResponse';
+import { Observable, firstValueFrom } from 'rxjs';
+import {
+    CreateVoucherRequestDTO,
+    DeleteVoucherRequestDTO,
+    EditVoucherRequestDTO,
+    FindAllVouchersRequestDTO,
+    FindOneVoucherRequestDTO,
+} from './voucher.dto';
+import { CreateVoucherResponse } from 'src/proto_build/booking/voucher/CreateVoucherResponse';
+import { EditVoucherResponse } from 'src/proto_build/booking/voucher/EditVoucherResponse';
+import { DeleteVoucherResponse } from 'src/proto_build/booking/voucher/DeleteVoucherResponse';
+import { FindAllVouchersResponse } from 'src/proto_build/e_commerce/voucher/FindAllVouchersResponse';
+import { FindOneVoucherResponse } from 'src/proto_build/booking/voucher/FindOneVoucherResponse';
 
-interface ServicesService {
-    createService(data: CreateServiceRequestDTO): Observable<CreateServiceResponse>;
-    findOne(data: FindOneRequestDTO): Observable<FindOneResponse>;
-    findServices(data: FindServicesRequestDTO): Observable<FindServicesResponse>;
-    deleteService(data: DeleteServiceRequestDTO): Observable<DeleteServiceResponse>;
-    updateService(data: UpdateServiceRequestDTO): Observable<UpdateServiceResponse>;
+interface VoucherService {
+    createVoucher(data: CreateVoucherRequestDTO): Observable<CreateVoucherResponse>;
+    editVoucher(data: EditVoucherRequestDTO): Observable<EditVoucherResponse>;
+    deleteVoucher(data: DeleteVoucherRequestDTO): Observable<DeleteVoucherResponse>;
+    findAllVouchers(data: FindAllVouchersRequestDTO): Observable<FindAllVouchersResponse>;
+    findOneVoucher(data: FindOneVoucherRequestDTO): Observable<FindOneVoucherResponse>;
 }
 
 @Injectable()
-export class BookingServicesService implements OnModuleInit {
-    private iServicesService: ServicesService;
+export class BookingVoucherService implements OnModuleInit {
+    private iVoucherService: VoucherService;
 
     constructor(@Inject('GRPC_ECOMMERCE_BOOKING') private client: ClientGrpc) {}
 
     onModuleInit() {
-        this.iServicesService = this.client.getService<ServicesService>('ServicesService');
+        this.iVoucherService = this.client.getService<VoucherService>('VoucherService');
         // console.log(this.iProductService)
     }
 
-    async createService(data: CreateServiceRequestDTO): Promise<CreateServiceResponse> {
+    async createVoucher(data: CreateVoucherRequestDTO): Promise<CreateVoucherResponse> {
         try {
             // console.log(this.iProductService.createProduct(data));
-            const createServiceResponse: CreateServiceResponse = await firstValueFrom(
-                this.iServicesService.createService(data),
+            const createVoucherResponse: CreateVoucherResponse = await firstValueFrom(
+                this.iVoucherService.createVoucher(data),
             );
-            return createServiceResponse;
+            return createVoucherResponse;
         } catch (e) {
             // console.log(e)
             const errorDetails = JSON.parse(e.details);
@@ -61,13 +61,13 @@ export class BookingServicesService implements OnModuleInit {
         }
     }
 
-    async findOne(data: FindOneRequestDTO): Promise<FindOneResponse> {
+    async editVoucher(data: EditVoucherRequestDTO): Promise<EditVoucherResponse> {
         try {
             // console.log(this.iProductService.createProduct(data));
-            const findOneResponse: FindOneResponse = await firstValueFrom(
-                this.iServicesService.findOne(data),
+            const editVoucherResponse: EditVoucherResponse = await firstValueFrom(
+                this.iVoucherService.editVoucher(data),
             );
-            return findOneResponse;
+            return editVoucherResponse;
         } catch (e) {
             // console.log(e)
             const errorDetails = JSON.parse(e.details);
@@ -82,13 +82,13 @@ export class BookingServicesService implements OnModuleInit {
         }
     }
 
-    async findServices(data: FindServicesRequestDTO): Promise<FindServicesResponse> {
+    async deleteVoucher(data: DeleteVoucherRequestDTO): Promise<DeleteVoucherResponse> {
         try {
             // console.log(this.iProductService.createProduct(data));
-            const findServicesResponse: FindServicesResponse = await firstValueFrom(
-                this.iServicesService.findServices(data),
+            const deleteVoucherResponse: DeleteVoucherResponse = await firstValueFrom(
+                this.iVoucherService.deleteVoucher(data),
             );
-            return findServicesResponse;
+            return deleteVoucherResponse;
         } catch (e) {
             // console.log(e)
             const errorDetails = JSON.parse(e.details);
@@ -103,13 +103,13 @@ export class BookingServicesService implements OnModuleInit {
         }
     }
 
-    async deleteService(data: DeleteServiceRequestDTO): Promise<DeleteServiceResponse> {
+    async findAllVouchers(data: FindAllVouchersRequestDTO): Promise<FindAllVouchersResponse> {
         try {
             // console.log(this.iProductService.createProduct(data));
-            const deleteServiceResponse: DeleteServiceResponse = await firstValueFrom(
-                this.iServicesService.deleteService(data),
+            const findAllVouchersResponse: FindAllVouchersResponse = await firstValueFrom(
+                this.iVoucherService.findAllVouchers(data),
             );
-            return deleteServiceResponse;
+            return findAllVouchersResponse;
         } catch (e) {
             // console.log(e)
             const errorDetails = JSON.parse(e.details);
@@ -124,13 +124,13 @@ export class BookingServicesService implements OnModuleInit {
         }
     }
 
-    async updateService(data: UpdateServiceRequestDTO): Promise<UpdateServiceResponse> {
+    async findOneVoucher(data: FindOneVoucherRequestDTO): Promise<FindOneVoucherResponse> {
         try {
             // console.log(this.iProductService.createProduct(data));
-            const updateServiceResponse: UpdateServiceResponse = await firstValueFrom(
-                this.iServicesService.updateService(data),
+            const findOneVoucherResponse: FindOneVoucherResponse = await firstValueFrom(
+                this.iVoucherService.findOneVoucher(data),
             );
-            return updateServiceResponse;
+            return findOneVoucherResponse;
         } catch (e) {
             // console.log(e)
             const errorDetails = JSON.parse(e.details);

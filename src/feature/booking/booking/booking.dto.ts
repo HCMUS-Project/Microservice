@@ -21,9 +21,9 @@ import {
 } from 'class-validator';
 import { IsBase64DataURI } from 'src/common/validator/is-base-64-dataURI.validator';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
-import {CreateBookingRequest} from 'src/proto_build/booking/booking/CreateBookingRequest';
-import {FindOneRequest} from 'src/proto_build/booking/booking/FindOneRequest';
-import {FindSlotBookingsRequest} from 'src/proto_build/booking/booking/FindSlotBookingsRequest';
+import { CreateBookingRequest } from 'src/proto_build/booking/booking/CreateBookingRequest';
+import { FindOneRequest } from 'src/proto_build/booking/booking/FindOneRequest';
+import { FindSlotBookingsRequest } from 'src/proto_build/booking/booking/FindSlotBookingsRequest';
 
 export class CreateBooking implements CreateBookingRequest {
     @IsDateString()
@@ -106,5 +106,3 @@ export class FindSlotBookingsRequestDTO extends FindSlotBookings {
     @ApiProperty()
     user: UserDto;
 }
-
- 

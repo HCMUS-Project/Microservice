@@ -26,7 +26,7 @@ import { DeleteServiceRequest } from 'src/proto_build/booking/services/DeleteSer
 import { FindOneRequest } from 'src/proto_build/booking/services/FindOneRequest';
 import { FindServicesRequest } from 'src/proto_build/booking/services/FindServicesRequest';
 import { ServiceTime } from 'src/proto_build/booking/services/ServiceTime';
-import {UpdateServiceRequest} from 'src/proto_build/booking/services/UpdateServiceRequest';
+import { UpdateServiceRequest } from 'src/proto_build/booking/services/UpdateServiceRequest';
 
 export class IServiceTime implements ServiceTime {
     @IsNotEmpty()

@@ -5,16 +5,20 @@ import {
     NotFoundException,
     OnModuleInit,
 } from '@nestjs/common';
- 
+
 import { Observable, firstValueFrom } from 'rxjs';
- 
+
 import { ClientGrpc } from '@nestjs/microservices';
 import { UserNotFoundException } from 'src/common/exceptions/exceptions';
- 
-import {CreateBookingRequestDTO, FindOneRequestDTO, FindSlotBookingsRequestDTO} from './booking.dto';
-import {CreateBookingResponse} from 'src/proto_build/booking/booking/CreateBookingResponse';
-import {FindOneResponse} from 'src/proto_build/booking/booking/FindOneResponse';
-import {FindSlotBookingsResponse} from 'src/proto_build/booking/booking/FindSlotBookingsResponse';
+
+import {
+    CreateBookingRequestDTO,
+    FindOneRequestDTO,
+    FindSlotBookingsRequestDTO,
+} from './booking.dto';
+import { CreateBookingResponse } from 'src/proto_build/booking/booking/CreateBookingResponse';
+import { FindOneResponse } from 'src/proto_build/booking/booking/FindOneResponse';
+import { FindSlotBookingsResponse } from 'src/proto_build/booking/booking/FindSlotBookingsResponse';
 
 interface BookingService {
     createBooking(data: CreateBookingRequestDTO): Observable<CreateBookingResponse>;
