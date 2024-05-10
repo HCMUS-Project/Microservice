@@ -321,6 +321,7 @@ export class BookingsController {
                     signin: {
                         summary: 'Response after find one booking successfully',
                         value: {
+                            statusCode: 200,
                             timestamp: '2024-05-09T07:11:43.721Z',
                             path: '/api/booking/bookings/search?date=2024-05-11T00:00:00.000Z&service=dfb82e86-2ecc-4eb3-8123-174b2299ad68',
                             message: null,

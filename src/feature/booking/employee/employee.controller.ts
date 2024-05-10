@@ -68,12 +68,7 @@ export class EmployeeController {
         type: CreateEmployee,
         examples: {
             category_1: {
-                value: {
-                    name: 'Ca 1',
-                    workDays: ['SUNDAY'],
-                    workShift: ['MORNING'],
-                    services: ['879101c7-7397-4e57-b196-b494acb6a76b'],
-                } as CreateEmployee,
+                value: {} as CreateEmployee,
             },
         },
     })
@@ -203,21 +198,18 @@ export class EmployeeController {
                         summary: 'Response after get one employee successfully',
                         value: {
                             statusCode: 200,
-                            timestamp: '2024-05-08T10:14:00.727Z',
-                            path: '/api/booking/employee/find/d4112320-a998-4ff5-ba84-b31514f43bc6',
+                            timestamp: '2024-05-10T09:03:47.836Z',
+                            path: '/api/booking/employee/find/9705690b-45d9-4d3c-a118-4ac490f34ec5',
                             message: null,
                             error: null,
                             data: {
-                                workDays: ['SUNDAY'],
-                                workShift: ['MORNING'],
-                                services: [
-                                    {
-                                        id: '879101c7-7397-4e57-b196-b494acb6a76b',
-                                        name: 'Cat toc',
-                                    },
-                                ],
-                                id: 'd4112320-a998-4ff5-ba84-b31514f43bc6',
-                                name: 'Ca 1',
+                                workDays: ['SATURDAY', 'SUNDAY'],
+                                workShift: ['MORNING', 'AFTERNOON'],
+                                services: ['[object Object]'],
+                                id: '9705690b-45d9-4d3c-a118-4ac490f34ec5',
+                                firstName: 'Nguyen',
+                                lastName: 'Khoi',
+                                email: 'nguyenvukhoi150402@gmail.com',
                             },
                         },
                     },
@@ -283,10 +275,22 @@ export class EmployeeController {
 ## Use query`,
     })
     @ApiQuery({
-        name: 'name',
-        description: 'Name of employee',
+        name: 'firstName',
+        description: 'First name of employee',
         required: false,
-        example: 'Ca 1',
+        example: 'Nguyen',
+    })
+    @ApiQuery({
+        name: 'lastName',
+        description: 'Last name of employee',
+        required: false,
+        example: 'Khoi',
+    })
+    @ApiQuery({
+        name: 'email',
+        description: 'Email of employee',
+        required: false,
+        example: 'nguyenvukhoi150402@gmail.com',
     })
     @ApiQuery({
         name: 'workDays',
@@ -312,7 +316,7 @@ export class EmployeeController {
             'Array of services. Repeat the parameter for each value with square brackets).',
         required: true,
         isArray: true,
-        example: 'services[]=879101c7-7397-4e57-b196-b494acb6a76b',
+        example: 'services[]=85351665-9e0a-41b4-9792-9001210f85f4',
     })
     @ApiCreatedResponse({
         description: 'Find one service successfully!!',
@@ -323,23 +327,20 @@ export class EmployeeController {
                         summary: 'Response after find one service successfully',
                         value: {
                             statusCode: 200,
-                            timestamp: '2024-05-08T10:28:08.542Z',
-                            path: '/api/booking/employee/search?workDays[]=SUNDAY&workShift[]=MORNING&services[]=879101c7-7397-4e57-b196-b494acb6a76b&name=Ca%201',
+                            timestamp: '2024-05-10T09:08:38.856Z',
+                            path: '/api/booking/employee/search?workDays[]=SUNDAY&workShift[]=MORNING&services[]=85351665-9e0a-41b4-9792-9001210f85f4&workDays[]=SUNDAY&firstName=Nguyen&lastName=Khoi&email=nguyenvukhoi150402@gmai.com',
                             message: null,
                             error: null,
                             data: {
                                 employees: [
                                     {
-                                        workDays: ['SUNDAY'],
-                                        workShift: ['MORNING'],
-                                        services: [
-                                            {
-                                                id: '879101c7-7397-4e57-b196-b494acb6a76b',
-                                                name: 'Cat toc',
-                                            },
-                                        ],
-                                        id: 'd4112320-a998-4ff5-ba84-b31514f43bc6',
-                                        name: 'Ca 1',
+                                        workDays: ['SATURDAY', 'SUNDAY'],
+                                        workShift: ['MORNING', 'AFTERNOON'],
+                                        services: ['[object Object]'],
+                                        id: '9705690b-45d9-4d3c-a118-4ac490f34ec5',
+                                        firstName: 'Nguyen',
+                                        lastName: 'Khoi',
+                                        email: 'nguyenvukhoi150402@gmail.com',
                                     },
                                 ],
                             },
@@ -411,13 +412,7 @@ export class EmployeeController {
         type: UpdateEmployee,
         examples: {
             category_1: {
-                value: {
-                    name: 'Ca 1',
-                    workDays: ['SATURDAY', 'SUNDAY'],
-                    workShift: ['MORNING'],
-                    services: ['879101c7-7397-4e57-b196-b494acb6a76b'],
-                    id: '9bc45900-cccc-4de6-81ae-c063d773127f',
-                } as UpdateEmployee,
+                value: {} as UpdateEmployee,
             },
         },
     })

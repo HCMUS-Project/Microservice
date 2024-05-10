@@ -5,6 +5,7 @@ import {
     IsArray,
     IsBase64,
     IsDateString,
+    IsEmail,
     IsEnum,
     IsInt,
     IsNotEmpty,
@@ -36,7 +37,17 @@ export class CreateEmployee implements CreateEmployeeRequest {
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
-    name: string;
+    firstName: string;
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty()
+    lastName: string;
+
+    @IsEmail()
+    @IsNotEmpty()
+    @ApiProperty()
+    email: string;
 
     @IsArray()
     @IsNotEmpty()
@@ -83,9 +94,19 @@ export class FindOneEmployeeRequestDTO extends FindOneEmployee {
 
 export class FindEmployee implements FindEmployeeRequest {
     @IsString()
-    @IsOptional()
+    @IsNotEmpty()
     @ApiProperty()
-    name: string;
+    firstName: string;
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty()
+    lastName: string;
+
+    @IsEmail()
+    @IsNotEmpty()
+    @ApiProperty()
+    email: string;
 
     @IsArray()
     @IsNotEmpty()
@@ -123,7 +144,17 @@ export class UpdateEmployee implements UpdateEmployeeRequest {
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
-    name: string;
+    firstName: string;
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty()
+    lastName: string;
+
+    @IsEmail()
+    @IsNotEmpty()
+    @ApiProperty()
+    email: string;
 
     @IsArray()
     @IsNotEmpty()

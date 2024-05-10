@@ -10,10 +10,12 @@ import { BookingsController } from './booking/booking.controller';
 import { BookingBookingsService } from './booking/booking.service';
 import {VoucherController} from './voucher/voucher.controller';
 import {BookingVoucherService} from './voucher/voucher.service';
+import {BookingReviewService} from './review/review.service';
+import {ReviewController} from './review/review.controller';
 
 @Module({
     imports: [ClientsModule],
-    controllers: [ServicesController, EmployeeController, BookingsController, VoucherController],
+    controllers: [ServicesController, EmployeeController, BookingsController, VoucherController, ReviewController],
     providers: [
         {
             provide: 'GRPC_ECOMMERCE_BOOKING_SERVICES',
@@ -30,6 +32,10 @@ import {BookingVoucherService} from './voucher/voucher.service';
         {
             provide: 'GRPC_ECOMMERCE_BOOKING_VOUCHER',
             useClass: BookingVoucherService,
+        },
+        {
+            provide: 'GRPC_ECOMMERCE_BOOKING_REVIEW',
+            useClass: BookingReviewService,
         },
         {
             provide: 'GRPC_ECOMMERCE_BOOKING',
