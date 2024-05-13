@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import {Type} from 'class-transformer';
 import {
     IsNotEmpty,
     IsObject,
@@ -7,7 +8,10 @@ import {
     IsArray,
     IsInt,
     IsOptional,
+    IsPositive,
+    IsUUID,
 } from 'class-validator';
+import {IsBase64DataURI} from 'src/common/validator/is-base-64-dataURI.validator';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
 import { AddProductQuantityRequest } from 'src/proto_build/e_commerce/product/AddProductQuantityRequest';
 import { CreateProductRequest } from 'src/proto_build/e_commerce/product/CreateProductRequest';
@@ -22,18 +26,19 @@ import { ProductResponse } from 'src/proto_build/e_commerce/product/ProductRespo
 import { SearchProductsRequest } from 'src/proto_build/e_commerce/product/SearchProductsRequest';
 import { UpdateProductRequest } from 'src/proto_build/e_commerce/product/UpdateProductRequest';
 
-export class CreateProductRequestDTO implements CreateProductRequest {
+export class CreateProduct implements CreateProductRequest {
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
     name: string;
 
-    @IsNumber()
+    @IsPositive()
     @IsNotEmpty()
     @ApiProperty()
     price: number;
 
     @IsInt()
+    @IsPositive()
     @IsNotEmpty()
     @ApiProperty()
     quantity: number;
@@ -43,25 +48,24 @@ export class CreateProductRequestDTO implements CreateProductRequest {
     @ApiProperty()
     description: string;
 
-    @IsInt()
-    @IsNotEmpty()
-    @ApiProperty()
-    views: number;
-
-    @IsNumber()
-    @IsNotEmpty()
-    @ApiProperty()
-    rating: number;
-
     @IsArray()
+    @IsUUID('all', {each: true})
     @IsNotEmpty()
-    @ApiProperty({ type: [String] })
+    @ApiProperty()
     categories: string[];
 
     @IsArray()
     @IsNotEmpty()
-    @ApiProperty({ type: [String] })
+    @IsBase64DataURI({ each: true, message: 'Each image must be a valid Base64 data URI.' })
+    @ApiProperty()
     images: string[];
+}
+
+export class CreateProductRequestDTO extends CreateProduct {
+    @IsObject()
+    @IsNotEmpty()
+    @ApiProperty()
+    user: UserDto;
 }
 
 export class FindAllProductsRequestDTO implements FindAllProductsRequest {
@@ -72,7 +76,7 @@ export class FindAllProductsRequestDTO implements FindAllProductsRequest {
 }
 
 export class FindProductById implements FindProductByIdRequest {
-    @IsString()
+    @IsUUID()
     @IsNotEmpty()
     @ApiProperty()
     id: string;
@@ -86,7 +90,7 @@ export class FindProductByIdRequestDTO extends FindProductById {
 }
 
 export class UpdateProduct implements UpdateProductRequest {
-    @IsString()
+    @IsUUID()
     @IsNotEmpty()
     @ApiProperty()
     id: string;
@@ -96,12 +100,13 @@ export class UpdateProduct implements UpdateProductRequest {
     @ApiProperty()
     name: string;
 
-    @IsNumber()
+    @IsPositive()
     @IsOptional()
     @ApiProperty()
     price: number;
 
     @IsInt()
+    @IsPositive()
     @IsOptional()
     @ApiProperty()
     quantity: number;
@@ -112,19 +117,16 @@ export class UpdateProduct implements UpdateProductRequest {
     description: string;
 
     @IsArray()
-    @IsOptional()
-    @ApiProperty({ type: [String] })
-    images: string[];
-
-    @IsInt()
-    @IsOptional()
+    @IsUUID('all', {each: true})
+    @IsNotEmpty()
     @ApiProperty()
-    views: number;
+    categories: string[];
 
     @IsArray()
-    @IsOptional()
-    @ApiProperty({ type: [String] })
-    categories: string[];
+    @IsNotEmpty()
+    @IsBase64DataURI({ each: true, message: 'Each image must be a valid Base64 data URI.' })
+    @ApiProperty()
+    images: string[];
 }
 
 export class UpdateProductRequestDTO extends UpdateProduct {
@@ -135,7 +137,7 @@ export class UpdateProductRequestDTO extends UpdateProduct {
 }
 
 export class DeleteProduct implements DeleteProductRequest {
-    @IsString()
+    @IsUUID()
     @IsNotEmpty()
     @ApiProperty()
     id: string;
@@ -160,24 +162,22 @@ export class SearchProduct implements SearchProductsRequest {
     category: string;
 
     @IsNumber()
+    @Type(() => Number)
     @IsOptional()
     @ApiProperty()
     minPrice: number;
 
     @IsNumber()
+    @Type(() => Number)
     @IsOptional()
     @ApiProperty()
     maxPrice: number;
 
     @IsInt()
+    @Type(() => Number)
     @IsOptional()
     @ApiProperty()
     rating: number;
-
-    @IsInt()
-    @IsOptional()
-    @ApiProperty()
-    sold: number;
 }
 
 export class SearchProductRequestDTO extends SearchProduct {
@@ -188,7 +188,7 @@ export class SearchProductRequestDTO extends SearchProduct {
 }
 
 export class IncreaseProductView implements IncreaseProductViewRequest {
-    @IsString()
+    @IsUUID()
     @IsNotEmpty()
     @ApiProperty()
     id: string;
@@ -202,12 +202,13 @@ export class IncreaseProductViewDTO extends IncreaseProductView {
 }
 
 export class AddProductQuantity implements AddProductQuantityRequest {
-    @IsString()
+    @IsUUID()
     @IsNotEmpty()
     @ApiProperty()
     id: string;
 
-    @IsNumber()
+    @IsInt()
+    @IsPositive()
     @IsNotEmpty()
     @ApiProperty()
     quantity: number;

@@ -1,5 +1,7 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post, Req, UseGuards } from '@nestjs/common';
 import {
+    ApiBadGatewayResponse,
+    ApiBadRequestResponse,
     ApiBearerAuth,
     ApiBody,
     ApiCreatedResponse,
@@ -18,7 +20,9 @@ import {
     CreateCategory,
     CreateCategoryRequestDTO,
     FindAllCategoriesRequestDTO,
+    FindOneCategory,
     FindOneCategoryRequestDTO,
+    RemoveCategory,
     RemoveCategoryRequestDTO,
     UpdateCategory,
     UpdateCategoryRequestDTO,
@@ -72,6 +76,26 @@ export class CategoryController {
                                 id: '6553fcfc-f8ad-400c-971f-dfd2670193d2',
                                 name: 'Esport',
                             },
+                        },
+                    },
+                },
+            },
+        },
+    })
+    @ApiBadRequestResponse({
+        description: 'Validation failed',
+        content: {
+            'application/json': {
+                examples: {
+                    all_field_missing: {
+                        summary: 'Response if all field missing and not valid with request',
+                        value: {
+                            statusCode: 400,
+                            timestamp: '2024-05-13T08:26:02.300Z',
+                            path: '/api/ecommerce/category/create',
+                            message: 'name should not be empty, description should not be empty',
+                            error: 'Bad Request',
+                            data: null,
                         },
                     },
                 },
@@ -174,56 +198,35 @@ export class CategoryController {
                         summary: 'Response after get all categories successfully',
                         value: {
                             statusCode: 200,
-                            timestamp: '2024-05-02T11:29:59.962Z',
+                            timestamp: '2024-05-13T15:23:40.909Z',
                             path: '/api/ecommerce/category/find/all',
                             message: null,
                             error: null,
                             data: {
                                 categories: [
                                     {
-                                        id: '93f55388-cd92-4f76-8ece-60fcf16f6806',
-                                        name: 'Cosmestic',
-                                        description:
-                                            'Using for make beauty and hahahaahahaha haahaa',
+                                        id: '58e6613d-41b0-4f31-93cf-91a211b12c9c',
+                                        name: 'Kem chong nang',
+                                        description: 'Kem chong nang gi do',
                                         createdAt: {
-                                            low: 528503348,
+                                            low: 1893381955,
                                             high: 399,
                                             unsigned: false,
                                         },
                                         domain: '30shine.com',
+                                        totalProducts: 2,
                                     },
                                     {
-                                        id: '840316ea-7675-4c18-8a40-795ee361b5b5',
-                                        name: 'Learning',
-                                        description: 'Learning many thing',
+                                        id: 'a09716f7-7b6e-4d29-a26f-ed3f321df4c9',
+                                        name: 'Sách vở',
+                                        description: 'Sách vở học tâp',
                                         createdAt: {
-                                            low: 533115864,
+                                            low: 1921856393,
                                             high: 399,
                                             unsigned: false,
                                         },
                                         domain: '30shine.com',
-                                    },
-                                    {
-                                        id: '1decb08d-1aee-4aba-a0a8-9b039d9072f6',
-                                        name: 'Skincare00000',
-                                        description: 'Skin care will 0000 fun',
-                                        createdAt: {
-                                            low: 553990192,
-                                            high: 399,
-                                            unsigned: false,
-                                        },
-                                        domain: '30shine.com',
-                                    },
-                                    {
-                                        id: '6553fcfc-f8ad-400c-971f-dfd2670193d2',
-                                        name: 'Esport',
-                                        description: 'Lien Minh Huyen Thoai',
-                                        createdAt: {
-                                            low: 955112174,
-                                            high: 399,
-                                            unsigned: false,
-                                        },
-                                        domain: '30shine.com',
+                                        totalProducts: 0,
                                     },
                                 ],
                             },
@@ -281,7 +284,7 @@ export class CategoryController {
     @ApiParam({
         name: 'id',
         description: 'ID of category in DB',
-        example: '93f55388-cd92-4f76-8ece-60fcf16f6806',
+        example: '58e6613d-41b0-4f31-93cf-91a211b12c9c',
         required: true,
     })
     @ApiCreatedResponse({
@@ -293,21 +296,42 @@ export class CategoryController {
                         summary: 'Response after get one category successfully',
                         value: {
                             statusCode: 200,
-                            timestamp: '2024-05-02T11:42:19.469Z',
-                            path: '/api/ecommerce/category/find/93f55388-cd92-4f76-8ece-60fcf16f6806',
+                            timestamp: '2024-05-13T15:16:49.927Z',
+                            path: '/api/ecommerce/category/find/58e6613d-41b0-4f31-93cf-91a211b12c9c',
                             message: null,
                             error: null,
                             data: {
-                                id: '93f55388-cd92-4f76-8ece-60fcf16f6806',
-                                name: 'Cosmestic',
-                                description: 'Using for make beauty and hahahaahahaha haahaa',
+                                id: '58e6613d-41b0-4f31-93cf-91a211b12c9c',
+                                name: 'Kem chong nang',
+                                description: 'Kem chong nang gi do',
                                 createdAt: {
-                                    low: 528503348,
+                                    low: 1893381955,
                                     high: 399,
                                     unsigned: false,
                                 },
                                 domain: '30shine.com',
+                                totalProducts: 2,
                             },
+                        },
+                    },
+                },
+            },
+        },
+    })
+    @ApiBadRequestResponse({
+        description: 'Validation failed',
+        content: {
+            'application/json': {
+                examples: {
+                    all_field_missing: {
+                        summary: 'Response if all field missing and not valid with request',
+                        value: {
+                            statusCode: 400,
+                            timestamp: '2024-05-13T08:45:19.575Z',
+                            path: '/api/ecommerce/category/find/:id',
+                            message: 'id must be a UUID',
+                            error: 'Bad Request',
+                            data: null,
                         },
                     },
                 },
@@ -345,7 +369,8 @@ export class CategoryController {
             },
         },
     })
-    async findOneCategory(@Req() req: Request, @Param('id') id: string) {
+    async findOneCategory(@Req() req: Request, @Param() data: FindOneCategory) {
+        console.log(data);
         const payloadToken = req['user'];
         // const header = req.headers;
         const userData = {
@@ -357,7 +382,7 @@ export class CategoryController {
         // console.log(userData, dataCategory)
         return await this.ecommerceCategoryService.findOneCategory({
             user: userData,
-            id,
+            ...data,
         } as FindOneCategoryRequestDTO);
     }
 
@@ -388,6 +413,27 @@ export class CategoryController {
                                 id: '93f55388-cd92-4f76-8ece-60fcf16f6806',
                                 name: 'SKinCare Khang oi',
                             },
+                        },
+                    },
+                },
+            },
+        },
+    })
+    @ApiBadRequestResponse({
+        description: 'Validation failed',
+        content: {
+            'application/json': {
+                examples: {
+                    all_field_missing: {
+                        summary: 'Response if all field missing and not valid with request',
+                        value: {
+                            statusCode: 400,
+                            timestamp: '2024-05-13T08:06:36.620Z',
+                            path: '/api/ecommerce/category/update',
+                            message:
+                                'id should not be empty, id must be a UUID, name should not be empty, description should not be empty',
+                            error: 'Bad Request',
+                            data: null,
                         },
                     },
                 },
@@ -479,6 +525,26 @@ export class CategoryController {
             },
         },
     })
+    @ApiBadRequestResponse({
+        description: 'Validation failed',
+        content: {
+            'application/json': {
+                examples: {
+                    all_field_missing: {
+                        summary: 'Response if all field missing and not valid with request',
+                        value: {
+                            statusCode: 400,
+                            timestamp: '2024-05-13T08:48:59.955Z',
+                            path: '/api/ecommerce/category/delete/:id',
+                            message: 'id must be a UUID',
+                            error: 'Bad Request',
+                            data: null,
+                        },
+                    },
+                },
+            },
+        },
+    })
     @ApiUnauthorizedResponse({
         description: 'Authorization failed',
         content: {
@@ -489,9 +555,31 @@ export class CategoryController {
                         value: {
                             statusCode: 401,
                             timestamp: '2024-04-27T17:42:40.039Z',
-                            path: '/api/ecommerce/category/update',
+                            path: '/api/ecommerce/category/delete/93f55388-cd92-4f76-8ece-60fcf16f6806',
                             message: 'Unauthorized',
                             error: null,
+                            data: null,
+                        },
+                    },
+                    token_not_found: {
+                        summary: 'Token not found',
+                        value: {
+                            statusCode: 401,
+                            timestamp: '2024-05-02T10:55:28.511Z',
+                            path: '/api/ecommerce/category/delete/93f55388-cd92-4f76-8ece-60fcf16f6806',
+                            message: 'Access Token not found',
+                            error: 'Unauthorized',
+                            data: null,
+                        },
+                    },
+                    unauthorized_role: {
+                        summary: 'Role not verified',
+                        value: {
+                            statusCode: 401,
+                            timestamp: '2024-04-27T12:31:30.700Z',
+                            path: '/api/ecommerce/category/delete/93f55388-cd92-4f76-8ece-60fcf16f6806',
+                            message: 'Unauthorized Role',
+                            error: 'Unauthorized',
                             data: null,
                         },
                     },
@@ -500,7 +588,7 @@ export class CategoryController {
                         value: {
                             statusCode: 401,
                             timestamp: '2024-05-02T11:43:05.882Z',
-                            path: '/api/ecommerce/category/update',
+                            path: '/api/ecommerce/category/delete/93f55388-cd92-4f76-8ece-60fcf16f6806',
                             message: 'Category not found',
                             error: 'Unauthorized',
                             data: null,
@@ -510,7 +598,7 @@ export class CategoryController {
             },
         },
     })
-    async deleteCategory(@Req() req: Request, @Param('id') id: string) {
+    async deleteCategory(@Req() req: Request, @Param() data: RemoveCategory) {
         const payloadToken = req['user'];
         // const header = req.headers;
         const userData = {
@@ -522,7 +610,7 @@ export class CategoryController {
         // console.log(userData, dataCategory)
         return await this.ecommerceCategoryService.removeCategory({
             user: userData,
-            id,
+            ...data,
         } as RemoveCategoryRequestDTO);
     }
 }

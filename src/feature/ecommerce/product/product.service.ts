@@ -54,6 +54,8 @@ export class EcommerceProductService implements OnModuleInit {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
                 throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'CATEGORY_NOT_FOUND') {
+                throw new UserNotFoundException('Category not found', 'Unauthorized');
             } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }
@@ -85,8 +87,8 @@ export class EcommerceProductService implements OnModuleInit {
             // console.log(e);
             const errorDetails = JSON.parse(e.details);
             // console.log(errorDetails);
-            if (errorDetails.error == 'CATEGORY_NOT_FOUND') {
-                throw new UserNotFoundException('Category not found', 'Unauthorized');
+            if (errorDetails.error == 'PRODUCT_NOT_FOUND') {
+                throw new UserNotFoundException('Product not found', 'Unauthorized');
             } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }
@@ -100,11 +102,12 @@ export class EcommerceProductService implements OnModuleInit {
             );
             return productResponse;
         } catch (e) {
-            console.log(e);
+            // console.log(e);
+            // console.log(e.response);
             const errorDetails = JSON.parse(e.details);
-            console.log(errorDetails);
-            if (errorDetails.error == 'CATEGORY_NOT_FOUND') {
-                throw new UserNotFoundException('Category not found', 'Unauthorized');
+            // console.log(errorDetails);
+            if (errorDetails.error == 'PRODUCT_NOT_FOUND') {
+                throw new UserNotFoundException('Product not found', 'Unauthorized');
             } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }
@@ -118,11 +121,11 @@ export class EcommerceProductService implements OnModuleInit {
             );
             return removeCategoryResponse;
         } catch (e) {
-            console.log(e);
+            // console.log(e);
             const errorDetails = JSON.parse(e.details);
-            console.log(errorDetails);
-            if (errorDetails.error == 'CATEGORY_NOT_FOUND') {
-                throw new UserNotFoundException('Category not found', 'Unauthorized');
+            // console.log(errorDetails);
+            if (errorDetails.error == 'PRODUCT_NOT_FOUND') {
+                throw new UserNotFoundException('Product not found', 'Unauthorized');
             } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }
@@ -131,20 +134,16 @@ export class EcommerceProductService implements OnModuleInit {
 
     async searchProducts(data: SearchProductRequestDTO): Promise<FindAllProductsResponse> {
         try {
-            console.log(data);
+            // console.log(data);
             const findAllProductsResponse: FindAllProductsResponse = await firstValueFrom(
                 this.iProductService.searchProducts(data),
             );
             return findAllProductsResponse;
         } catch (e) {
-            console.log(e);
+            // console.log(e);
             const errorDetails = JSON.parse(e.details);
-            console.log(errorDetails);
-            if (errorDetails.error == 'CATEGORY_NOT_FOUND') {
-                throw new UserNotFoundException('Category not found', 'Unauthorized');
-            } else {
-                throw new NotFoundException(errorDetails, 'Not found');
-            }
+            // console.log(errorDetails);
+            throw new NotFoundException(errorDetails, 'Not found');
         }
     }
 
@@ -155,11 +154,11 @@ export class EcommerceProductService implements OnModuleInit {
             );
             return productResponse;
         } catch (e) {
-            console.log(e);
+            // console.log(e);
             const errorDetails = JSON.parse(e.details);
-            console.log(errorDetails);
-            if (errorDetails.error == 'CATEGORY_NOT_FOUND') {
-                throw new UserNotFoundException('Category not found', 'Unauthorized');
+            // console.log(errorDetails);
+            if (errorDetails.error == 'PRODUCT_NOT_FOUND') {
+                throw new UserNotFoundException('Product not found', 'Unauthorized');
             } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }
@@ -173,11 +172,11 @@ export class EcommerceProductService implements OnModuleInit {
             );
             return productResponse;
         } catch (e) {
-            console.log(e);
+            // console.log(e);
             const errorDetails = JSON.parse(e.details);
-            console.log(errorDetails);
-            if (errorDetails.error == 'CATEGORY_NOT_FOUND') {
-                throw new UserNotFoundException('Category not found', 'Unauthorized');
+            // console.log(errorDetails);
+            if (errorDetails.error == 'PRODUCT_NOT_FOUND') {
+                throw new UserNotFoundException('Product not found', 'Unauthorized');
             } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsObject, IsString } from 'class-validator';
+import { IsNotEmpty, IsObject, IsString, IsUUID } from 'class-validator';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
 import { CreateCategoryRequest } from 'src/proto_build/e_commerce/category/CreateCategoryRequest';
 import { FindAllCategoriesRequest } from 'src/proto_build/e_commerce/category/FindAllCategoriesRequest';
@@ -34,7 +34,7 @@ export class FindAllCategoriesRequestDTO implements FindAllCategoriesRequest {
 }
 
 export class FindOneCategory implements FindOneCategoryRequest {
-    @IsString()
+    @IsUUID('all')
     @IsNotEmpty()
     @ApiProperty()
     id: string;
@@ -48,7 +48,7 @@ export class FindOneCategoryRequestDTO extends FindOneCategory {
 }
 
 export class UpdateCategory implements UpdateCategoryRequest {
-    @IsString()
+    @IsUUID('all')
     @IsNotEmpty()
     @ApiProperty()
     id: string;
@@ -72,7 +72,7 @@ export class UpdateCategoryRequestDTO extends UpdateCategory {
 }
 
 export class RemoveCategory implements RemoveCategoryRequest {
-    @IsString()
+    @IsUUID('all')
     @IsNotEmpty()
     @ApiProperty()
     id: string;
