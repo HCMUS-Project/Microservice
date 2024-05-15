@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {Type} from 'class-transformer';
+import { Type } from 'class-transformer';
 import {
     IsNotEmpty,
     IsObject,
@@ -11,7 +11,7 @@ import {
     IsPositive,
     IsUUID,
 } from 'class-validator';
-import {IsBase64DataURI} from 'src/common/validator/is-base-64-dataURI.validator';
+import { IsBase64DataURI } from 'src/common/validator/is-base-64-dataURI.validator';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
 import { AddProductQuantityRequest } from 'src/proto_build/e_commerce/product/AddProductQuantityRequest';
 import { CreateProductRequest } from 'src/proto_build/e_commerce/product/CreateProductRequest';
@@ -49,7 +49,7 @@ export class CreateProduct implements CreateProductRequest {
     description: string;
 
     @IsArray()
-    @IsUUID('all', {each: true})
+    @IsUUID('all', { each: true })
     @IsNotEmpty()
     @ApiProperty()
     categories: string[];
@@ -117,7 +117,7 @@ export class UpdateProduct implements UpdateProductRequest {
     description: string;
 
     @IsArray()
-    @IsUUID('all', {each: true})
+    @IsUUID('all', { each: true })
     @IsNotEmpty()
     @ApiProperty()
     categories: string[];

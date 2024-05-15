@@ -54,8 +54,8 @@ export class EcommerceVoucherService implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'VOUCHER_ALREADY_EXIST') {
+                throw new ForbiddenException('Voucher already exists', 'Forbidden');
             } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }
@@ -73,13 +73,7 @@ export class EcommerceVoucherService implements OnModuleInit {
             // console.log(e)
             const errorDetails = JSON.parse(e.details);
             // console.log(errorDetails);
-            if (errorDetails.error == 'PERMISSION_DENIED') {
-                throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
-            } else {
-                throw new NotFoundException(errorDetails, 'Not found');
-            }
+            throw new NotFoundException(errorDetails, 'Not found');
         }
     }
 
@@ -96,8 +90,8 @@ export class EcommerceVoucherService implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'VOUCHER_NOT_FOUND') {
+                throw new UserNotFoundException('Voucher not found');
             } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }
@@ -117,8 +111,8 @@ export class EcommerceVoucherService implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'VOUCHER_NOT_FOUND') {
+                throw new UserNotFoundException('Voucher not found');
             } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }
@@ -138,8 +132,8 @@ export class EcommerceVoucherService implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'VOUCHER_NOT_FOUND') {
+                throw new UserNotFoundException('Voucher not found');
             } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }
@@ -159,8 +153,8 @@ export class EcommerceVoucherService implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'VOUCHER_NOT_FOUND') {
+                throw new UserNotFoundException('Voucher not found');
             } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }

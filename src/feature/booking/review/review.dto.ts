@@ -15,10 +15,10 @@ import {
 } from 'class-validator';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
 import { CreateReviewRequest } from 'src/proto_build/booking/review/CreateReviewRequest';
-import {DeleteReviewRequest} from 'src/proto_build/booking/review/DeleteReviewRequest';
+import { DeleteReviewRequest } from 'src/proto_build/booking/review/DeleteReviewRequest';
 import { EditReviewRequest } from 'src/proto_build/booking/review/EditReviewRequest';
-import {FindAllReviewsRequest} from 'src/proto_build/booking/review/FindAllReviewsRequest';
-import {FindOneReviewRequest} from 'src/proto_build/booking/review/FindOneReviewRequest';
+import { FindAllReviewsRequest } from 'src/proto_build/booking/review/FindAllReviewsRequest';
+import { FindOneReviewRequest } from 'src/proto_build/booking/review/FindOneReviewRequest';
 
 export class CreateReview implements CreateReviewRequest {
     @IsUUID()

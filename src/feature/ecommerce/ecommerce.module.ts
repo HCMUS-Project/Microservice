@@ -6,7 +6,6 @@ import { EcommerceCategoryService } from './category/category.service';
 import { CategoryController } from './category/category.controller';
 import { EcommerceProductService } from './product/product.service';
 import { ProductController } from './product/product.controller';
-import { VoucherController } from './voucher/voucher.controller';
 import { EcommerceVoucherService } from './voucher/voucher.service';
 import { EcommerceCartService } from './cart/cart.service';
 import { CartController } from './cart/cart.controller';
@@ -14,6 +13,7 @@ import { OrderController } from './order/order.controller';
 import { EcommerceOrderService } from './order/order.service';
 import { ReviewController } from './review/review.controller';
 import { EcommerceReviewService } from './review/review.service';
+import {VoucherController} from './voucher/voucher.controller';
 
 @Module({
     imports: [ClientsModule],

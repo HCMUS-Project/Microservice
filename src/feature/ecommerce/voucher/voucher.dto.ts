@@ -1,11 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+    IsDateString,
     IsNotEmpty,
     IsNumber,
     IsObject,
     IsOptional,
     IsPositive,
     IsString,
+    IsUUID,
     IsUppercase,
     Matches,
     Max,
@@ -49,7 +51,7 @@ export class CreateVoucher implements CreateVoucherRequest {
     @ApiProperty()
     discountPercent: number;
 
-    @IsString()
+    @IsDateString()
     @IsNotEmpty()
     @IsNotEmpty()
     @ApiProperty()
@@ -71,7 +73,7 @@ export class FindAllVouchersRequestDTO implements FindAllVouchersRequest {
 }
 
 export class FindVoucherById implements FindVoucherByIdRequest {
-    @IsString()
+    @IsUUID()
     @IsNotEmpty()
     @ApiProperty()
     id: string;
@@ -85,7 +87,7 @@ export class FindVoucherByIdRequestDTO extends FindVoucherById {
 }
 
 export class UpdateVoucher implements UpdateVoucherRequest {
-    @IsString()
+    @IsUUID()
     @IsNotEmpty()
     @ApiProperty()
     id: string;
@@ -119,9 +121,8 @@ export class UpdateVoucher implements UpdateVoucherRequest {
     @ApiProperty()
     discountPercent: number;
 
-    @IsString()
-    @IsNotEmpty()
-    @IsNotEmpty()
+    @IsDateString()
+    @IsNotEmpty() 
     @ApiProperty()
     expireAt: string;
 }
@@ -134,7 +135,7 @@ export class UpdateVoucherRequestDTO extends UpdateVoucher {
 }
 
 export class DeleteVoucher implements DeleteVoucherRequest {
-    @IsString()
+    @IsUUID()
     @IsNotEmpty()
     @ApiProperty()
     id: string;
@@ -150,6 +151,7 @@ export class DeleteVoucherRequestDTO extends DeleteVoucher {
 export class FindVoucherByCode implements CheckVoucherByCodeRequest {
     @IsString()
     @IsNotEmpty()
+    @Matches(/^[A-Z0-9]*$/, { message: 'Voucher code must be uppercase and contain no spaces' })
     @ApiProperty()
     code: string;
 }

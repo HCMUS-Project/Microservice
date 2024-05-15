@@ -1,15 +1,7 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post, Req, UseGuards } from '@nestjs/common';
 import {
-    ApiBadGatewayResponse,
-    ApiBadRequestResponse,
     ApiBearerAuth,
-    ApiBody,
-    ApiCreatedResponse,
-    ApiForbiddenResponse,
-    ApiOperation,
-    ApiParam,
     ApiTags,
-    ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { EcommerceCategoryService } from './category.service';
 import { AccessTokenGuard } from 'src/common/guards/token/accessToken.guard';
@@ -28,7 +20,13 @@ import {
     UpdateCategoryRequestDTO,
 } from './category.dto';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
-import { UpdateProfileDto } from 'src/feature/auth/profile/profile.dto';
+import {
+    ApiBodyExample,
+    ApiEndpoint,
+    ApiErrorResponses,
+    ApiQueryExamples,
+    ApiResponseExample,
+} from 'src/common/decorator/swagger.decorator';
 
 @Controller('/ecommerce/category')
 @ApiTags('ecommerce/category')
@@ -42,127 +40,62 @@ export class CategoryController {
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.TENANT)
     @ApiBearerAuth('JWT-access-token-tenant')
-    @ApiOperation({
-        summary: 'Create category of domain',
-        description: `
-## Use access token
-## Must use tenant account`,
+    @ApiEndpoint({
+        summary: `Create a category`,
+        details: `
+## Description
+Create a category within a domain using an access token. This operation is restricted to tenant accounts only.
+        
+## Requirements
+- **Access Token**: Must provide a valid tenant access token.
+- **Permissions**: Requires tenant-level permissions.
+`,
     })
-    @ApiBody({
-        type: CreateCategory,
-        examples: {
-            category_1: {
-                value: {
-                    name: 'Esport',
-                    description: 'Lien Minh Huyen Thoai',
-                } as CreateCategory,
-            },
-        },
+    @ApiBodyExample(CreateCategory, {
+        name: 'Esport',
+        description: 'Lien Minh Huyen Thoai',
     })
-    @ApiCreatedResponse({
-        description: 'Create category successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after Create category successfully',
-                        value: {
-                            statusCode: 201,
-                            timestamp: '2024-05-02T10:51:03.295Z',
-                            path: '/api/ecommerce/category/create',
-                            message: null,
-                            error: null,
-                            data: {
-                                id: '6553fcfc-f8ad-400c-971f-dfd2670193d2',
-                                name: 'Esport',
-                            },
-                        },
-                    },
-                },
-            },
+    @ApiResponseExample(
+        'create',
+        'create Category',
+        {
+            id: '6553fcfc-f8ad-400c-971f-dfd2670193d2',
+            name: 'Esport',
         },
-    })
-    @ApiBadRequestResponse({
-        description: 'Validation failed',
-        content: {
-            'application/json': {
-                examples: {
-                    all_field_missing: {
-                        summary: 'Response if all field missing and not valid with request',
-                        value: {
-                            statusCode: 400,
-                            timestamp: '2024-05-13T08:26:02.300Z',
-                            path: '/api/ecommerce/category/create',
-                            message: 'name should not be empty, description should not be empty',
-                            error: 'Bad Request',
-                            data: null,
-                        },
-                    },
-                },
-            },
+        '/api/ecommerce/category/create',
+    )
+    @ApiErrorResponses('/api/ecommerce/category/create', '/api/ecommerce/category/create', {
+        badRequest: {
+            summary: 'Validation Error',
+            detail: 'name should not be empty, description should not be empty',
         },
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    token_not_verified: {
-                        summary: 'Token not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T12:31:30.700Z',
-                            path: '/api/ecommerce/category/create',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
-                        },
-                    },
-                    unauthorized_role: {
-                        summary: 'Role not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T12:31:30.700Z',
-                            path: '/api/ecommerce/category/create',
-                            message: 'Unauthorized Role',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                    token_not_found: {
-                        summary: 'Token not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-02T10:55:28.511Z',
-                            path: '/api/ecommerce/category/create',
-                            message: 'Access Token not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                },
+        unauthorized: [
+            {
+                key: 'token_not_verified',
+                summary: 'Token not verified',
+                detail: 'Unauthorized',
+                error: null,
             },
-        },
-    })
-    @ApiForbiddenResponse({
-        description: 'Forbidden',
-        content: {
-            'application/json': {
-                examples: {
-                    user_not_verified: {
-                        summary: 'Category already exists',
-                        value: {
-                            statusCode: 403,
-                            timestamp: '2024-05-02T11:24:03.152Z',
-                            path: '/api/ecommerce/category/create',
-                            message: 'Category already exists',
-                            error: 'Forbidden',
-                            data: null,
-                        },
-                    },
-                },
+            {
+                key: 'token_not_found',
+                summary: 'Token not found',
+                detail: 'Access Token not found',
+                error: 'Unauthorized',
             },
-        },
+            {
+                key: 'unauthorized_role',
+                summary: 'Role not verified',
+                detail: 'Unauthorized Role',
+                error: 'Unauthorized',
+            },
+        ],
+        forbidden: [
+            {
+                key: 'already_exists',
+                summary: 'Category already exists',
+                detail: 'Category already exists',
+            },
+        ],
     })
     async createCategory(@Req() req: Request, @Body() dataCategory: CreateCategory) {
         const payloadToken = req['user'];
@@ -184,77 +117,70 @@ export class CategoryController {
     @UseGuards(AccessTokenGuard)
     @ApiBearerAuth('JWT-access-token-user')
     @ApiBearerAuth('JWT-access-token-tenant')
-    @ApiOperation({
-        summary: 'Find all categories',
-        description: `
-## Use access token`,
+    @ApiEndpoint({
+        summary: `Find all Categories`,
+        details: `
+## Description
+Return all categories within a domain using an access token.  
+        
+## Requirements
+- **Access Token**: Must provide a valid tenant access token. 
+`,
     })
-    @ApiCreatedResponse({
-        description: 'Get all categories successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after get all categories successfully',
-                        value: {
-                            statusCode: 200,
-                            timestamp: '2024-05-13T15:23:40.909Z',
-                            path: '/api/ecommerce/category/find/all',
-                            message: null,
-                            error: null,
-                            data: {
-                                categories: [
-                                    {
-                                        id: '58e6613d-41b0-4f31-93cf-91a211b12c9c',
-                                        name: 'Kem chong nang',
-                                        description: 'Kem chong nang gi do',
-                                        createdAt: {
-                                            low: 1893381955,
-                                            high: 399,
-                                            unsigned: false,
-                                        },
-                                        domain: '30shine.com',
-                                        totalProducts: 2,
-                                    },
-                                    {
-                                        id: 'a09716f7-7b6e-4d29-a26f-ed3f321df4c9',
-                                        name: 'Sách vở',
-                                        description: 'Sách vở học tâp',
-                                        createdAt: {
-                                            low: 1921856393,
-                                            high: 399,
-                                            unsigned: false,
-                                        },
-                                        domain: '30shine.com',
-                                        totalProducts: 0,
-                                    },
-                                ],
-                            },
-                        },
+    @ApiResponseExample(
+        'read',
+        'find all categories',
+        {
+            categories: [
+                {
+                    id: '58e6613d-41b0-4f31-93cf-91a211b12c9c',
+                    name: 'Kem chong nang',
+                    description: 'Kem chong nang gi do',
+                    createdAt: {
+                        low: 1893381955,
+                        high: 399,
+                        unsigned: false,
                     },
+                    domain: '30shine.com',
+                    totalProducts: 2,
                 },
-            },
-        },
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    token_not_verified: {
-                        summary: 'Token not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-02T11:30:43.976Z',
-                            path: '/api/ecommerce/category/find/all',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
-                        },
+                {
+                    id: 'a09716f7-7b6e-4d29-a26f-ed3f321df4c9',
+                    name: 'Sách vở',
+                    description: 'Sách vở học tâp',
+                    createdAt: {
+                        low: 1921856393,
+                        high: 399,
+                        unsigned: false,
                     },
+                    domain: '30shine.com',
+                    totalProducts: 0,
                 },
-            },
+            ],
         },
+        '/api/ecommerce/category/find/all',
+    )
+    @ApiErrorResponses('/api/ecommerce/category/find/all', '/api/ecommerce/category/find/all', {
+        unauthorized: [
+            {
+                key: 'token_not_verified',
+                summary: 'Token not verified',
+                detail: 'Unauthorized',
+                error: null,
+            },
+            {
+                key: 'token_not_found',
+                summary: 'Token not found',
+                detail: 'Access Token not found',
+                error: 'Unauthorized',
+            },
+            {
+                key: 'unauthorized_role',
+                summary: 'Role not verified',
+                detail: 'Unauthorized Role',
+                error: 'Unauthorized',
+            },
+        ],
     })
     async findAllCategory(@Req() req: Request) {
         const payloadToken = req['user'];
@@ -275,100 +201,77 @@ export class CategoryController {
     @UseGuards(AccessTokenGuard)
     @ApiBearerAuth('JWT-access-token-user')
     @ApiBearerAuth('JWT-access-token-tenant')
-    @ApiOperation({
-        summary: 'Find one category',
-        description: `
-## Use access token
-## Use id to path`,
+    @ApiEndpoint({
+        summary: `Find one category by ID`,
+        details: `
+## Description
+Find a category within a domain using an access token.
+## Requirements
+- **Access Token**: Must provide a valid tenant access token.
+`,
     })
-    @ApiParam({
-        name: 'id',
-        description: 'ID of category in DB',
-        example: '58e6613d-41b0-4f31-93cf-91a211b12c9c',
-        required: true,
-    })
-    @ApiCreatedResponse({
-        description: 'Get one category successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after get one category successfully',
-                        value: {
-                            statusCode: 200,
-                            timestamp: '2024-05-13T15:16:49.927Z',
-                            path: '/api/ecommerce/category/find/58e6613d-41b0-4f31-93cf-91a211b12c9c',
-                            message: null,
-                            error: null,
-                            data: {
-                                id: '58e6613d-41b0-4f31-93cf-91a211b12c9c',
-                                name: 'Kem chong nang',
-                                description: 'Kem chong nang gi do',
-                                createdAt: {
-                                    low: 1893381955,
-                                    high: 399,
-                                    unsigned: false,
-                                },
-                                domain: '30shine.com',
-                                totalProducts: 2,
-                            },
-                        },
-                    },
-                },
-            },
+    @ApiQueryExamples([
+        {
+            name: 'id',
+            description: 'ID of category in DB',
+            example: '58e6613d-41b0-4f31-93cf-91a211b12c9c',
+            required: true,
         },
-    })
-    @ApiBadRequestResponse({
-        description: 'Validation failed',
-        content: {
-            'application/json': {
-                examples: {
-                    all_field_missing: {
-                        summary: 'Response if all field missing and not valid with request',
-                        value: {
-                            statusCode: 400,
-                            timestamp: '2024-05-13T08:45:19.575Z',
-                            path: '/api/ecommerce/category/find/:id',
-                            message: 'id must be a UUID',
-                            error: 'Bad Request',
-                            data: null,
-                        },
-                    },
-                },
+    ])
+    @ApiResponseExample(
+        'read',
+        'find a category by Id',
+        {
+            id: '58e6613d-41b0-4f31-93cf-91a211b12c9c',
+            name: 'Kem chong nang',
+            description: 'Kem chong nang gi do',
+            createdAt: {
+                low: 1893381955,
+                high: 399,
+                unsigned: false,
             },
+            domain: '30shine.com',
+            totalProducts: 2,
         },
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    token_not_verified: {
-                        summary: 'Token not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T17:42:40.039Z',
-                            path: '/api/ecommerce/category/find/93f55388-cd92-4f76-8ece-60fcf16f6806',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
-                        },
-                    },
-                    category_not_found: {
-                        summary: 'Category not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-02T11:43:05.882Z',
-                            path: '/api/ecommerce/category/find/93f55388-cd92-4f76-8ece-60fcf16f680',
-                            message: 'Category not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                },
+        '/api/ecommerce/category/find/58e6613d-41b0-4f31-93cf-91a211b12c9c',
+    )
+    @ApiErrorResponses(
+        '/api/ecommerce/category/find/:id',
+        '/api/ecommerce/category/find/3bb423de-2b81-4526-a1d3-9c3ca84633df',
+        {
+            badRequest: {
+                summary: 'Validation Error',
+                detail: 'id must be a UUID',
             },
+
+            unauthorized: [
+                {
+                    key: 'token_not_verified',
+                    summary: 'Token not verified',
+                    detail: 'Unauthorized',
+                    error: null,
+                },
+                {
+                    key: 'token_not_found',
+                    summary: 'Token not found',
+                    detail: 'Access Token not found',
+                    error: 'Unauthorized',
+                },
+                {
+                    key: 'unauthorized_role',
+                    summary: 'Role not verified',
+                    detail: 'Unauthorized Role',
+                    error: 'Unauthorized',
+                },
+                {
+                    key: 'category_not_found',
+                    summary: 'Category not found',
+                    detail: 'Category not found',
+                    error: 'Unauthorized',
+                },
+            ],
         },
-    })
+    )
     async findOneCategory(@Req() req: Request, @Param() data: FindOneCategory) {
         console.log(data);
         const payloadToken = req['user'];
@@ -390,86 +293,62 @@ export class CategoryController {
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.TENANT)
     @ApiBearerAuth('JWT-access-token-tenant')
-    @ApiOperation({
-        summary: 'Update one category',
-        description: `
-## Use access token
-## Must be TENANT`,
+    @ApiEndpoint({
+        summary: `Update a category`,
+        details: `
+## Description
+Update a category within a domain using an access token. This operation is restricted to tenant accounts only.
+        
+## Requirements
+- **Access Token**: Must provide a valid tenant access token.
+- **Permissions**: Requires tenant-level permissions.
+`,
     })
-    @ApiCreatedResponse({
-        description: 'Update one category successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after update category successfully',
-                        value: {
-                            statusCode: 201,
-                            timestamp: '2024-05-02T17:39:47.880Z',
-                            path: '/api/ecommerce/category/update',
-                            message: null,
-                            error: null,
-                            data: {
-                                id: '93f55388-cd92-4f76-8ece-60fcf16f6806',
-                                name: 'SKinCare Khang oi',
-                            },
-                        },
-                    },
-                },
-            },
-        },
+    @ApiBodyExample(UpdateCategory, {
+        id: '93f55388-cd92-4f76-8ece-60fcf16f6806',
+        name: 'SKinCare Khang oi',
+        description: 'Khang oi sorry nhe hoi lau',
     })
-    @ApiBadRequestResponse({
-        description: 'Validation failed',
-        content: {
-            'application/json': {
-                examples: {
-                    all_field_missing: {
-                        summary: 'Response if all field missing and not valid with request',
-                        value: {
-                            statusCode: 400,
-                            timestamp: '2024-05-13T08:06:36.620Z',
-                            path: '/api/ecommerce/category/update',
-                            message:
-                                'id should not be empty, id must be a UUID, name should not be empty, description should not be empty',
-                            error: 'Bad Request',
-                            data: null,
-                        },
-                    },
-                },
-            },
+    @ApiResponseExample(
+        'update',
+        'update Category',
+        {
+            id: '93f55388-cd92-4f76-8ece-60fcf16f6806',
+            name: 'SKinCare Khang oi',
         },
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    token_not_verified: {
-                        summary: 'Token not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T17:42:40.039Z',
-                            path: '/api/ecommerce/category/update',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
-                        },
-                    },
-                    category_not_found: {
-                        summary: 'Category not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-02T11:43:05.882Z',
-                            path: '/api/ecommerce/category/update',
-                            message: 'Category not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                },
-            },
+        '/api/ecommerce/category/update',
+    )
+    @ApiErrorResponses('/api/ecommerce/category/update', '/api/ecommerce/category/update', {
+        badRequest: {
+            summary: 'Validation Error',
+            detail: 'id should not be empty, id must be a UUID, name should not be empty, description should not be empty',
         },
+        unauthorized: [
+            {
+                key: 'token_not_verified',
+                summary: 'Token not verified',
+                detail: 'Unauthorized',
+                error: null,
+            },
+            {
+                key: 'token_not_found',
+                summary: 'Token not found',
+                detail: 'Access Token not found',
+                error: 'Unauthorized',
+            },
+            {
+                key: 'unauthorized_role',
+                summary: 'Role not verified',
+                detail: 'Unauthorized Role',
+                error: 'Unauthorized',
+            },
+            {
+                key: 'category_not_found',
+                summary: 'Category not found',
+                detail: 'Category not found',
+                error: 'Unauthorized',
+            },
+        ],
     })
     async updateCategory(@Req() req: Request, @Body() updateCategory: UpdateCategory) {
         const payloadToken = req['user'];
@@ -491,113 +370,70 @@ export class CategoryController {
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.TENANT)
     @ApiBearerAuth('JWT-access-token-tenant')
-    @ApiOperation({
-        summary: 'Delete one category',
-        description: `
-## Use access token
-## Must be TENANT`,
+    @ApiEndpoint({
+        summary: `Delete one category by ID`,
+        details: `
+## Description
+Delete a category within a domain using an access token. This operation is restricted to tenant accounts only.
+        
+## Requirements
+- **Access Token**: Must provide a valid tenant access token.
+- **Permissions**: Requires tenant-level and user-level permissions.
+`,
     })
-    @ApiParam({
-        name: 'id',
-        description: 'ID of category in DB',
-        example: '93f55388-cd92-4f76-8ece-60fcf16f6806',
-        required: true,
-    })
-    @ApiCreatedResponse({
-        description: 'Delete one category successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after delete category successfully',
-                        value: {
-                            statusCode: 200,
-                            timestamp: '2024-05-02T17:44:14.267Z',
-                            path: '/api/ecommerce/category/delete/93f55388-cd92-4f76-8ece-60fcf16f6806',
-                            message: null,
-                            error: null,
-                            data: {
-                                result: 'success',
-                            },
-                        },
-                    },
-                },
-            },
+    @ApiQueryExamples([
+        {
+            name: 'id',
+            description: 'ID of the category',
+            example: 'eefdb88b-de10-4d14-b1a9-b762ffb0982a',
+            required: true,
         },
-    })
-    @ApiBadRequestResponse({
-        description: 'Validation failed',
-        content: {
-            'application/json': {
-                examples: {
-                    all_field_missing: {
-                        summary: 'Response if all field missing and not valid with request',
-                        value: {
-                            statusCode: 400,
-                            timestamp: '2024-05-13T08:48:59.955Z',
-                            path: '/api/ecommerce/category/delete/:id',
-                            message: 'id must be a UUID',
-                            error: 'Bad Request',
-                            data: null,
-                        },
-                    },
-                },
-            },
+    ])
+    @ApiResponseExample(
+        'delete',
+        'delete a category by Id',
+        {
+            result: 'success',
         },
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    token_not_verified: {
-                        summary: 'Token not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T17:42:40.039Z',
-                            path: '/api/ecommerce/category/delete/93f55388-cd92-4f76-8ece-60fcf16f6806',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
-                        },
-                    },
-                    token_not_found: {
-                        summary: 'Token not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-02T10:55:28.511Z',
-                            path: '/api/ecommerce/category/delete/93f55388-cd92-4f76-8ece-60fcf16f6806',
-                            message: 'Access Token not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                    unauthorized_role: {
-                        summary: 'Role not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T12:31:30.700Z',
-                            path: '/api/ecommerce/category/delete/93f55388-cd92-4f76-8ece-60fcf16f6806',
-                            message: 'Unauthorized Role',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                    category_not_found: {
-                        summary: 'Category not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-02T11:43:05.882Z',
-                            path: '/api/ecommerce/category/delete/93f55388-cd92-4f76-8ece-60fcf16f6806',
-                            message: 'Category not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                },
+        '/api/ecommerce/category/delete/93f55388-cd92-4f76-8ece-60fcf16f6806',
+    )
+    @ApiErrorResponses(
+        '/api/ecommerce/category/delete/:id',
+        '/api/ecommerce/category/delete/93f55388-cd92-4f76-8ece-60fcf16f6806',
+        {
+            badRequest: {
+                summary: 'Validation Error',
+                detail: 'id must be a UUID',
             },
+
+            unauthorized: [
+                {
+                    key: 'token_not_verified',
+                    summary: 'Token not verified',
+                    detail: 'Unauthorized',
+                    error: null,
+                },
+                {
+                    key: 'token_not_found',
+                    summary: 'Token not found',
+                    detail: 'Access Token not found',
+                    error: 'Unauthorized',
+                },
+                {
+                    key: 'unauthorized_role',
+                    summary: 'Role not verified',
+                    detail: 'Unauthorized Role',
+                    error: 'Unauthorized',
+                },
+                {
+                    key: 'category_not_found',
+                    summary: 'Category not found',
+                    detail: 'Category not found',
+                    error: 'Unauthorized',
+                },
+            ],
         },
-    })
+    )
     async deleteCategory(@Req() req: Request, @Param() data: RemoveCategory) {
         const payloadToken = req['user'];
         // const header = req.headers;
