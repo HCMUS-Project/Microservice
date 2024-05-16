@@ -122,7 +122,7 @@ export class UpdateVoucher implements UpdateVoucherRequest {
     discountPercent: number;
 
     @IsDateString()
-    @IsNotEmpty() 
+    @IsNotEmpty()
     @ApiProperty()
     expireAt: string;
 }

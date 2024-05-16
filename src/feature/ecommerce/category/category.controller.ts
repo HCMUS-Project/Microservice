@@ -1,8 +1,5 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post, Req, UseGuards } from '@nestjs/common';
-import {
-    ApiBearerAuth,
-    ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { EcommerceCategoryService } from './category.service';
 import { AccessTokenGuard } from 'src/common/guards/token/accessToken.guard';
 import { RolesGuard } from 'src/common/guards/role/role.guard';
@@ -24,6 +21,7 @@ import {
     ApiBodyExample,
     ApiEndpoint,
     ApiErrorResponses,
+    ApiParamExamples,
     ApiQueryExamples,
     ApiResponseExample,
 } from 'src/common/decorator/swagger.decorator';
@@ -124,7 +122,7 @@ Create a category within a domain using an access token. This operation is restr
 Return all categories within a domain using an access token.  
         
 ## Requirements
-- **Access Token**: Must provide a valid tenant access token. 
+- **Access Token**: Must provide a valid access token. 
 `,
     })
     @ApiResponseExample(
@@ -207,10 +205,10 @@ Return all categories within a domain using an access token.
 ## Description
 Find a category within a domain using an access token.
 ## Requirements
-- **Access Token**: Must provide a valid tenant access token.
+- **Access Token**: Must provide a valid access token.
 `,
     })
-    @ApiQueryExamples([
+    @ApiParamExamples([
         {
             name: 'id',
             description: 'ID of category in DB',
@@ -381,7 +379,7 @@ Delete a category within a domain using an access token. This operation is restr
 - **Permissions**: Requires tenant-level and user-level permissions.
 `,
     })
-    @ApiQueryExamples([
+    @ApiParamExamples([
         {
             name: 'id',
             description: 'ID of the category',

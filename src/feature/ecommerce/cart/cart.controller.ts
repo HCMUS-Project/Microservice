@@ -28,14 +28,23 @@ import { AccessTokenGuard } from 'src/common/guards/token/accessToken.guard';
 import { RolesGuard } from 'src/common/guards/role/role.guard';
 import { Role } from 'src/proto_build/auth/userToken/Role';
 import {
-    CreateCart,
-    CreateCartRequestDTO,
+    AddItemsToCart,
+    AddItemsToCartRequestDTO,
+    DeleteCart,
     DeleteCartRequestDTO,
     FindAllCartsByUserIdRequestDTO,
     UpdateCart,
     UpdateCartRequestDTO,
 } from './cart.dto';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
+import {
+    ApiBodyExample,
+    ApiEndpoint,
+    ApiErrorResponses,
+    ApiParamExamples,
+    ApiResponseExample,
+} from 'src/common/decorator/swagger.decorator';
+import { DeleteCartRequest } from 'src/proto_build/e_commerce/cart/DeleteCartRequest';
 
 @Controller('/ecommerce/cart')
 @ApiTags('ecommerce/cart')
@@ -45,118 +54,80 @@ export class CartController {
         private readonly ecommerceCartService: EcommerceCartService,
     ) {}
 
-    @Post('create')
+    @Post('item/add')
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.USER)
     @ApiBearerAuth('JWT-access-token-user')
-    @ApiOperation({
-        summary: 'Create cart of user in domain',
-        description: `
-## Use access token
-## For user account
-## Parse email to user_id `,
+    @ApiEndpoint({
+        summary: `Add an Item to Cart`,
+        details: `
+## Description
+Add an Item to Cart within a domain using an access token. If Cart isnt exists, new Cart will be created; otherwise, add it to existed Cart. This operation is restricted to user accounts only.
+        
+## Requirements
+- **Access Token**: Must provide a valid user access token.
+- **Permissions**: Requires user-level permissions.
+`,
     })
-    @ApiBearerAuth('JWT-access-token-user')
-    @ApiBody({
-        type: CreateCart,
-        examples: {
-            category_1: {
-                value: {
-                    userId: 'khoi dep trai qua',
-                    cartItems: [
-                        {
-                            quantity: 1,
-                            productId: 'a83854d9-b3db-49b8-b5bc-5fac19042b91',
-                        },
-                        {
-                            quantity: 5,
-                            productId: 'ebe267f1-2f6c-416b-ac24-d713838ea92f',
-                        },
-                    ],
-                } as CreateCart,
-            },
+    @ApiBodyExample(AddItemsToCart, {
+        userId: 'some userId',
+        cartItem: {
+            productId: 'c886a59c-7293-4239-8052-eb611b68e890',
+            quantity: 2,
         },
     })
-    @ApiCreatedResponse({
-        description: 'Create cart successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after Create voucher successfully',
-                        value: {
-                            statusCode: 201,
-                            timestamp: '2024-05-06T08:50:30.349Z',
-                            path: '/api/ecommerce/cart/create',
-                            message: null,
-                            error: null,
-                            data: {
-                                cart: {
-                                    cartItems: [
-                                        {
-                                            productId: 'ebe267f1-2f6c-416b-ac24-d713838ea92f',
-                                            quantity: 5,
-                                        },
-                                        {
-                                            productId: 'a83854d9-b3db-49b8-b5bc-5fac19042b91',
-                                            quantity: 1,
-                                        },
-                                    ],
-                                    id: '072360d7-0504-42da-bcfa-666282d5ad76',
-                                    totalPrice: 250,
-                                    createdAt: '2024-05-06T08:50:30.336Z',
-                                    updatedAt: '2024-05-06T08:50:30.336Z',
-                                },
-                            },
-                        },
+    @ApiResponseExample(
+        'create',
+        'add an Item to Cart',
+        {
+            cart: {
+                cartItems: [
+                    {
+                        productId: 'c886a59c-7293-4239-8052-eb611b68e890',
+                        quantity: 2,
                     },
-                },
+                ],
+                id: '7795a3bc-6468-4b77-9908-3fb766f74c08',
+                createdAt: '2024-05-16T05:30:48.227Z',
+                updatedAt: '2024-05-16T05:30:48.227Z',
             },
         },
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    token_not_verified: {
-                        summary: 'Token not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T12:31:30.700Z',
-                            path: '/api/ecommerce/cart/create',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
-                        },
-                    },
-                    unauthorized_role: {
-                        summary: 'Role not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T12:31:30.700Z',
-                            path: '/api/ecommerce/cart/create',
-                            message: 'Unauthorized Role',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                    token_not_found: {
-                        summary: 'Token not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-02T10:55:28.511Z',
-                            path: '/api/ecommerce/cart/create',
-                            message: 'Access Token not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                },
-            },
+        '/api/ecommerce/cart/item/add',
+    )
+    @ApiErrorResponses('/api/ecommerce/cart/item/add', '/api/ecommerce/cart/item/add', {
+        badRequest: {
+            summary: 'Validation Error',
+            detail: 'userId should not be empty, cartItem.productId should not be empty, cartItem.productId must be a UUID, cartItem.quantity must not be less than 1, cartItem.quantity must be an integer number',
         },
+        unauthorized: [
+            {
+                key: 'token_not_verified',
+                summary: 'Token not verified',
+                detail: 'Unauthorized',
+                error: null,
+            },
+            {
+                key: 'token_not_found',
+                summary: 'Token not found',
+                detail: 'Access Token not found',
+                error: 'Unauthorized',
+            },
+            {
+                key: 'unauthorized_role',
+                summary: 'Role not verified',
+                detail: 'Unauthorized Role',
+                error: 'Unauthorized',
+            },
+        ],
+        forbidden: [
+            {
+                key: 'product_not_enough',
+                summary: 'Product not enough',
+                detail: 'Product not enough',
+            },
+        ],
     })
-    async createCart(@Req() req: Request, @Body() data: CreateCart) {
+    async addItemToCart(@Req() req: Request, @Body() data: AddItemsToCart) {
         const payloadToken = req['user'];
         // const header = req.headers;
         const userData = {
@@ -166,95 +137,79 @@ export class CartController {
             accessToken: payloadToken.accessToken,
         } as UserDto;
         // console.log(userData, dataCategory)
-        return await this.ecommerceCartService.createCart({
+        return await this.ecommerceCartService.addItemsToCart({
             user: userData,
             ...data,
-        } as CreateCartRequestDTO);
+        } as AddItemsToCartRequestDTO);
     }
 
-    @Get('search')
-    @ApiQuery({
-        name: 'userId',
-        description: 'Search by User Id',
-        required: true,
-        example: 'khoi dep trai qua',
-    })
+    @Get('find/all')
     @UseGuards(AccessTokenGuard)
     @ApiBearerAuth('JWT-access-token-user')
     @ApiBearerAuth('JWT-access-token-tenant')
-    @ApiOperation({
-        summary: 'Find all carts by User Id',
-        description: `
-## Use access token
-## User user_id to search
-## Can search by token of user and tenant`,
+    @ApiEndpoint({
+        summary: `Find all Carts by token`,
+        details: `
+## Description
+Return all Carts within a domain using an access token.  
+        
+## Requirements
+- **Access Token**: Must provide a valid access token. 
+`,
     })
-    @ApiCreatedResponse({
-        description: 'Get all carts successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after get all vouchers successfully',
-                        value: {
-                            statusCode: 200,
-                            timestamp: '2024-05-06T09:03:46.888Z',
-                            path: '/api/ecommerce/cart/search/?userId=khoi%20dep%20trai%20qua',
-                            message: null,
-                            error: null,
-                            data: {
-                                carts: [
-                                    {
-                                        cartItems: [
-                                            {
-                                                productId: 'ebe267f1-2f6c-416b-ac24-d713838ea92f',
-                                                quantity: 5,
-                                            },
-                                            {
-                                                productId: 'a83854d9-b3db-49b8-b5bc-5fac19042b91',
-                                                quantity: 1,
-                                            },
-                                        ],
-                                        id: '072360d7-0504-42da-bcfa-666282d5ad76',
-                                        totalPrice: 250,
-                                        createdAt: '2024-05-06T08:50:30.336Z',
-                                        updatedAt: '2024-05-06T08:50:30.336Z',
-                                    },
-                                ],
-                            },
+    @ApiResponseExample(
+        'read',
+        'find all Carts by UserId',
+        {
+            carts: [
+                {
+                    cartItems: [
+                        {
+                            productId: 'c886a59c-7293-4239-8052-eb611b68e890',
+                            quantity: 2,
                         },
-                    },
-                },
-            },
-        },
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    token_not_verified: {
-                        summary: 'Token not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-02T11:30:43.976Z',
-                            path: '/api/ecommerce/cart/search/?userId=khoi%20dep%20trai%20qua',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
+                        {
+                            productId: 'f9e75324-a8f4-4cbd-af6d-0210c5e9a5d9',
+                            quantity: 2,
                         },
-                    },
+                    ],
+                    id: '7795a3bc-6468-4b77-9908-3fb766f74c08',
+                    createdAt: '2024-05-16T05:30:48.227Z',
+                    updatedAt: '2024-05-16T05:30:48.227Z',
                 },
+            ],
+        },
+        '/api/ecommerce/category/find/all',
+    )
+    @ApiErrorResponses('/api/ecommerce/category/find/all', '/api/ecommerce/category/find/all', {
+        unauthorized: [
+            {
+                key: 'token_not_verified',
+                summary: 'Token not verified',
+                detail: 'Unauthorized',
+                error: null,
             },
-        },
+            {
+                key: 'token_not_found',
+                summary: 'Token not found',
+                detail: 'Access Token not found',
+                error: 'Unauthorized',
+            },
+            {
+                key: 'unauthorized_role',
+                summary: 'Role not verified',
+                detail: 'Unauthorized Role',
+                error: 'Unauthorized',
+            },
+            {
+                key: 'cart_not_found',
+                summary: 'Cart not found',
+                detail: 'Cart not found',
+                error: 'Unauthorized',
+            },
+        ],
     })
-    async findAllCartsByUserId(
-        @Req() req: Request,
-        @Query()
-        query: {
-            userId?: string;
-        },
-    ) {
+    async findAllCartsByUserId(@Req() req: Request) {
         const payloadToken = req['user'];
         // const header = req.headers;
         const userData = {
@@ -263,10 +218,9 @@ export class CartController {
             role: payloadToken.role,
             accessToken: payloadToken.accessToken,
         } as UserDto;
-        // console.log(userData, dataCategory)
+        // console.log(param)
         return await this.ecommerceCartService.findAllCartsByUserId({
             user: userData,
-            ...query,
         } as FindAllCartsByUserIdRequestDTO);
     }
 
@@ -274,92 +228,84 @@ export class CartController {
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.USER)
     @ApiBearerAuth('JWT-access-token-user')
-    @ApiOperation({
-        summary: 'Update one cart',
-        description: `
-## Use access token
-## Must be USER`,
+    @ApiEndpoint({
+        summary: `Update a Cart by Id of CartItem`,
+        details: `
+## Description
+Update a Cart by Id of CartItem within a domain using an access token. This operation is restricted to user accounts only.
+        
+## Requirements
+- **Access Token**: Must provide a valid user access token.
+- **Permissions**: Requires user-level permissions.
+`,
     })
-    @ApiBody({
-        type: UpdateCart,
-        examples: {
-            category_1: {
-                value: {
-                    userId: 'khoi dep trai qua',
-                    id: '072360d7-0504-42da-bcfa-666282d5ad76',
-                    cartItems: [
-                        {
-                            quantity: 5,
-                            productId: 'ebe267f1-2f6c-416b-ac24-d713838ea92f',
-                        },
-                    ],
-                } as UpdateCart,
-            },
+    @ApiBodyExample(UpdateCart, {
+        id: '7795a3bc-6468-4b77-9908-3fb766f74c08',
+        cartItems: {
+            quantity: 5,
+            productId: 'c886a59c-7293-4239-8052-eb611b68e890',
         },
     })
-    @ApiCreatedResponse({
-        description: 'Update one voucher successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after update voucher successfully',
-                        value: {
-                            statusCode: 201,
-                            timestamp: '2024-05-06T09:23:22.720Z',
-                            path: '/api/ecommerce/cart/update',
-                            message: null,
-                            error: null,
-                            data: {
-                                cart: {
-                                    cartItems: [
-                                        {
-                                            productId: 'ebe267f1-2f6c-416b-ac24-d713838ea92f',
-                                            quantity: 5,
-                                        },
-                                    ],
-                                    id: '072360d7-0504-42da-bcfa-666282d5ad76',
-                                    totalPrice: 250,
-                                    createdAt: '2024-05-06T08:50:30.336Z',
-                                    updatedAt: '2024-05-06T09:23:22.696Z',
-                                },
-                            },
-                        },
+    @ApiResponseExample(
+        'update',
+        'update an Item in Cart',
+        {
+            cart: {
+                cartItems: [
+                    {
+                        productId: 'c886a59c-7293-4239-8052-eb611b68e890',
+                        quantity: 5,
                     },
-                },
+                    {
+                        productId: 'f9e75324-a8f4-4cbd-af6d-0210c5e9a5d9',
+                        quantity: 2,
+                    },
+                ],
+                id: '7795a3bc-6468-4b77-9908-3fb766f74c08',
+                createdAt: '2024-05-16T05:30:48.227Z',
+                updatedAt: '2024-05-16T05:30:48.227Z',
             },
         },
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    token_not_verified: {
-                        summary: 'Token not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T17:42:40.039Z',
-                            path: '/api/ecommerce/category/update',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
-                        },
-                    },
-                    category_not_found: {
-                        summary: 'Category not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-02T11:43:05.882Z',
-                            path: '/api/ecommerce/category/update',
-                            message: 'Category not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                },
-            },
+        '/api/ecommerce/cart/update',
+    )
+    @ApiErrorResponses('/api/ecommerce/cart/update', '/api/ecommerce/cart/update', {
+        badRequest: {
+            summary: 'Validation Error',
+            detail: 'id should not be empty, id must be a UUID, cartItems.productId should not be empty, cartItems.productId must be a UUID, cartItems.quantity must not be less than 1, cartItems.quantity must be an integer number',
         },
+        unauthorized: [
+            {
+                key: 'token_not_verified',
+                summary: 'Token not verified',
+                detail: 'Unauthorized',
+                error: null,
+            },
+            {
+                key: 'token_not_found',
+                summary: 'Token not found',
+                detail: 'Access Token not found',
+                error: 'Unauthorized',
+            },
+            {
+                key: 'unauthorized_role',
+                summary: 'Role not verified',
+                detail: 'Unauthorized Role',
+                error: 'Unauthorized',
+            },
+            {
+                key: 'cart_item_not_found',
+                summary: 'Cart item not found',
+                detail: 'Cart item not found',
+                error: 'Unauthorized',
+            },
+        ],
+        forbidden: [
+            {
+                key: 'product_not_enough',
+                summary: 'Product not enough',
+                detail: 'Product Sách dạy làm giàu not enough',
+            },
+        ],
     })
     async updateCart(@Req() req: Request, @Body() updateCart: UpdateCart) {
         const payloadToken = req['user'];
@@ -381,83 +327,84 @@ export class CartController {
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.USER)
     @ApiBearerAuth('JWT-access-token-user')
-    @ApiOperation({
-        summary: 'Delete one cart',
-        description: `
-## Use access token
-## Must be USER`,
+    @ApiEndpoint({
+        summary: `Delete a Cart by Id`,
+        details: `
+## Description
+Update a Cart by Id of CartItem within a domain using an access token. This operation is restricted to user accounts only.
+        
+## Requirements
+- **Access Token**: Must provide a valid user access token.
+- **Permissions**: Requires user-level permissions.
+`,
     })
-    @ApiParam({
-        name: 'id',
-        description: 'ID of cart in DB',
-        example: '072360d7-0504-42da-bcfa-666282d5ad76',
-        required: true,
-    })
-    @ApiCreatedResponse({
-        description: 'Delete one cart successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after delete cart successfully',
-                        value: {
-                            statusCode: 200,
-                            timestamp: '2024-05-06T09:34:46.756Z',
-                            path: '/api/ecommerce/cart/delete/072360d7-0504-42da-bcfa-666282d5ad76',
-                            message: null,
-                            error: null,
-                            data: {
-                                cart: {
-                                    cartItems: [
-                                        {
-                                            productId: 'ebe267f1-2f6c-416b-ac24-d713838ea92f',
-                                            quantity: 5,
-                                        },
-                                    ],
-                                    id: '072360d7-0504-42da-bcfa-666282d5ad76',
-                                    totalPrice: 250,
-                                    createdAt: '2024-05-06T08:50:30.336Z',
-                                    updatedAt: '2024-05-06T09:23:22.696Z',
-                                },
-                            },
-                        },
+    @ApiParamExamples([
+        {
+            name: 'id',
+            description: 'id of Cart',
+            example: '7795a3bc-6468-4b77-9908-3fb766f74c08',
+            required: true,
+        },
+    ])
+    @ApiResponseExample(
+        'delete',
+        'delete a Cart by Id',
+        {
+            cart: {
+                cartItems: [
+                    {
+                        productId: 'c886a59c-7293-4239-8052-eb611b68e890',
+                        quantity: 5,
                     },
-                },
+                    {
+                        productId: 'f9e75324-a8f4-4cbd-af6d-0210c5e9a5d9',
+                        quantity: 2,
+                    },
+                ],
+                id: '7795a3bc-6468-4b77-9908-3fb766f74c08',
+                createdAt: '2024-05-16T05:30:48.227Z',
+                updatedAt: '2024-05-16T05:30:48.227Z',
             },
         },
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    token_not_verified: {
-                        summary: 'Token not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T17:42:40.039Z',
-                            path: '/api/ecommerce/category/update',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
-                        },
-                    },
-                    category_not_found: {
-                        summary: 'Category not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-02T11:43:05.882Z',
-                            path: '/api/ecommerce/category/update',
-                            message: 'Category not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                },
+        '/api/ecommerce/cart/delete/7795a3bc-6468-4b77-9908-3fb766f74c08',
+    )
+    @ApiErrorResponses(
+        '/api/ecommerce/cart/delete/:id',
+        '/api/ecommerce/cart/delete/7795a3bc-6468-4b77-9908-3fb766f74c09',
+        {
+            badRequest: {
+                summary: 'Validation Error',
+                detail: 'id must be a UUID',
             },
+            unauthorized: [
+                {
+                    key: 'token_not_verified',
+                    summary: 'Token not verified',
+                    detail: 'Unauthorized',
+                    error: null,
+                },
+                {
+                    key: 'token_not_found',
+                    summary: 'Token not found',
+                    detail: 'Access Token not found',
+                    error: 'Unauthorized',
+                },
+                {
+                    key: 'unauthorized_role',
+                    summary: 'Role not verified',
+                    detail: 'Unauthorized Role',
+                    error: 'Unauthorized',
+                },
+                {
+                    key: 'cart_not_found',
+                    summary: 'Cart not found',
+                    detail: 'Cart not found',
+                    error: 'Unauthorized',
+                },
+            ],
         },
-    })
-    async deleteVoucher(@Req() req: Request, @Param('id') id: string) {
+    )
+    async deleteCart(@Req() req: Request, @Param() data: DeleteCart) {
         const payloadToken = req['user'];
         // const header = req.headers;
         const userData = {
@@ -469,7 +416,7 @@ export class CartController {
         // console.log(userData, dataCategory)
         return await this.ecommerceCartService.deleteCart({
             user: userData,
-            id,
+            ...data,
         } as DeleteCartRequestDTO);
     }
 }

@@ -6,7 +6,7 @@ import {
     OnModuleInit,
 } from '@nestjs/common';
 import {
-    CreateCartRequestDTO,
+    AddItemsToCartRequestDTO,
     DeleteCartRequestDTO,
     FindAllCartsByUserIdRequestDTO,
     FindCartByIdRequestDTO,
@@ -19,7 +19,7 @@ import { ClientGrpc } from '@nestjs/microservices';
 import { UserNotFoundException } from 'src/common/exceptions/exceptions';
 
 interface CartService {
-    createCart(data: CreateCartRequestDTO): Observable<CartResponse>;
+    addItemsToCart(data: AddItemsToCartRequestDTO): Observable<CartResponse>;
     findAllCartsByUserId(data: FindAllCartsByUserIdRequestDTO): Observable<FindAllCartsResponse>;
     findCartById(data: FindCartByIdRequestDTO): Observable<CartResponse>;
     updateCart(data: UpdateCartRequestDTO): Observable<CartResponse>;
@@ -37,21 +37,21 @@ export class EcommerceCartService implements OnModuleInit {
         // console.log(this.iProductService)
     }
 
-    async createCart(data: CreateCartRequestDTO): Promise<CartResponse> {
+    async addItemsToCart(data: AddItemsToCartRequestDTO): Promise<CartResponse> {
         try {
             // console.log(this.iProductService.createProduct(data));
-            const createCartResponse: CartResponse = await firstValueFrom(
-                this.iCartService.createCart(data),
+            const addItemsToCartResponse: CartResponse = await firstValueFrom(
+                this.iCartService.addItemsToCart(data),
             );
-            return createCartResponse;
+            return addItemsToCartResponse;
         } catch (e) {
             // console.log(e)
             const errorDetails = JSON.parse(e.details);
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'PRODUCT_NOT_ENOUGH') {
+                throw new ForbiddenException('Product not enough', 'Forbidden');
             } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }
@@ -73,8 +73,8 @@ export class EcommerceCartService implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'CART_NOT_FOUND') {
+                throw new UserNotFoundException('Cart not found');
             } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }
@@ -94,8 +94,8 @@ export class EcommerceCartService implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'CART_NOT_FOUND') {
+                throw new UserNotFoundException('Cart not found');
             } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }
@@ -105,18 +105,22 @@ export class EcommerceCartService implements OnModuleInit {
     async updateCart(data: UpdateCartRequestDTO): Promise<CartResponse> {
         try {
             // console.log(this.iProductService.createProduct(data));
+            // console.log(data)
             const cartResponse: CartResponse = await firstValueFrom(
                 this.iCartService.updateCart(data),
             );
             return cartResponse;
         } catch (e) {
-            // console.log(e)
+            console.log(e)
             const errorDetails = JSON.parse(e.details);
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error.includes('PRODUCT_NOT_ENOUGH')) {
+                const productName = errorDetails.error.split(': ')[1];
+                throw new ForbiddenException(`Product ${productName} not enough`, 'Forbidden');
+            } else if (errorDetails.error == 'CART_ITEM_NOT_FOUND') {
+                throw new UserNotFoundException(`Cart item not found`);
             } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }
@@ -136,8 +140,8 @@ export class EcommerceCartService implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'CART_NOT_FOUND') {
+                throw new UserNotFoundException('Cart not found');
             } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }

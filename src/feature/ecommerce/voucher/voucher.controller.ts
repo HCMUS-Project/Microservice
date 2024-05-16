@@ -21,6 +21,7 @@ import {
     ApiResponseExample,
     ApiErrorResponses,
     ApiQueryExamples,
+    ApiParamExamples,
 } from 'src/common/decorator/swagger.decorator';
 import {
     CreateVoucher,
@@ -150,7 +151,7 @@ Create a voucher within a domain using an access token. This operation is restri
 Return all vouchers within a domain using an access token.  
         
 ## Requirements
-- **Access Token**: Must provide a valid tenant access token. 
+- **Access Token**: Must provide a valid access token. 
 `,
     })
     @ApiResponseExample(
@@ -235,10 +236,10 @@ Return all vouchers within a domain using an access token.
 ## Description
 Find a voucher within a domain using an access token.
 ## Requirements
-- **Access Token**: Must provide a valid tenant access token.
+- **Access Token**: Must provide a valid access token.
 `,
     })
-    @ApiQueryExamples([
+    @ApiParamExamples([
         {
             name: 'id',
             description: 'ID of the voucher',
@@ -423,10 +424,10 @@ Delete a voucher within a domain using an access token. This operation is restri
         
 ## Requirements
 - **Access Token**: Must provide a valid tenant access token.
-- **Permissions**: Requires tenant-level and user-level permissions.
+- **Permissions**: Requires tenant-level permissions.
 `,
     })
-    @ApiQueryExamples([
+    @ApiParamExamples([
         {
             name: 'id',
             description: 'ID of the voucher',
@@ -518,7 +519,7 @@ Delete a voucher within a domain using an access token. This operation is restri
 Search a voucher within a domain using an access token.
         
 ## Requirements
-- **Access Token**: Must provide a valid tenant access token. 
+- **Access Token**: Must provide a valid access token. 
 `,
     })
     @ApiQueryExamples([

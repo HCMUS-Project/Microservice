@@ -2,53 +2,64 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
     IsArray,
+    IsIn,
+    IsInt,
     IsNotEmpty,
     IsNumber,
     IsObject,
     IsString,
+    IsUUID,
     Min,
     ValidateNested,
 } from 'class-validator';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
+import { AddItemsToCartRequest } from 'src/proto_build/e_commerce/cart/AddItemsToCartRequest';
 import { CartItem } from 'src/proto_build/e_commerce/cart/CartItem';
-import { CreateCartRequest } from 'src/proto_build/e_commerce/cart/CreateCartRequest';
 import { DeleteCartRequest } from 'src/proto_build/e_commerce/cart/DeleteCartRequest';
 import { FindAllCartsByUserIdRequest } from 'src/proto_build/e_commerce/cart/FindAllCartsByUserIdRequest';
 import { FindCartByIdRequest } from 'src/proto_build/e_commerce/cart/FindCartByIdRequest';
 import { UpdateCartRequest } from 'src/proto_build/e_commerce/cart/UpdateCartRequest';
 
 export class CartItemDto {
-    @IsString()
+    @IsUUID('all')
     @IsNotEmpty()
     @ApiProperty()
     productId: string;
 
-    @IsNumber()
+    @IsInt()
     @Min(1)
     @ApiProperty()
     quantity: number;
 }
 
-export class CreateCart implements CreateCartRequest {
+export class AddItemsToCart implements AddItemsToCartRequest {
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
     userId: string;
 
-    @IsArray()
+    @IsObject()
     @IsNotEmpty()
     @ValidateNested({ each: true })
     @Type(() => CartItemDto)
-    @ApiProperty({ type: [CartItemDto] })
-    cartItems: CartItemDto[];
+    @ApiProperty({ type: CartItemDto })
+    cartItem: CartItemDto;
 }
 
-export class CreateCartRequestDTO extends CreateCart {
+export class AddItemsToCartRequestDTO extends AddItemsToCart {
     @IsObject()
     @IsNotEmpty()
     @ApiProperty()
     user: UserDto;
 }
+
+// export class FindAllCartsByUserId implements FindAllCartsByUserIdRequest {
+//     @IsString()
+//     @IsNotEmpty()
+//     @Type(() => String)
+//     @ApiProperty()
+//     userId: string;
+// }
 
 export class FindAllCartsByUserIdRequestDTO implements FindAllCartsByUserIdRequest {
     @IsObject()
@@ -58,6 +69,7 @@ export class FindAllCartsByUserIdRequestDTO implements FindAllCartsByUserIdReque
 
     @IsString()
     @IsNotEmpty()
+    @Type(() => String)
     @ApiProperty()
     userId: string;
 }
@@ -75,39 +87,39 @@ export class FindCartByIdRequestDTO implements FindCartByIdRequest {
 }
 
 export class UpdateCart implements UpdateCartRequest {
+    @IsUUID('all')
+    @IsNotEmpty()
+    @ApiProperty()
+    id: string;
+
+    @IsObject()
+    @IsNotEmpty()
+    @ValidateNested({ each: true })
+    @Type(() => CartItemDto)
+    @ApiProperty({ type: CartItemDto })
+    cartItems: CartItemDto;
+}
+
+export class UpdateCartRequestDTO extends UpdateCart {
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
     userId: string;
 
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
-    id: string;
-
-    @IsArray()
-    @IsNotEmpty()
-    @ValidateNested({ each: true })
-    @Type(() => CartItemDto)
-    @ApiProperty({ type: [CartItemDto] })
-    cartItems: CartItemDto[];
-}
-
-export class UpdateCartRequestDTO extends UpdateCart {
     @IsObject()
     @IsNotEmpty()
     @ApiProperty()
     user: UserDto;
 }
-
-export class DeleteCartRequestDTO implements DeleteCartRequest {
+export class DeleteCart implements DeleteCartRequest {
+    @IsUUID('all')
+    @IsNotEmpty()
+    @ApiProperty()
+    id: string;
+}
+export class DeleteCartRequestDTO extends DeleteCart {
     @IsObject()
     @IsNotEmpty()
     @ApiProperty()
     user: UserDto;
-
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
-    id: string;
 }

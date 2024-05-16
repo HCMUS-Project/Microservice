@@ -13,7 +13,7 @@ import { OrderController } from './order/order.controller';
 import { EcommerceOrderService } from './order/order.service';
 import { ReviewController } from './review/review.controller';
 import { EcommerceReviewService } from './review/review.service';
-import {VoucherController} from './voucher/voucher.controller';
+import { VoucherController } from './voucher/voucher.controller';
 
 @Module({
     imports: [ClientsModule],

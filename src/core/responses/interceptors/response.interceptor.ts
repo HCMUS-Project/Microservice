@@ -8,7 +8,7 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, Response<T>> {
     intercept(context: ExecutionContext, next: CallHandler): Observable<Response<T>> {
         return next.handle().pipe(
             map(data => {
-                // console.log(data)
+                // console.log(context)
                 const status =
                     typeof data.status === 'string' || data.status === undefined
                         ? context.switchToHttp().getResponse().statusCode

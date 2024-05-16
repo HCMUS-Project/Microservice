@@ -51,6 +51,7 @@ import {
     ApiBodyExample,
     ApiEndpoint,
     ApiErrorResponses,
+    ApiParamExamples,
     ApiQueryExamples,
     ApiResponseExample,
 } from 'src/common/decorator/swagger.decorator';
@@ -369,7 +370,7 @@ Find a product within a domain using an access token.
 - **Access Token**: Must provide a valid tenant access token.
 `,
     })
-    @ApiQueryExamples([
+    @ApiParamExamples([
         {
             name: 'id',
             description: 'ID of product in DB',
@@ -574,10 +575,10 @@ Delete a product within a domain using an access token. This operation is restri
         
 ## Requirements
 - **Access Token**: Must provide a valid tenant access token.
-- **Permissions**: Requires tenant-level and user-level permissions.
+- **Permissions**: Requires tenant-level and permissions.
 `,
     })
-    @ApiQueryExamples([
+    @ApiParamExamples([
         {
             name: 'id',
             description: 'ID of product in DB',
@@ -820,7 +821,7 @@ Increase product view by Id within a domain using an access token. This operatio
 - **Permissions**: Requires tenant-level and user-level permissions.
 `,
     })
-    @ApiQueryExamples([
+    @ApiParamExamples([
         {
             name: 'id',
             description: 'ID of product in DB',

@@ -10,6 +10,7 @@ import {
     ApiCreatedResponse,
     ApiOkResponse,
     ApiQuery,
+    ApiParam,
 } from '@nestjs/swagger';
 
 export function ApiEndpoint(description: { summary: string; details?: string }) {
@@ -166,6 +167,21 @@ export function ApiQueryExamples(
     return applyDecorators(
         ...queries.map(query =>
             ApiQuery({
+                name: query.name,
+                description: query.description,
+                example: query.example,
+                required: query.required !== undefined ? query.required : true,
+            }),
+        ),
+    );
+}
+
+export function ApiParamExamples(
+    params: Array<{ name: string; description: string; example: any; required?: boolean }>,
+) {
+    return applyDecorators(
+        ...params.map(query =>
+            ApiParam({
                 name: query.name,
                 description: query.description,
                 example: query.example,
