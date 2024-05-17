@@ -31,12 +31,21 @@ import { EcommerceReviewService } from './review.service';
 import {
     CreateReview,
     CreateReviewRequestDTO,
+    DeleteReview,
     DeleteReviewRequestDTO,
     FindAllReviews,
     FindAllReviewsRequestDTO,
     UpdateReview,
     UpdateReviewRequestDTO,
 } from './review.dto';
+import {
+    ApiBodyExample,
+    ApiEndpoint,
+    ApiErrorResponses,
+    ApiParamExamples,
+    ApiQueryExamples,
+    ApiResponseExample,
+} from 'src/common/decorator/swagger.decorator';
 
 @Controller('/ecommerce/review')
 @ApiTags('ecommerce/review')
@@ -50,96 +59,77 @@ export class ReviewController {
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.USER)
     @ApiBearerAuth('JWT-access-token-user')
-    @ApiOperation({
-        summary: 'Create review of user in domain',
-        description: `
-## Use access token
-## For user account`,
+    @ApiEndpoint({
+        summary: `Create Review`,
+        details: `
+## Description
+Create within a domain using an access token. This operation is restricted to user accounts only.
+        
+## Requirements
+- **Access Token**: Must provide a valid user access token.
+- **Permissions**: Requires user-level permissions.
+`,
     })
-    @ApiBody({
-        type: CreateReview,
-        examples: {
-            category_1: {
-                value: {
-                    productId: 'ebe267f1-2f6c-416b-ac24-d713838ea92f',
-                    rating: 3.5,
-                    review: 'San pham nay nhin chung cung duoc, ko nen mua',
-                } as CreateReview,
+    @ApiBodyExample(CreateReview, {
+        productId: 'c886a59c-7293-4239-8052-eb611b68e890',
+        rating: 3.5,
+        review: 'San pham nay nhin chung cung duoc, ko nen mua',
+    })
+    @ApiResponseExample(
+        'create',
+        'create Review',
+        {
+            review: {
+                id: '68c1eea1-393a-4836-a01c-b7240f1adcbf',
+                type: 'ecommerce',
+                domain: '30shine.com',
+                productId: 'c886a59c-7293-4239-8052-eb611b68e890',
+                user: 'volehoai070902@gmail.com',
+                rating: 3.5,
+                review: 'San pham nay nhin chung cung duoc, ko nen mua',
+                createdAt: '2024-05-17T08:39:13.922Z',
+                updatedAt: '2024-05-17T08:39:13.922Z',
             },
         },
-    })
-    @ApiCreatedResponse({
-        description: 'Create review successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after Create review successfully',
-                        value: {
-                            statusCode: 201,
-                            timestamp: '2024-05-07T05:34:41.213Z',
-                            path: '/api/ecommerce/review/create',
-                            message: null,
-                            error: null,
-                            data: {
-                                review: {
-                                    id: 'fe06853b-8c7c-458c-b5f3-3a7571e11d5e',
-                                    domain: '30shine.com',
-                                    productId: 'ebe267f1-2f6c-416b-ac24-d713838ea92f',
-                                    user: 'volehoai070902@gmail.com',
-                                    rating: 3.5,
-                                    review: 'San pham nay nhin chung cung duoc, ko nen mua',
-                                    createdAt: '2024-05-07T04:41:29.232Z',
-                                    updatedAt: '2024-05-07T05:34:41.189Z',
-                                },
-                            },
-                        },
-                    },
-                },
-            },
+        '/api/ecommerce/review/create',
+    )
+    @ApiErrorResponses('/api/ecommerce/review/create', '/api/ecommerce/review/create', {
+        badRequest: {
+            summary: 'Validation Error',
+            detail: 'productId should not be empty, productId must be a UUID, rating should not be empty, rating must not be less than 0, rating must be a number conforming to the specified constraints, review should not be empty',
         },
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    token_not_verified: {
-                        summary: 'Token not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T12:31:30.700Z',
-                            path: '/api/ecommerce/review/create',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
-                        },
-                    },
-                    unauthorized_role: {
-                        summary: 'Role not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T12:31:30.700Z',
-                            path: '/api/ecommerce/review/create',
-                            message: 'Unauthorized Role',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                    token_not_found: {
-                        summary: 'Token not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-02T10:55:28.511Z',
-                            path: '/api/ecommerce/review/create',
-                            message: 'Access Token not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                },
+        unauthorized: [
+            {
+                key: 'token_not_verified',
+                summary: 'Token not verified',
+                detail: 'Unauthorized',
+                error: null,
             },
-        },
+            {
+                key: 'token_not_found',
+                summary: 'Token not found',
+                detail: 'Access Token not found',
+                error: 'Unauthorized',
+            },
+            {
+                key: 'unauthorized_role',
+                summary: 'Role not verified',
+                detail: 'Unauthorized Role',
+                error: 'Unauthorized',
+            },
+        ],
+        forbidden: [
+            {
+                key: 'forbidden_resource',
+                summary: 'Forbidden resource',
+                detail: 'Forbidden resource',
+            },
+            {
+                key: 'not_purchased_product',
+                summary: 'User has not purchased Product',
+                detail: 'User has not purchased Product',
+            },
+        ],
     })
     async createReview(@Req() req: Request, @Body() data: CreateReview) {
         const payloadToken = req['user'];
@@ -161,98 +151,98 @@ export class ReviewController {
     @UseGuards(AccessTokenGuard)
     @ApiBearerAuth('JWT-access-token-user')
     @ApiBearerAuth('JWT-access-token-tenant')
-    @ApiOperation({
-        summary: 'Find all review by productId',
-        description: `
-## Use access token
-## Use pageSize and page to limit result
-## Default is 10 and 1 if not pass value in`,
+    @ApiEndpoint({
+        summary: `Find all Reviews by token`,
+        details: `
+## Description
+Return all Reviews within a domain using an access token.  
+        
+## Requirements
+- **Access Token**: Must provide a valid access token. 
+- **pageSize** and **page** to limit result
+- **Default** is 10 for **pageSize** and 1 for **page** without pass
+`,
     })
-    @ApiQuery({
-        name: 'productId',
-        description: 'Id of product want to get review',
-        required: false,
-        example: 'ebe267f1-2f6c-416b-ac24-d713838ea92f',
-    })
-    @ApiQuery({
-        name: 'pageSize',
-        description: 'Number of review per page',
-        required: false,
-        example: 10,
-    })
-    @ApiQuery({
-        name: 'page',
-        description: 'the order of page',
-        required: false,
-        example: 1,
-    })
-    @ApiCreatedResponse({
-        description: 'Get all reviews successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after get one order successfully',
-                        value: {
-                            statusCode: 200,
-                            timestamp: '2024-05-07T05:39:56.138Z',
-                            path: '/api/ecommerce/review/find/all/?productId=ebe267f1-2f6c-416b-ac24-d713838ea92f',
-                            message: null,
-                            error: null,
-                            data: {
-                                reviews: [
-                                    {
-                                        id: 'fe06853b-8c7c-458c-b5f3-3a7571e11d5e',
-                                        domain: '30shine.com',
-                                        productId: 'ebe267f1-2f6c-416b-ac24-d713838ea92f',
-                                        user: 'volehoai070902@gmail.com',
-                                        rating: 3.5,
-                                        review: 'San pham nay nhin chung cung duoc, ko nen mua',
-                                        createdAt: '2024-05-07T04:41:29.232Z',
-                                        updatedAt: '2024-05-07T05:34:41.189Z',
-                                    },
-                                ],
-                                totalPages: 1,
-                                page: 1,
-                                pageSize: 10,
-                            },
-                        },
-                    },
-                },
-            },
+    @ApiQueryExamples([
+        {
+            name: 'productId',
+            description: 'Id of product want to get review',
+            example: 'ebe267f1-2f6c-416b-ac24-d713838ea92f',
+            required: false,
         },
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    token_not_verified: {
-                        summary: 'Token not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T17:42:40.039Z',
-                            path: '/api/ecommerce/order/find/cd61a9d1-fcca-460c-875b-39e543fea679',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
-                        },
-                    },
-                    category_not_found: {
-                        summary: 'Category not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-02T11:43:05.882Z',
-                            path: '/api/ecommerce/order/find/cd61a9d1-fcca-460c-875b-39e543fea679',
-                            message: 'Category not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                },
-            },
+        {
+            name: 'pageSize',
+            description: 'Number of review per page',
+            example: 10,
+            required: false,
         },
-    })
+        {
+            name: 'page',
+            description: 'the order of page',
+            example: 1,
+            required: false,
+        },
+    ])
+    @ApiResponseExample(
+        'read',
+        'find all Reviews',
+        {
+            reviews: [
+                {
+                    id: '2aa6a553-7baa-47d7-8ff0-b1c3c8f7ba8e',
+                    type: 'ecommerce',
+                    domain: '30shine.com',
+                    productId: 'c886a59c-7293-4239-8052-eb611b68e890',
+                    user: 'volehoai070902@gmail.com',
+                    rating: 3.5,
+                    review: 'San pham nay nhin chung cung duoc, ko nen mua',
+                    createdAt: '2024-05-17T09:59:32.887Z',
+                    updatedAt: '2024-05-17T10:00:17.338Z',
+                },
+            ],
+            totalPages: 1,
+            page: 1,
+            pageSize: 10,
+        },
+        '/api/ecommerce/review/find/all?productId=c886a59c-7293-4239-8052-eb611b68e890&pageSize=10&page=1',
+    )
+    @ApiErrorResponses(
+        '/api/ecommerce/review/find/all?productId&pageSize&page',
+        '/api/ecommerce/review/find/all?productId=c886a59c-7293-4239-8052-eb611b68e890&pageSize=10&page=1',
+        {
+            badRequest: {
+                summary: 'Validation Error',
+                detail: 'productId must be a UUID, pageSize must not be less than 1, page must not be less than 1',
+            },
+            unauthorized: [
+                {
+                    key: 'token_not_verified',
+                    summary: 'Token not verified',
+                    detail: 'Unauthorized',
+                    error: null,
+                },
+                {
+                    key: 'token_not_found',
+                    summary: 'Token not found',
+                    detail: 'Access Token not found',
+                    error: 'Unauthorized',
+                },
+                {
+                    key: 'unauthorized_role',
+                    summary: 'Role not verified',
+                    detail: 'Unauthorized Role',
+                    error: 'Unauthorized',
+                },
+            ],
+            forbidden: [
+                {
+                    key: 'forbidden_resource',
+                    summary: 'Forbidden resource',
+                    detail: 'Forbidden resource',
+                },
+            ],
+        },
+    )
     async findAllReviews(
         @Req() req: Request,
         @Query()
@@ -277,88 +267,79 @@ export class ReviewController {
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.USER)
     @ApiBearerAuth('JWT-access-token-user')
-    @ApiOperation({
-        summary: 'Update Review',
-        description: `
-## Use access token
-## Must be USER`,
+    @ApiEndpoint({
+        summary: `Update a Review by Id of Review`,
+        details: `
+## Description
+Update a Cart by Id of CartItem within a domain using an access token. This operation is restricted to user accounts only.
+        
+## Requirements
+- **Access Token**: Must provide a valid user access token.
+- **Permissions**: Requires user-level permissions.
+`,
     })
-    @ApiBody({
-        type: UpdateReview,
-        examples: {
-            category_1: {
-                value: {
-                    id: 'fe06853b-8c7c-458c-b5f3-3a7571e11d5e',
-                    domain: '30shine.com',
-                    productId: 'ebe267f1-2f6c-416b-ac24-d713838ea92f',
-                    userId: 'volehoai070902@gmail.com',
-                    rating: 5,
-                    review: 'Toi nghi lai roi',
-                } as UpdateReview,
+    @ApiBodyExample(UpdateReview, {
+        id: '2aa6a553-7baa-47d7-8ff0-b1c3c8f7ba8e',
+        userId: 'volehoai070902@gmail.com',
+        rating: 5,
+        review: 'Toi nghi lai roi',
+    })
+    @ApiResponseExample(
+        'update',
+        'update a Review',
+        {
+            review: {
+                id: '2aa6a553-7baa-47d7-8ff0-b1c3c8f7ba8e',
+                type: 'ecommerce',
+                domain: '30shine.com',
+                productId: 'c886a59c-7293-4239-8052-eb611b68e890',
+                user: 'volehoai070902@gmail.com',
+                rating: 5,
+                review: 'Toi nghi lai roi',
+                createdAt: '2024-05-17T09:59:32.887Z',
+                updatedAt: '2024-05-17T10:21:53.443Z',
             },
         },
-    })
-    @ApiCreatedResponse({
-        description: 'Update one review successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after update review successfully',
-                        value: {
-                            statusCode: 201,
-                            timestamp: '2024-05-07T06:00:47.990Z',
-                            path: '/api/ecommerce/review/update',
-                            message: null,
-                            error: null,
-                            data: {
-                                review: {
-                                    id: 'fe06853b-8c7c-458c-b5f3-3a7571e11d5e',
-                                    domain: '30shine.com',
-                                    productId: 'ebe267f1-2f6c-416b-ac24-d713838ea92f',
-                                    user: 'volehoai070902@gmail.com',
-                                    rating: 5,
-                                    review: 'Toi nghi lai roi',
-                                    createdAt: '2024-05-07T04:41:29.232Z',
-                                    updatedAt: '2024-05-07T06:00:47.971Z',
-                                },
-                            },
-                        },
-                    },
-                },
-            },
+        '/api/ecommerce/review/update',
+    )
+    @ApiErrorResponses('/api/ecommerce/review/update', '/api/ecommerce/review/update', {
+        badRequest: {
+            summary: 'Validation Error',
+            detail: 'id should not be empty, id must be a UUID, productId should not be empty, productId must be a UUID, userId should not be empty, rating should not be empty, rating must not be less than 0, rating must be an integer number, review should not be empty',
         },
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    token_not_verified: {
-                        summary: 'Token not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T17:42:40.039Z',
-                            path: '/api/ecommerce/review/update',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
-                        },
-                    },
-                    category_not_found: {
-                        summary: 'Category not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-02T11:43:05.882Z',
-                            path: '/api/ecommerce/review/update',
-                            message: 'Category not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                },
+        unauthorized: [
+            {
+                key: 'token_not_verified',
+                summary: 'Token not verified',
+                detail: 'Unauthorized',
+                error: null,
             },
-        },
+            {
+                key: 'token_not_found',
+                summary: 'Token not found',
+                detail: 'Access Token not found',
+                error: 'Unauthorized',
+            },
+            {
+                key: 'unauthorized_role',
+                summary: 'Role not verified',
+                detail: 'Unauthorized Role',
+                error: 'Unauthorized',
+            },
+            {
+                key: 'review_not_found',
+                summary: 'Review not found',
+                detail: 'Review not found',
+                error: 'Unauthorized',
+            },
+        ],
+        forbidden: [
+            {
+                key: 'forbidden_resource',
+                summary: 'Forbidden resource',
+                detail: 'Forbidden resource',
+            },
+        ],
     })
     async updateReview(@Req() req: Request, @Body() updateReview: UpdateReview) {
         const payloadToken = req['user'];
@@ -380,72 +361,75 @@ export class ReviewController {
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.USER)
     @ApiBearerAuth('JWT-access-token-user')
-    @ApiOperation({
-        summary: 'Delete one review',
-        description: `
-## Use access token
-## USER role`,
+    @ApiEndpoint({
+        summary: `Delete a Review by Id`,
+        details: `
+## Description
+Delete a Review by Id within a domain using an access token. This operation is restricted to user accounts only.
+        
+## Requirements
+- **Access Token**: Must provide a valid user access token.
+- **Permissions**: Requires user-level permissions.
+`,
     })
-    @ApiParam({
-        name: 'id',
-        description: 'ID of review in DB',
-        example: 'fe06853b-8c7c-458c-b5f3-3a7571e11d5e',
-        required: true,
-    })
-    @ApiCreatedResponse({
-        description: 'Cancel one review successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after delete one review successfully',
-                        value: {
-                            statusCode: 200,
-                            timestamp: '2024-05-07T06:02:16.618Z',
-                            path: '/api/ecommerce/review/delete/fe06853b-8c7c-458c-b5f3-3a7571e11d5e',
-                            message: null,
-                            error: null,
-                            data: {
-                                result: 'success',
-                            },
-                        },
-                    },
-                },
-            },
+    @ApiParamExamples([
+        {
+            name: 'id',
+            description: 'id of Review',
+            example: 'id must be a UUID',
+            required: true,
         },
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    token_not_verified: {
-                        summary: 'Token not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T17:42:40.039Z',
-                            path: '/api/ecommerce/review/delete/fe06853b-8c7c-458c-b5f3-3a7571e11d5e',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
-                        },
-                    },
-                    category_not_found: {
-                        summary: 'Category not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-02T11:43:05.882Z',
-                            path: '/api/ecommerce/review/delete/fe06853b-8c7c-458c-b5f3-3a7571e11d5e',
-                            message: 'Category not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                },
+    ])
+    @ApiResponseExample(
+        'delete',
+        'delete a Review by Id',
+        { result: 'success' },
+        '/api/ecommerce/review/delete/968b2af1-3519-4493-8e20-f056e5c0f672 ',
+    )
+    @ApiErrorResponses(
+        '/api/ecommerce/review/delete/:id',
+        '/api/ecommerce/review/delete/fe06853b-8c7c-458c-b5f3-3a7571e11d5e',
+        {
+            badRequest: {
+                summary: 'Validation Error',
+                detail: 'id must be a UUID',
             },
+            unauthorized: [
+                {
+                    key: 'token_not_verified',
+                    summary: 'Token not verified',
+                    detail: 'Unauthorized',
+                    error: null,
+                },
+                {
+                    key: 'token_not_found',
+                    summary: 'Token not found',
+                    detail: 'Access Token not found',
+                    error: 'Unauthorized',
+                },
+                {
+                    key: 'unauthorized_role',
+                    summary: 'Role not verified',
+                    detail: 'Unauthorized Role',
+                    error: 'Unauthorized',
+                },
+                {
+                    key: 'review_not_found',
+                    summary: 'Review not found',
+                    detail: 'Review not found',
+                    error: 'Unauthorized',
+                },
+            ],
+            forbidden: [
+                {
+                    key: 'forbidden_resource',
+                    summary: 'Forbidden resource',
+                    detail: 'Forbidden resource',
+                },
+            ],
         },
-    })
-    async deleteReview(@Req() req: Request, @Param('id') id: string) {
+    )
+    async deleteReview(@Req() req: Request, @Param() data: DeleteReview) {
         const payloadToken = req['user'];
         // const header = req.headers;
         const userData = {
@@ -457,7 +441,7 @@ export class ReviewController {
         // console.log(userData, dataCategory)
         return await this.ecommerceReviewService.deleteReview({
             user: userData,
-            id,
+            ...data,
         } as DeleteReviewRequestDTO);
     }
 }

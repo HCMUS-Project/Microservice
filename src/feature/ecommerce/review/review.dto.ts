@@ -23,6 +23,7 @@ export class CreateReview implements CreateReviewRequest {
     productId: string;
 
     @IsNumber()
+    @Min(0)
     @IsNotEmpty()
     @ApiProperty()
     rating: number;
@@ -42,7 +43,7 @@ export class CreateReviewRequestDTO extends CreateReview {
 
 export class FindAllReviews implements FindAllReviewsRequest {
     @IsUUID()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     productId: string;
 
@@ -77,16 +78,6 @@ export class UpdateReview implements UpdateReviewRequest {
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
-    domain: string;
-
-    @IsUUID()
-    @IsNotEmpty()
-    @ApiProperty()
-    productId: string;
-
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
     userId: string;
 
     @IsInt()
@@ -106,6 +97,16 @@ export class UpdateReviewRequestDTO extends UpdateReview {
     @IsNotEmpty()
     @ApiProperty()
     user: UserDto;
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty()
+    domain: string;
+
+    @IsUUID()
+    @IsNotEmpty()
+    @ApiProperty()
+    productId: string;
 }
 
 export class DeleteReview implements DeleteReviewRequest {

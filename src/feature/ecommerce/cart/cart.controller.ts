@@ -325,7 +325,7 @@ Update a Cart by Id of CartItem within a domain using an access token. This oper
         summary: `Delete a Cart by Id`,
         details: `
 ## Description
-Update a Cart by Id of CartItem within a domain using an access token. This operation is restricted to user accounts only.
+Delete a Cart by Id of CartItem within a domain using an access token. This operation is restricted to user accounts only.
         
 ## Requirements
 - **Access Token**: Must provide a valid user access token.

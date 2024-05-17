@@ -50,8 +50,8 @@ export class EcommerceReviewService implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'USER_HAS_NOT_PURCHASED_PRODUCT') {
+                throw new ForbiddenException('User has not purchased Product', 'Forbidden');
             } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }
@@ -69,13 +69,7 @@ export class EcommerceReviewService implements OnModuleInit {
             // console.log(e)
             const errorDetails = JSON.parse(e.details);
             // console.log(errorDetails);
-            if (errorDetails.error == 'PERMISSION_DENIED') {
-                throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
-            } else {
-                throw new NotFoundException(errorDetails, 'Not found');
-            }
+            throw new NotFoundException(errorDetails, 'Not found');
         }
     }
 
@@ -92,8 +86,8 @@ export class EcommerceReviewService implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'REVIEW_NOT_FOUND') {
+                throw new UserNotFoundException('Review not found')
             } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }
@@ -113,8 +107,8 @@ export class EcommerceReviewService implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'REVIEW_NOT_FOUND') {
+                throw new UserNotFoundException('Review not found')
             } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }
