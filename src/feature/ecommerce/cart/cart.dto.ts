@@ -27,7 +27,7 @@ export class CartItemDto {
     productId: string;
 
     @IsInt()
-    @Min(1)
+    @Min(0)
     @ApiProperty()
     quantity: number;
 }
