@@ -118,6 +118,11 @@ Create a voucher within a domain using an access token. This operation is restri
         ],
         forbidden: [
             {
+                key: 'forbidden_resource',
+                summary: 'Forbidden resource',
+                detail: 'Forbidden resource',
+            },
+            {
                 key: 'already_exists',
                 summary: 'Voucher already exists',
                 detail: 'Voucher already exists',
@@ -208,6 +213,13 @@ Return all vouchers within a domain using an access token.
                 summary: 'Role not verified',
                 detail: 'Unauthorized Role',
                 error: 'Unauthorized',
+            },
+        ],
+        forbidden: [
+            {
+                key: 'forbidden_resource',
+                summary: 'Forbidden resource',
+                detail: 'Forbidden resource',
             },
         ],
     })
@@ -302,6 +314,13 @@ Find a voucher within a domain using an access token.
                     error: 'Unauthorized',
                 },
             ],
+            forbidden: [
+                {
+                    key: 'forbidden_resource',
+                    summary: 'Forbidden resource',
+                    detail: 'Forbidden resource',
+                },
+            ],
         },
     )
     async findVoucherById(@Req() req: Request, @Param() data: FindVoucherById) {
@@ -393,6 +412,13 @@ Update a voucher within a domain using an access token. This operation is restri
                 summary: 'Voucher not found',
                 detail: 'Voucher not found',
                 error: 'Unauthorized',
+            },
+        ],
+        forbidden: [
+            {
+                key: 'forbidden_resource',
+                summary: 'Forbidden resource',
+                detail: 'Forbidden resource',
             },
         ],
     })
@@ -490,6 +516,13 @@ Delete a voucher within a domain using an access token. This operation is restri
                     error: 'Unauthorized',
                 },
             ],
+            forbidden: [
+                {
+                    key: 'forbidden_resource',
+                    summary: 'Forbidden resource',
+                    detail: 'Forbidden resource',
+                },
+            ],
         },
     )
     async deleteVoucher(@Req() req: Request, @Param() data: DeleteVoucher) {
@@ -583,6 +616,13 @@ Search a voucher within a domain using an access token.
                     summary: 'Voucher not found',
                     detail: 'Voucher not found',
                     error: 'Unauthorized',
+                },
+            ],
+            forbidden: [
+                {
+                    key: 'forbidden_resource',
+                    summary: 'Forbidden resource',
+                    detail: 'Forbidden resource',
                 },
             ],
         },

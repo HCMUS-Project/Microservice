@@ -89,6 +89,11 @@ Create a category within a domain using an access token. This operation is restr
         ],
         forbidden: [
             {
+                key: 'forbidden_resource',
+                summary: 'Forbidden resource',
+                detail: 'Forbidden resource',
+            },
+            {
                 key: 'already_exists',
                 summary: 'Category already exists',
                 detail: 'Category already exists',
@@ -177,6 +182,13 @@ Return all categories within a domain using an access token.
                 summary: 'Role not verified',
                 detail: 'Unauthorized Role',
                 error: 'Unauthorized',
+            },
+        ],
+        forbidden: [
+            {
+                key: 'forbidden_resource',
+                summary: 'Forbidden resource',
+                detail: 'Forbidden resource',
             },
         ],
     })
@@ -268,6 +280,13 @@ Find a category within a domain using an access token.
                     error: 'Unauthorized',
                 },
             ],
+            forbidden: [
+                {
+                    key: 'forbidden_resource',
+                    summary: 'Forbidden resource',
+                    detail: 'Forbidden resource',
+                },
+            ],
         },
     )
     async findOneCategory(@Req() req: Request, @Param() data: FindOneCategory) {
@@ -345,6 +364,13 @@ Update a category within a domain using an access token. This operation is restr
                 summary: 'Category not found',
                 detail: 'Category not found',
                 error: 'Unauthorized',
+            },
+        ],
+        forbidden: [
+            {
+                key: 'forbidden_resource',
+                summary: 'Forbidden resource',
+                detail: 'Forbidden resource',
             },
         ],
     })
@@ -428,6 +454,13 @@ Delete a category within a domain using an access token. This operation is restr
                     summary: 'Category not found',
                     detail: 'Category not found',
                     error: 'Unauthorized',
+                },
+            ],
+            forbidden: [
+                {
+                    key: 'forbidden_resource',
+                    summary: 'Forbidden resource',
+                    detail: 'Forbidden resource',
                 },
             ],
         },

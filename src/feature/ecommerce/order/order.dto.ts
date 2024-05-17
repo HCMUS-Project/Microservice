@@ -11,6 +11,7 @@ import {
     IsOptional,
     IsString,
     IsUUID,
+    Min,
     ValidateNested,
 } from 'class-validator';
 import { StageOrder } from 'src/common/enums/stageOrder.enum';
@@ -22,18 +23,15 @@ import { ListOrdersRequest } from 'src/proto_build/e_commerce/order/ListOrdersRe
 import { UpdateStageOrderRequest } from 'src/proto_build/e_commerce/order/UpdateStageOrderRequest';
 
 export class CreateOrder implements CreateOrderRequest {
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
-    domain: string;
-
     @IsArray()
+    @IsUUID('all', { each: true })
     @ArrayNotEmpty()
     @ApiProperty({ type: 'array', items: { type: 'string' } })
     productsId: string[];
 
     @IsArray()
     @ArrayNotEmpty()
+    @Min(1, { each: true })
     @IsNumber({}, { each: true })
     @ApiProperty({ type: 'array', items: { type: 'number' } })
     quantities: number[];
@@ -53,7 +51,7 @@ export class CreateOrder implements CreateOrderRequest {
     @ApiProperty()
     address: string;
 
-    @IsString()
+    @IsUUID()
     @IsOptional()
     @ApiProperty()
     voucherId: string;
@@ -66,12 +64,14 @@ export class CreateOrderRequestDTO extends CreateOrder {
     user: UserDto;
 }
 
-export class GetOrderRequestDTO implements GetOrderRequest {
-    @IsString()
+export class GetOrder implements GetOrderRequest {
+    @IsUUID('all')
     @IsNotEmpty()
     @ApiProperty()
     orderId: string;
+}
 
+export class GetOrderRequestDTO extends GetOrder {
     @IsObject()
     @IsNotEmpty()
     @ApiProperty()
@@ -116,15 +116,15 @@ export class UpdateStageOrderRequestDTO extends UpdateStageOrder {
     @ApiProperty()
     user: UserDto;
 }
-
-export class CancelOrderRequestDTO implements CancelOrderRequest {
-    @IsObject()
-    @IsNotEmpty()
-    @ApiProperty()
-    user: UserDto;
-
+export class CancelOrder implements CancelOrderRequest {
     @IsUUID()
     @IsNotEmpty()
     @ApiProperty()
     id: string;
+}
+export class CancelOrderRequestDTO extends CancelOrder {
+    @IsObject()
+    @IsNotEmpty()
+    @ApiProperty()
+    user: UserDto;
 }

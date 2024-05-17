@@ -54,8 +54,12 @@ export class EcommerceOrderService implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'PRODUCT_OUT_OF_STOCK') {
+                throw new ForbiddenException('Product out of stock', 'Forbidden');
+            } else if (errorDetails.error == 'VOUCHER_EXPIRED') {
+                throw new ForbiddenException('Voucher expired', 'Forbidden');
+            } else if (errorDetails.error == 'VOUCHER_NOT_FOUND') {
+                throw new UserNotFoundException('Voucher not found');
             } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }
@@ -75,8 +79,8 @@ export class EcommerceOrderService implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'ORDER_NOT_FOUND') {
+                throw new UserNotFoundException('Order not found');
             } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }
@@ -94,13 +98,8 @@ export class EcommerceOrderService implements OnModuleInit {
             // console.log(e)
             const errorDetails = JSON.parse(e.details);
             // console.log(errorDetails);
-            if (errorDetails.error == 'PERMISSION_DENIED') {
-                throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
-            } else {
-                throw new NotFoundException(errorDetails, 'Not found');
-            }
+
+            throw new NotFoundException(errorDetails, 'Not found');
         }
     }
 
@@ -117,8 +116,10 @@ export class EcommerceOrderService implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'INVALID_ARGUMENT') {
+                throw new ForbiddenException('Invalid argument stage', 'Forbidden');
+            } else if (errorDetails.error == 'ORDER_NOT_FOUND') {
+                throw new UserNotFoundException('Order not found');
             } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }
@@ -138,8 +139,12 @@ export class EcommerceOrderService implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'ORDER_NOT_FOUND') {
+                throw new UserNotFoundException('Order not found');
+            } else if (errorDetails.error == 'ORDER_CANCELLED') {
+                throw new ForbiddenException('Order already cancelled', 'Forbidden');
+            } else if (errorDetails.error == 'CANNOT_CANCEL_ORDER') {
+                throw new ForbiddenException('Stage Order different pending can not cancelled by User', 'Forbidden');
             } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }

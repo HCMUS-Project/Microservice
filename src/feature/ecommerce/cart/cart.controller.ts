@@ -1,27 +1,5 @@
-import {
-    Controller,
-    Get,
-    Post,
-    Body,
-    Patch,
-    Param,
-    Delete,
-    Inject,
-    UseGuards,
-    Req,
-    Query,
-} from '@nestjs/common';
-import {
-    ApiBearerAuth,
-    ApiBody,
-    ApiCreatedResponse,
-    ApiForbiddenResponse,
-    ApiOperation,
-    ApiParam,
-    ApiQuery,
-    ApiTags,
-    ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Param, Delete, Inject, UseGuards, Req } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { EcommerceCartService } from './cart.service';
 import { Roles } from 'src/common/decorator/role.decorator';
 import { AccessTokenGuard } from 'src/common/guards/token/accessToken.guard';
@@ -44,7 +22,6 @@ import {
     ApiParamExamples,
     ApiResponseExample,
 } from 'src/common/decorator/swagger.decorator';
-import { DeleteCartRequest } from 'src/proto_build/e_commerce/cart/DeleteCartRequest';
 
 @Controller('/ecommerce/cart')
 @ApiTags('ecommerce/cart')
@@ -120,6 +97,11 @@ Add an Item to Cart within a domain using an access token. If Cart isnt exists, 
             },
         ],
         forbidden: [
+            {
+                key: 'forbidden_resource',
+                summary: 'Forbidden resource',
+                detail: 'Forbidden resource',
+            },
             {
                 key: 'product_not_enough',
                 summary: 'Product not enough',
@@ -206,6 +188,13 @@ Return all Carts within a domain using an access token.
                 summary: 'Cart not found',
                 detail: 'Cart not found',
                 error: 'Unauthorized',
+            },
+        ],
+        forbidden: [
+            {
+                key: 'forbidden_resource',
+                summary: 'Forbidden resource',
+                detail: 'Forbidden resource',
             },
         ],
     })
@@ -300,6 +289,11 @@ Update a Cart by Id of CartItem within a domain using an access token. This oper
             },
         ],
         forbidden: [
+            {
+                key: 'forbidden_resource',
+                summary: 'Forbidden resource',
+                detail: 'Forbidden resource',
+            },
             {
                 key: 'product_not_enough',
                 summary: 'Product not enough',
@@ -402,6 +396,13 @@ Update a Cart by Id of CartItem within a domain using an access token. This oper
                     error: 'Unauthorized',
                 },
             ],
+            forbidden:[
+                {
+                    key: 'forbidden_resource',
+                    summary: 'Forbidden resource',
+                    detail: 'Forbidden resource',
+                },
+            ]
         },
     )
     async deleteCart(@Req() req: Request, @Param() data: DeleteCart) {

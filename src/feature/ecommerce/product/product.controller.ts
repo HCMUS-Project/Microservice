@@ -151,84 +151,16 @@ Create a product within a domain using an access token. This operation is restri
         ],
         forbidden: [
             {
+                key: 'forbidden_resource',
+                summary: 'Forbidden resource',
+                detail: 'Forbidden resource',
+            },
+            {
                 key: 'already_exists',
                 summary: 'Product already exists',
                 detail: 'Product already exists',
             },
         ],
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    token_not_verified: {
-                        summary: 'Token not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T12:31:30.700Z',
-                            path: '/api/auth/product/create',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
-                        },
-                    },
-                    token_not_found: {
-                        summary: 'Token not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-02T10:55:28.511Z',
-                            path: '/api/auth/product/create',
-                            message: 'Access Token not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                    unauthorized_role: {
-                        summary: 'Role not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T12:31:30.700Z',
-                            path: '/api/auth/product/create',
-                            message: 'Unauthorized Role',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                    category_not_found: {
-                        summary: 'Category not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-13T09:38:05.663Z',
-                            path: '/api/ecommerce/product/create',
-                            message: 'Category not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                },
-            },
-        },
-    })
-    @ApiForbiddenResponse({
-        description: 'Forbidden',
-        content: {
-            'application/json': {
-                examples: {
-                    user_not_verified: {
-                        summary: 'Product already exists',
-                        value: {
-                            statusCode: 403,
-                            timestamp: '2024-05-13T09:37:23.878Z',
-                            path: '/api/ecommerce/product/create',
-                            message: 'Product already exists',
-                            error: 'Forbidden',
-                            data: null,
-                        },
-                    },
-                },
-            },
-        },
     })
     async createProduct(@Req() req: Request, @Body() data: CreateProduct) {
         const payloadToken = req['user'];
@@ -341,6 +273,13 @@ Return all products within a domain using an access token.
                 error: 'Unauthorized',
             },
         ],
+        forbidden: [
+            {
+                key: 'forbidden_resource',
+                summary: 'Forbidden resource',
+                detail: 'Forbidden resource',
+            },
+        ],
     })
     async findAllProducts(@Req() req: Request) {
         const payloadToken = req['user'];
@@ -440,6 +379,13 @@ Find a product within a domain using an access token.
                     summary: 'Product not found',
                     detail: 'Product not found',
                     error: 'Unauthorized',
+                },
+            ],
+            forbidden: [
+                {
+                    key: 'forbidden_resource',
+                    summary: 'Forbidden resource',
+                    detail: 'Forbidden resource',
                 },
             ],
         },
@@ -546,6 +492,13 @@ Update a product within a domain using an access token. This operation is restri
                 error: 'Unauthorized',
             },
         ],
+        forbidden: [
+            {
+                key: 'forbidden_resource',
+                summary: 'Forbidden resource',
+                detail: 'Forbidden resource',
+            },
+        ],
     })
     async updateProduct(@Req() req: Request, @Body() updateProduct: UpdateProduct) {
         const payloadToken = req['user'];
@@ -648,6 +601,13 @@ Delete a product within a domain using an access token. This operation is restri
                     summary: 'Product not found',
                     detail: 'Product not found',
                     error: 'Unauthorized',
+                },
+            ],
+            forbidden: [
+                {
+                    key: 'forbidden_resource',
+                    summary: 'Forbidden resource',
+                    detail: 'Forbidden resource',
                 },
             ],
         },
@@ -785,6 +745,13 @@ Search products within a domain using an access token.
                     error: 'Unauthorized',
                 },
             ],
+            forbidden: [
+                {
+                    key: 'forbidden_resource',
+                    summary: 'Forbidden resource',
+                    detail: 'Forbidden resource',
+                },
+            ],
         },
     )
     async searchProducts(
@@ -893,6 +860,13 @@ Increase product view by Id within a domain using an access token. This operatio
                     error: 'Unauthorized',
                 },
             ],
+            forbidden: [
+                {
+                    key: 'forbidden_resource',
+                    summary: 'Forbidden resource',
+                    detail: 'Forbidden resource',
+                },
+            ],
         },
     )
     async increaseProductView(@Req() req: Request, @Param() data: IncreaseProductView) {
@@ -991,6 +965,13 @@ Add quantity to product within a domain using an access token. This operation is
                     summary: 'Product not found',
                     detail: 'Product not found',
                     error: 'Unauthorized',
+                },
+            ],
+            forbidden: [
+                {
+                    key: 'forbidden_resource',
+                    summary: 'Forbidden resource',
+                    detail: 'Forbidden resource',
                 },
             ],
         },
