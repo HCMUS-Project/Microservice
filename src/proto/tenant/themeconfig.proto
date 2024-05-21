@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+import "../auth/user_token.proto";
+
+package themeConfig;
+
+service ThemeConfigService {
+    rpc CreateThemeConfig(CreateThemeConfigRequest) returns (ThemeConfigResponse);
+    rpc FindThemeConfigByTenantId(FindThemeConfigByTenantIdRequest) returns (ThemeConfigResponse);
+    rpc UpdateThemeConfig(UpdateThemeConfigRequest) returns (ThemeConfigResponse);
+    rpc DeleteThemeConfig(DeleteThemeConfigRequest) returns (ThemeConfigResponse);
+}
+
+message ThemeConfig {
+    string id = 1;
+    string tenant_id = 2;
+    string header_color = 3;
+    string header_text_color = 4;
+    string body_color = 5;
+    string body_text_color = 6;
+    string footer_color = 7;
+    string footer_text_color = 8;
+    string text_font = 9;
+    string button_color = 10;
+    string button_text_color = 11;
+    double button_radius = 12;
+    string created_at = 13;
+    string updated_at = 14;
+}
+
+message CreateThemeConfigRequest {
+    userToken.User user = 1;
+    string tenant_id = 2;
+    string header_color = 3;
+    string header_text_color = 4;
+    string body_color = 5;
+    string body_text_color = 6;
+    string footer_color = 7;
+    string footer_text_color = 8;
+    string text_font = 9;
+    string button_color = 10;
+    string button_text_color = 11;
+    double button_radius = 12;
+}
+
+message FindThemeConfigByTenantIdRequest {
+    userToken.User user = 1;
+    string tenant_id = 2;
+}
+
+message UpdateThemeConfigRequest {
+    userToken.User user = 1;
+    string id = 2;
+    string tenant_id = 3;
+    optional string header_color = 4;
+    optional string header_text_color = 5;
+    optional string body_color = 6;
+    optional string body_text_color = 7;
+    optional string footer_color = 8;
+    optional string footer_text_color = 9;
+    optional string text_font = 10;
+    optional string button_color = 11;
+    optional string button_text_color = 12;
+    optional double button_radius = 13;
+}
+
+message DeleteThemeConfigRequest {
+    userToken.User user = 1;
+    string id = 2;
+}
+
+message ThemeConfigResponse {
+    ThemeConfig theme_config = 1;
+}

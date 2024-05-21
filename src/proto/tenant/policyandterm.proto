@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+import "../auth/user_token.proto";
+
+package policyAndTerm;
+
+service PolicyAndTermService {
+    rpc CreatePolicyAndTerm(CreatePolicyAndTermRequest) returns (PolicyAndTermResponse);
+    rpc FindPolicyAndTermByTenantId(FindPolicyAndTermByTenantIdRequest) returns (PolicyAndTermResponse);
+    rpc UpdatePolicyAndTerm(UpdatePolicyAndTermRequest) returns (PolicyAndTermResponse);
+    rpc DeletePolicyAndTerm(DeletePolicyAndTermRequest) returns (PolicyAndTermResponse);
+}
+
+message PolicyAndTerm {
+    string id = 1;
+    string tenant_id = 2;
+    string policy = 3;
+    string term = 4;
+    string created_at = 5;
+    string updated_at = 6;
+}
+
+message CreatePolicyAndTermRequest {
+    userToken.User user = 1;
+    string tenant_id = 2;
+    string policy = 3;
+    string term = 4;
+}
+
+message FindPolicyAndTermByTenantIdRequest {
+    userToken.User user = 1;
+    string tenant_id = 2;
+}
+
+message UpdatePolicyAndTermRequest {
+    userToken.User user = 1;
+    string id = 2;
+    string tenant_id = 3;
+    optional string policy = 4;
+    optional string term = 5;
+}
+
+message DeletePolicyAndTermRequest {
+    userToken.User user = 1;
+    string id = 2;
+}
+
+message PolicyAndTermResponse {
+    PolicyAndTerm policy_and_term = 1;
+}
+
