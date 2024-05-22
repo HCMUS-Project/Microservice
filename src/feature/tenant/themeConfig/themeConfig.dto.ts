@@ -18,7 +18,7 @@ import { IsBase64DataURI } from 'src/common/validator/is-base-64-dataURI.validat
 import { IsSpecificUrl } from 'src/common/validator/is-specific-url.validator';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
 import { CreateThemeConfigRequest } from 'src/proto_build/tenant/themeConfig/CreateThemeConfigRequest';
-import {DeleteThemeConfigRequest} from 'src/proto_build/tenant/themeConfig/DeleteThemeConfigRequest';
+import { DeleteThemeConfigRequest } from 'src/proto_build/tenant/themeConfig/DeleteThemeConfigRequest';
 import { FindThemeConfigByTenantIdRequest } from 'src/proto_build/tenant/themeConfig/FindThemeConfigByTenantIdRequest';
 import { UpdateThemeConfigRequest } from 'src/proto_build/tenant/themeConfig/UpdateThemeConfigRequest';
 

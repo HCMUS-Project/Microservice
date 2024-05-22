@@ -50,14 +50,23 @@ export class EcommerceVoucherService implements OnModuleInit {
             return createVoucherResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'VOUCHER_ALREADY_EXIST') {
                 throw new ForbiddenException('Voucher already exists', 'Forbidden');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -71,9 +80,18 @@ export class EcommerceVoucherService implements OnModuleInit {
             return findAllVouchersResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
-            throw new NotFoundException(errorDetails, 'Not found');
+            throw new NotFoundException(
+                `Unhandled error type: ${errorDetails.error}`,
+                'Error not recognized',
+            );
         }
     }
 
@@ -86,14 +104,23 @@ export class EcommerceVoucherService implements OnModuleInit {
             return voucherResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'VOUCHER_NOT_FOUND') {
                 throw new UserNotFoundException('Voucher not found');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -107,14 +134,23 @@ export class EcommerceVoucherService implements OnModuleInit {
             return voucherResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'VOUCHER_NOT_FOUND') {
                 throw new UserNotFoundException('Voucher not found');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -128,14 +164,23 @@ export class EcommerceVoucherService implements OnModuleInit {
             return voucherResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'VOUCHER_NOT_FOUND') {
                 throw new UserNotFoundException('Voucher not found');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -149,14 +194,23 @@ export class EcommerceVoucherService implements OnModuleInit {
             return voucherResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'VOUCHER_NOT_FOUND') {
                 throw new UserNotFoundException('Voucher not found');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }

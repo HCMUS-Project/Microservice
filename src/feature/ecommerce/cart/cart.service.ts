@@ -46,14 +46,23 @@ export class EcommerceCartService implements OnModuleInit {
             return addItemsToCartResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'PRODUCT_NOT_ENOUGH') {
                 throw new ForbiddenException('Product not enough', 'Forbidden');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -69,14 +78,23 @@ export class EcommerceCartService implements OnModuleInit {
             return findAllCartsResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'CART_NOT_FOUND') {
                 throw new UserNotFoundException('Cart not found');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -90,14 +108,23 @@ export class EcommerceCartService implements OnModuleInit {
             return cartResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'CART_NOT_FOUND') {
                 throw new UserNotFoundException('Cart not found');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -111,8 +138,14 @@ export class EcommerceCartService implements OnModuleInit {
             );
             return cartResponse;
         } catch (e) {
-            console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            console.log(e);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
@@ -122,7 +155,10 @@ export class EcommerceCartService implements OnModuleInit {
             } else if (errorDetails.error == 'CART_ITEM_NOT_FOUND') {
                 throw new UserNotFoundException(`Cart item not found`);
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -136,14 +172,23 @@ export class EcommerceCartService implements OnModuleInit {
             return cartResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'CART_NOT_FOUND') {
                 throw new UserNotFoundException('Cart not found');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }

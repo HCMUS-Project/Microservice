@@ -32,8 +32,14 @@ export class AuthServiceSignIn implements OnModuleInit {
             return signInResponse;
         } catch (e) {
             // console.log(e);
-            const errorDetails = JSON.parse(e.details);
-            // console.log(errorDetails);
+            let errorDetails: { error?: string };
+
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError: any) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            } // console.log(errorDetails);
             if (errorDetails.error == 'USER_NOT_FOUND') {
                 throw new UserNotFoundException();
             } else if (errorDetails.error == 'INVALID_PASSWORD') {
@@ -41,7 +47,10 @@ export class AuthServiceSignIn implements OnModuleInit {
             } else if (errorDetails.error == 'USER_NOT_VERIFIED') {
                 throw new UserNotFoundException('User not verified');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }

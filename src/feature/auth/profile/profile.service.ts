@@ -39,7 +39,13 @@ export class AuthServiceProfile implements OnModuleInit {
             return getProfileResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'USER_NOT_FOUND') {
                 throw new UserNotFoundException();
@@ -47,7 +53,10 @@ export class AuthServiceProfile implements OnModuleInit {
                 throw new UserNotFoundException('User not verified', 'Forbidden');
             }
             {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -60,7 +69,13 @@ export class AuthServiceProfile implements OnModuleInit {
             return updateProfileResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'USER_NOT_FOUND') {
                 throw new UserNotFoundException();
@@ -72,7 +87,10 @@ export class AuthServiceProfile implements OnModuleInit {
                 throw new ForbiddenException('Update username of User table failed', 'Forbidden');
             }
             {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }

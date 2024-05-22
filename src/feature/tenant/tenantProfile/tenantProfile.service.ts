@@ -39,8 +39,14 @@ export class TenantTenantProfileService implements OnModuleInit {
             return tenantProfileResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
-            // console.log(errorDetails);
+            let errorDetails: { error?: string };
+
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError: any) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            } // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'TENANT_PROFILE_ALREADY_EXISTS') {
@@ -53,7 +59,9 @@ export class TenantTenantProfileService implements OnModuleInit {
         }
     }
 
-    async findTenantProfileByTenantId(data: FindTenantProfileByTenantIdRequestDTO): Promise<TenantProfileResponse> {
+    async findTenantProfileByTenantId(
+        data: FindTenantProfileByTenantIdRequestDTO,
+    ): Promise<TenantProfileResponse> {
         try {
             const tenantProfileResponse: TenantProfileResponse = await firstValueFrom(
                 this.iTenantProfileService.findTenantProfileByTenantId(data),
@@ -61,12 +69,21 @@ export class TenantTenantProfileService implements OnModuleInit {
             return tenantProfileResponse;
         } catch (e) {
             // console.log(e);
-            const errorDetails = JSON.parse(e.details);
-            // console.log(errorDetails);
+            let errorDetails: { error?: string };
+
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError: any) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            } // console.log(errorDetails);
             if (errorDetails.error == 'TENANT_PROFILE_NOT_FOUND') {
                 throw new UserNotFoundException('Tenant profile not found');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -79,14 +96,23 @@ export class TenantTenantProfileService implements OnModuleInit {
             return tenantProfileResponse;
         } catch (e) {
             // console.log(e);
-            const errorDetails = JSON.parse(e.details);
-            // console.log(errorDetails);
+            let errorDetails: { error?: string };
+
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError: any) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            } // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'TENANT_PROFILE_NOT_FOUND') {
                 throw new UserNotFoundException('Tenant profile not found');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -99,14 +125,23 @@ export class TenantTenantProfileService implements OnModuleInit {
             return tenantProfileResponse;
         } catch (e) {
             // console.log(e);
-            const errorDetails = JSON.parse(e.details);
-            // console.log(errorDetails);
+            let errorDetails: { error?: string };
+
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError: any) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            } // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'TENANT_PROFILE_NOT_FOUND') {
                 throw new UserNotFoundException('Tenant profile not found');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }

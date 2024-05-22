@@ -49,14 +49,23 @@ export class BookingServicesService implements OnModuleInit {
             return createServiceResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'SERVICE_EXIST') {
+                throw new ForbiddenException('Service already exists', 'Forbidden');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -70,14 +79,23 @@ export class BookingServicesService implements OnModuleInit {
             return findOneResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'SERVICE_NOT_EXIST') {
+                throw new UserNotFoundException('Service not found');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -91,14 +109,23 @@ export class BookingServicesService implements OnModuleInit {
             return findServicesResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'INVALID_DATA') {
+                throw new ForbiddenException('Invalid data', 'Forbidden');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -112,14 +139,23 @@ export class BookingServicesService implements OnModuleInit {
             return deleteServiceResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'SERVICE_NOT_EXIST') {
+                throw new UserNotFoundException('Service not found');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -133,14 +169,23 @@ export class BookingServicesService implements OnModuleInit {
             return updateServiceResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'SERVICE_NOT_EXIST') {
+                throw new UserNotFoundException('Service not found');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }

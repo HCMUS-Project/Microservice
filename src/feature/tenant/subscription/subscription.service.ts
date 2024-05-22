@@ -2,9 +2,13 @@ import { Observable, firstValueFrom, lastValueFrom, take, toArray } from 'rxjs';
 import { Inject, Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { ForbiddenException, UserNotFoundException } from 'src/common/exceptions/exceptions';
-import {SubscriptionResponse} from 'src/proto_build/tenant/subscription/SubscriptionResponse';
-import {CreateSubscriptionRequestDTO, DeleteSubscriptionRequestDTO, FindSubscriptionByTenantIdRequestDTO, UpdateSubscriptionRequestDTO} from './subscription.dto';
- 
+import { SubscriptionResponse } from 'src/proto_build/tenant/subscription/SubscriptionResponse';
+import {
+    CreateSubscriptionRequestDTO,
+    DeleteSubscriptionRequestDTO,
+    FindSubscriptionByTenantIdRequestDTO,
+    UpdateSubscriptionRequestDTO,
+} from './subscription.dto';
 
 interface SubscriptionService {
     createSubscription(data: CreateSubscriptionRequestDTO): Observable<SubscriptionResponse>;
@@ -22,7 +26,8 @@ export class TenantSubscriptionService implements OnModuleInit {
     constructor(@Inject('GRPC_TENANT_SERVICE') private client: ClientGrpc) {}
 
     onModuleInit() {
-        this.iSubscriptionService = this.client.getService<SubscriptionService>('SubscriptionService');
+        this.iSubscriptionService =
+            this.client.getService<SubscriptionService>('SubscriptionService');
     }
 
     async createSubscription(data: CreateSubscriptionRequestDTO): Promise<SubscriptionResponse> {
@@ -34,7 +39,13 @@ export class TenantSubscriptionService implements OnModuleInit {
             return subscriptionResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
@@ -58,12 +69,21 @@ export class TenantSubscriptionService implements OnModuleInit {
             return subscriptionResponse;
         } catch (e) {
             // console.log(e);
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'SUBSCRIPTION_NOT_FOUND') {
                 throw new UserNotFoundException('Subscription not found');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -77,14 +97,23 @@ export class TenantSubscriptionService implements OnModuleInit {
             return subscriptionResponse;
         } catch (e) {
             // console.log(e);
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'SUBSCRIPTION_NOT_FOUND') {
                 throw new UserNotFoundException('Subscription not found');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -97,14 +126,23 @@ export class TenantSubscriptionService implements OnModuleInit {
             return subscriptionResponse;
         } catch (e) {
             // console.log(e);
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'SUBSCRIPTION_NOT_FOUND') {
                 throw new UserNotFoundException('Subscription not found');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }

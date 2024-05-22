@@ -18,11 +18,10 @@ import {
 import { IsBase64DataURI } from 'src/common/validator/is-base-64-dataURI.validator';
 import { IsSpecificUrl } from 'src/common/validator/is-specific-url.validator';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
-import {CreatePolicyAndTermRequest} from 'src/proto_build/tenant/policyAndTerm/CreatePolicyAndTermRequest';
-import {DeletePolicyAndTermRequest} from 'src/proto_build/tenant/policyAndTerm/DeletePolicyAndTermRequest';
-import {FindPolicyAndTermByTenantIdRequest} from 'src/proto_build/tenant/policyAndTerm/FindPolicyAndTermByTenantIdRequest';
-import {UpdatePolicyAndTermRequest} from 'src/proto_build/tenant/policyAndTerm/UpdatePolicyAndTermRequest';
- 
+import { CreatePolicyAndTermRequest } from 'src/proto_build/tenant/policyAndTerm/CreatePolicyAndTermRequest';
+import { DeletePolicyAndTermRequest } from 'src/proto_build/tenant/policyAndTerm/DeletePolicyAndTermRequest';
+import { FindPolicyAndTermByTenantIdRequest } from 'src/proto_build/tenant/policyAndTerm/FindPolicyAndTermByTenantIdRequest';
+import { UpdatePolicyAndTermRequest } from 'src/proto_build/tenant/policyAndTerm/UpdatePolicyAndTermRequest';
 
 export class CreatePolicyAndTerm implements CreatePolicyAndTermRequest {
     @IsUUID()
@@ -38,7 +37,7 @@ export class CreatePolicyAndTerm implements CreatePolicyAndTermRequest {
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
-    term: string
+    term: string;
 }
 
 export class CreatePolicyAndTermRequestDTO extends CreatePolicyAndTerm {
@@ -81,7 +80,7 @@ export class UpdatePolicyAndTerm implements UpdatePolicyAndTermRequest {
     @IsString()
     @IsOptional()
     @ApiProperty()
-    term: string
+    term: string;
 }
 
 export class UpdatePolicyAndTermRequestDTO extends UpdatePolicyAndTerm {

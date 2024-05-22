@@ -35,7 +35,13 @@ export class AuthServiceVerifyAccount implements OnModuleInit {
             return signUpResponse;
         } catch (e) {
             // console.log(e);
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             if (errorDetails.error == 'USER_NOT_FOUND') {
                 throw new UserNotFoundException();
             } else if (errorDetails.error == 'USER_ALREADY_VERIFIED') {
@@ -45,7 +51,10 @@ export class AuthServiceVerifyAccount implements OnModuleInit {
             } else if (errorDetails.error == 'OTP_INVALID') {
                 throw new ForbiddenException('Otp invalid', 'Forbidden');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -57,13 +66,22 @@ export class AuthServiceVerifyAccount implements OnModuleInit {
             );
             return sendMailResponse;
         } catch (e) {
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             if (errorDetails.error == 'USER_NOT_FOUND') {
                 throw new UserNotFoundException();
             } else if (errorDetails.error == 'USER_ALREADY_VERIFIED') {
                 throw new ForbiddenException('User already verified', 'Forbidden');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }

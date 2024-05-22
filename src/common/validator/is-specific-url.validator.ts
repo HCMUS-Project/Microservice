@@ -1,4 +1,10 @@
-import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments, registerDecorator, ValidationOptions } from 'class-validator';
+import {
+    ValidatorConstraint,
+    ValidatorConstraintInterface,
+    ValidationArguments,
+    registerDecorator,
+    ValidationOptions,
+} from 'class-validator';
 
 @ValidatorConstraint({ async: false })
 export class IsSpecificUrlConstraint implements ValidatorConstraintInterface {

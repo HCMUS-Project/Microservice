@@ -36,7 +36,13 @@ export class TenantBannerService implements OnModuleInit {
             return bannerResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
@@ -52,9 +58,7 @@ export class TenantBannerService implements OnModuleInit {
         }
     }
 
-    async findBannerByTenantId(
-        data: FindBannerByTenantIdRequestDTO,
-    ): Promise<BannerResponse> {
+    async findBannerByTenantId(data: FindBannerByTenantIdRequestDTO): Promise<BannerResponse> {
         try {
             const bannerResponse: BannerResponse = await firstValueFrom(
                 this.iBannerService.findBannerByTenantId(data),
@@ -62,12 +66,21 @@ export class TenantBannerService implements OnModuleInit {
             return bannerResponse;
         } catch (e) {
             // console.log(e);
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'BANNER_NOT_FOUND') {
                 throw new UserNotFoundException('Banner not found');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -81,14 +94,23 @@ export class TenantBannerService implements OnModuleInit {
             return bannerResponse;
         } catch (e) {
             // console.log(e);
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'BANNER_NOT_FOUND') {
                 throw new UserNotFoundException('Banner not found');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -101,14 +123,23 @@ export class TenantBannerService implements OnModuleInit {
             return bannerResponse;
         } catch (e) {
             // console.log(e);
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'BANNER_NOT_FOUND') {
                 throw new UserNotFoundException('Banner not found');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }

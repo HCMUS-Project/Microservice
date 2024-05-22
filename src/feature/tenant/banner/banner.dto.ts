@@ -18,11 +18,10 @@ import {
 import { IsBase64DataURI } from 'src/common/validator/is-base-64-dataURI.validator';
 import { IsSpecificUrl } from 'src/common/validator/is-specific-url.validator';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
-import {CreateBannerRequest} from 'src/proto_build/tenant/banner/CreateBannerRequest';
-import {DeleteBannerRequest} from 'src/proto_build/tenant/banner/DeleteBannerRequest';
-import {FindBannerByTenantIdRequest} from 'src/proto_build/tenant/banner/FindBannerByTenantIdRequest';
-import {UpdateBannerRequest} from 'src/proto_build/tenant/banner/UpdateBannerRequest';
- 
+import { CreateBannerRequest } from 'src/proto_build/tenant/banner/CreateBannerRequest';
+import { DeleteBannerRequest } from 'src/proto_build/tenant/banner/DeleteBannerRequest';
+import { FindBannerByTenantIdRequest } from 'src/proto_build/tenant/banner/FindBannerByTenantIdRequest';
+import { UpdateBannerRequest } from 'src/proto_build/tenant/banner/UpdateBannerRequest';
 
 export class CreateBanner implements CreateBannerRequest {
     @IsUUID()
@@ -38,7 +37,7 @@ export class CreateBanner implements CreateBannerRequest {
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
-    description: string
+    description: string;
 
     @IsHexColor()
     @IsNotEmpty()
@@ -92,7 +91,7 @@ export class UpdateBanner implements UpdateBannerRequest {
     @IsString()
     @IsOptional()
     @ApiProperty()
-    description: string
+    description: string;
 
     @IsHexColor()
     @IsOptional()

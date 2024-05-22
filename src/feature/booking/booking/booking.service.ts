@@ -46,14 +46,23 @@ export class BookingBookingsService implements OnModuleInit {
             return createBookingResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
                 throw new ForbiddenException('Product already exists', 'Forbidden');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -67,14 +76,23 @@ export class BookingBookingsService implements OnModuleInit {
             return findOneResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
                 throw new ForbiddenException('Product already exists', 'Forbidden');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -88,7 +106,13 @@ export class BookingBookingsService implements OnModuleInit {
             return findSlotBookingsResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
@@ -116,7 +140,10 @@ export class BookingBookingsService implements OnModuleInit {
     //         } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
     //             throw new ForbiddenException('Product already exists', 'Forbidden');
     //         } else {
-    //             throw new NotFoundException(errorDetails, 'Not found');
+    //             throw new NotFoundException(
+                //     `Unhandled error type: ${errorDetails.error}`,
+                //     'Error not recognized',
+                // );
     //         }
     //     }
     // }

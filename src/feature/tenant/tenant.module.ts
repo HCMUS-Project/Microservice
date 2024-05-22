@@ -11,9 +11,9 @@ import { TenantThemeConfigService } from './themeConfig/themeConfig.service';
 import { SubscriptionController } from './subscription/subscription.controller';
 import { TenantSubscriptionService } from './subscription/subscription.service';
 import { PolicyAndTermController } from './policyAndTerm/policyAndTerm.controller';
-import {TenantPolictyAndTermService} from './policyAndTerm/policyAndTerm.service';
-import {BannerController} from './banner/banner.controller';
-import {TenantBannerService} from './banner/banner.service';
+import { TenantPolictyAndTermService } from './policyAndTerm/policyAndTerm.service';
+import { BannerController } from './banner/banner.controller';
+import { TenantBannerService } from './banner/banner.service';
 
 @Module({
     imports: [ClientsModule],
@@ -23,7 +23,7 @@ import {TenantBannerService} from './banner/banner.service';
         ThemeConfigController,
         SubscriptionController,
         PolicyAndTermController,
-        BannerController
+        BannerController,
     ],
     providers: [
         {

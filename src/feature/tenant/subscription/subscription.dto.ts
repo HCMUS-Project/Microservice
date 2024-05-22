@@ -18,10 +18,10 @@ import {
 import { IsBase64DataURI } from 'src/common/validator/is-base-64-dataURI.validator';
 import { IsSpecificUrl } from 'src/common/validator/is-specific-url.validator';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
-import {CreateSubscriptionRequest} from 'src/proto_build/tenant/subscription/CreateSubscriptionRequest';
-import {DeleteSubscriptionRequest} from 'src/proto_build/tenant/subscription/DeleteSubscriptionRequest';
-import {FindSubscriptionByTenantIdRequest} from 'src/proto_build/tenant/subscription/FindSubscriptionByTenantIdRequest';
-import {UpdateSubscriptionRequest} from 'src/proto_build/tenant/subscription/UpdateSubscriptionRequest';
+import { CreateSubscriptionRequest } from 'src/proto_build/tenant/subscription/CreateSubscriptionRequest';
+import { DeleteSubscriptionRequest } from 'src/proto_build/tenant/subscription/DeleteSubscriptionRequest';
+import { FindSubscriptionByTenantIdRequest } from 'src/proto_build/tenant/subscription/FindSubscriptionByTenantIdRequest';
+import { UpdateSubscriptionRequest } from 'src/proto_build/tenant/subscription/UpdateSubscriptionRequest';
 
 export class CreateSubscription implements CreateSubscriptionRequest {
     @IsUUID()
@@ -37,7 +37,7 @@ export class CreateSubscription implements CreateSubscriptionRequest {
     @IsDateString()
     @IsNotEmpty()
     @ApiProperty()
-    nextBilling: string
+    nextBilling: string;
 }
 
 export class CreateSubscriptionRequestDTO extends CreateSubscription {
@@ -80,7 +80,7 @@ export class UpdateSubscription implements UpdateSubscriptionRequest {
     @IsDateString()
     @IsOptional()
     @ApiProperty()
-    nextBilling: string
+    nextBilling: string;
 }
 
 export class UpdateSubscriptionRequestDTO extends UpdateSubscription {

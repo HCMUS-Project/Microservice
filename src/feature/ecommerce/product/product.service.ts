@@ -48,7 +48,13 @@ export class EcommerceProductService implements OnModuleInit {
             return createProductResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
@@ -57,7 +63,10 @@ export class EcommerceProductService implements OnModuleInit {
             } else if (errorDetails.error == 'CATEGORY_NOT_FOUND') {
                 throw new UserNotFoundException('Category not found', 'Unauthorized');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -70,10 +79,19 @@ export class EcommerceProductService implements OnModuleInit {
             return findAllProductsResponse;
         } catch (e) {
             // console.log(e);
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
 
-            throw new NotFoundException(errorDetails, 'Not found');
+            throw new NotFoundException(
+                `Unhandled error type: ${errorDetails.error}`,
+                'Error not recognized',
+            );
         }
     }
 
@@ -85,12 +103,21 @@ export class EcommerceProductService implements OnModuleInit {
             return productResponse;
         } catch (e) {
             // console.log(e);
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PRODUCT_NOT_FOUND') {
                 throw new UserNotFoundException('Product not found', 'Unauthorized');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -104,12 +131,21 @@ export class EcommerceProductService implements OnModuleInit {
         } catch (e) {
             // console.log(e);
             // console.log(e.response);
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PRODUCT_NOT_FOUND') {
                 throw new UserNotFoundException('Product not found', 'Unauthorized');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -122,12 +158,21 @@ export class EcommerceProductService implements OnModuleInit {
             return removeCategoryResponse;
         } catch (e) {
             // console.log(e);
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PRODUCT_NOT_FOUND') {
                 throw new UserNotFoundException('Product not found', 'Unauthorized');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -141,9 +186,18 @@ export class EcommerceProductService implements OnModuleInit {
             return findAllProductsResponse;
         } catch (e) {
             // console.log(e);
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
-            throw new NotFoundException(errorDetails, 'Not found');
+            throw new NotFoundException(
+                `Unhandled error type: ${errorDetails.error}`,
+                'Error not recognized',
+            );
         }
     }
 
@@ -155,12 +209,21 @@ export class EcommerceProductService implements OnModuleInit {
             return productResponse;
         } catch (e) {
             // console.log(e);
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PRODUCT_NOT_FOUND') {
                 throw new UserNotFoundException('Product not found', 'Unauthorized');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -173,12 +236,21 @@ export class EcommerceProductService implements OnModuleInit {
             return productResponse;
         } catch (e) {
             // console.log(e);
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PRODUCT_NOT_FOUND') {
                 throw new UserNotFoundException('Product not found', 'Unauthorized');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }

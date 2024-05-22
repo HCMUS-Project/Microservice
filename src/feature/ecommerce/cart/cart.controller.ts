@@ -396,13 +396,13 @@ Delete a Cart by Id of CartItem within a domain using an access token. This oper
                     error: 'Unauthorized',
                 },
             ],
-            forbidden:[
+            forbidden: [
                 {
                     key: 'forbidden_resource',
                     summary: 'Forbidden resource',
                     detail: 'Forbidden resource',
                 },
-            ]
+            ],
         },
     )
     async deleteCart(@Req() req: Request, @Param() data: DeleteCart) {

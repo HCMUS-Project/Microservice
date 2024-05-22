@@ -20,7 +20,7 @@ import { ExceptionsFilter } from './core/responses/filter/exception.filter';
 import { AuthModule } from './feature/auth/auth.module';
 import { EcommerceModule } from './feature/ecommerce/ecommerce.module';
 import { BookingModule } from './feature/booking/booking.module';
-import {TenantModule} from './feature/tenant/tenant.module';
+import { TenantModule } from './feature/tenant/tenant.module';
 
 @Module({
     imports: [
@@ -33,7 +33,7 @@ import {TenantModule} from './feature/tenant/tenant.module';
         AuthModule,
         EcommerceModule,
         BookingModule,
-        TenantModule
+        TenantModule,
         // CacheModule.registerAsync(RedisOptions)
     ],
     controllers: [AppController],

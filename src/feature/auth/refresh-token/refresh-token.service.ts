@@ -29,7 +29,13 @@ export class AuthServiceRefreshToken implements OnModuleInit {
             return refreshTokenResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'INVALID_REFRESH_TOKEN') {
                 throw new ForbiddenException('Invalid refresh token', 'Forbidden');
@@ -37,7 +43,10 @@ export class AuthServiceRefreshToken implements OnModuleInit {
                 throw new ForbiddenException('Refresh token expired', 'Forbidden');
             }
             {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }

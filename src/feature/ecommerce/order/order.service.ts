@@ -50,7 +50,13 @@ export class EcommerceOrderService implements OnModuleInit {
             return createOrderResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
@@ -61,7 +67,10 @@ export class EcommerceOrderService implements OnModuleInit {
             } else if (errorDetails.error == 'VOUCHER_NOT_FOUND') {
                 throw new UserNotFoundException('Voucher not found');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -75,14 +84,23 @@ export class EcommerceOrderService implements OnModuleInit {
             return getOrderResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'ORDER_NOT_FOUND') {
                 throw new UserNotFoundException('Order not found');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -96,10 +114,19 @@ export class EcommerceOrderService implements OnModuleInit {
             return listOrdersResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
 
-            throw new NotFoundException(errorDetails, 'Not found');
+            throw new NotFoundException(
+                `Unhandled error type: ${errorDetails.error}`,
+                'Error not recognized',
+            );
         }
     }
 
@@ -112,7 +139,13 @@ export class EcommerceOrderService implements OnModuleInit {
             return updateStageOrderResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
@@ -121,7 +154,10 @@ export class EcommerceOrderService implements OnModuleInit {
             } else if (errorDetails.error == 'ORDER_NOT_FOUND') {
                 throw new UserNotFoundException('Order not found');
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
@@ -135,7 +171,13 @@ export class EcommerceOrderService implements OnModuleInit {
             return cancelOrderResponse;
         } catch (e) {
             // console.log(e)
-            const errorDetails = JSON.parse(e.details);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
@@ -144,9 +186,15 @@ export class EcommerceOrderService implements OnModuleInit {
             } else if (errorDetails.error == 'ORDER_CANCELLED') {
                 throw new ForbiddenException('Order already cancelled', 'Forbidden');
             } else if (errorDetails.error == 'CANNOT_CANCEL_ORDER') {
-                throw new ForbiddenException('Stage Order different pending can not cancelled by User', 'Forbidden');
+                throw new ForbiddenException(
+                    'Stage Order different pending can not cancelled by User',
+                    'Forbidden',
+                );
             } else {
-                throw new NotFoundException(errorDetails, 'Not found');
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
             }
         }
     }
