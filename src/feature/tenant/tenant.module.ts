@@ -4,14 +4,27 @@ import { ClientProxyFactory, ClientsModule, Transport } from '@nestjs/microservi
 import { join } from 'path';
 import { TenantTenantService } from './tenant/tenant.service';
 import { TenantController } from './tenant/tenant.controller';
-import {TenantTenantProfileService} from './tenantProfile/tenantProfile.service';
-import {TenantProfileController} from './tenantProfile/tenantProfile.controller';
-import {ThemeConfigController} from './themeConfig/themeConfig.controller';
-import {TenantThemeConfigService} from './themeConfig/themeConfig.service';
+import { TenantTenantProfileService } from './tenantProfile/tenantProfile.service';
+import { TenantProfileController } from './tenantProfile/tenantProfile.controller';
+import { ThemeConfigController } from './themeConfig/themeConfig.controller';
+import { TenantThemeConfigService } from './themeConfig/themeConfig.service';
+import { SubscriptionController } from './subscription/subscription.controller';
+import { TenantSubscriptionService } from './subscription/subscription.service';
+import { PolicyAndTermController } from './policyAndTerm/policyAndTerm.controller';
+import {TenantPolictyAndTermService} from './policyAndTerm/policyAndTerm.service';
+import {BannerController} from './banner/banner.controller';
+import {TenantBannerService} from './banner/banner.service';
 
 @Module({
     imports: [ClientsModule],
-    controllers: [TenantController, TenantProfileController, ThemeConfigController],
+    controllers: [
+        TenantController,
+        TenantProfileController,
+        ThemeConfigController,
+        SubscriptionController,
+        PolicyAndTermController,
+        BannerController
+    ],
     providers: [
         {
             provide: 'GRPC_TENANT_SERVICE_TENANT',
@@ -24,6 +37,18 @@ import {TenantThemeConfigService} from './themeConfig/themeConfig.service';
         {
             provide: 'GRPC_TENANT_SERVICE_THEME_CONFIG',
             useClass: TenantThemeConfigService,
+        },
+        {
+            provide: 'GRPC_TENANT_SERVICE_SUBSCRIPTION',
+            useClass: TenantSubscriptionService,
+        },
+        {
+            provide: 'GRPC_TENANT_SERVICE_POLICY',
+            useClass: TenantPolictyAndTermService,
+        },
+        {
+            provide: 'GRPC_TENANT_SERVICE_BANNER',
+            useClass: TenantBannerService,
         },
         {
             provide: 'GRPC_TENANT_SERVICE',
