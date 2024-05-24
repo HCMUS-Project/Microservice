@@ -45,6 +45,14 @@ import { FindOneEmployeeResponse } from 'src/proto_build/booking/employee/FindOn
 import { WorkDays } from 'src/common/enums/workDays.enum';
 import { FindOne } from '../services/services.dto';
 import { WorkShift } from 'src/common/enums/workShift.enum';
+import {
+    ApiBodyExample,
+    ApiEndpoint,
+    ApiErrorResponses,
+    ApiParamExamples,
+    ApiQueryExamples,
+    ApiResponseExample,
+} from 'src/common/decorator/swagger.decorator';
 
 @Controller('/booking/employee')
 @ApiTags('booking/employee')
@@ -58,103 +66,89 @@ export class EmployeeController {
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.TENANT)
     @ApiBearerAuth('JWT-access-token-tenant')
-    @ApiOperation({
-        summary: 'Create employee of domain',
-        description: `
-## Use access token
-## Must use tenant account`,
+    @ApiEndpoint({
+        summary: `Create an Employee`,
+        details: `
+## Description
+Create an Employee within a domain using an access token. This operation is restricted to tenant accounts only.
+        
+## Requirements
+- **Access Token**: Must provide a valid tenant access token.
+- **Permissions**: Requires tenant-level permissions.
+`,
     })
-    @ApiBody({
-        type: CreateEmployee,
-        examples: {
-            category_1: {
-                value: {} as CreateEmployee,
-            },
-        },
+    @ApiBodyExample(CreateEmployee, {
+        firstName: 'Nguyen',
+        lastName: 'Khoi',
+        email: 'nguyenvukhoi150402@gmail.com',
+        workDays: ['SATURDAY', 'SUNDAY'],
+        workShift: ['MORNING', 'AFTERNOON'],
+        services: ['2489bc57-5382-46a3-a03b-4276335261db'],
     })
-    @ApiCreatedResponse({
-        description: 'Create services successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after Create services successfully',
-                        value: {
-                            statusCode: 201,
-                            timestamp: '2024-05-08T10:01:30.061Z',
-                            path: '/api/booking/employee/create',
-                            message: null,
-                            error: null,
-                            data: {
-                                id: 'd4112320-a998-4ff5-ba84-b31514f43bc6',
-                            },
-                        },
-                    },
-                },
-            },
+    @ApiResponseExample(
+        'create',
+        'create Employee',
+        { id: 'edcc4096-3d88-4815-8e38-a87938b1e49d' },
+        '/api/booking/employee/create',
+    )
+    @ApiErrorResponses('/api/booking/employee/create', '/api/booking/employee/create', {
+        badRequest: {
+            summary: 'Validation Error',
+            detail: 'firstName should not be empty, firstName must be a string, lastName should not be empty, lastName must be a string, email should not be empty, email must be an email, each value in workDays must be one of the following values: SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, workDays must contain at least 1 elements, workDays should not be empty, workDays must be an array, each value in workShift must be one of the following values: MORNING, AFTERNOON, EVENING, NIGHT, workShift must contain at least 1 elements, workShift should not be empty, workShift must be an array, each value in services must be a UUID, services must contain at least 1 elements, services should not be empty, services must be an array',
         },
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    token_not_verified: {
-                        summary: 'Token not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T12:31:30.700Z',
-                            path: '/api/booking/employee/create',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
-                        },
-                    },
-                    unauthorized_role: {
-                        summary: 'Role not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T12:31:30.700Z',
-                            path: '/api/booking/employee/create',
-                            message: 'Unauthorized Role',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                    token_not_found: {
-                        summary: 'Token not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-02T10:55:28.511Z',
-                            path: '/api/booking/employee/create',
-                            message: 'Access Token not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                },
+        unauthorized: [
+            {
+                key: 'token_not_verified',
+                summary: 'Token not verified',
+                detail: 'Unauthorized',
+                error: null,
             },
-        },
-    })
-    @ApiForbiddenResponse({
-        description: 'Forbidden',
-        content: {
-            'application/json': {
-                examples: {
-                    user_not_verified: {
-                        summary: 'Category already exists',
-                        value: {
-                            statusCode: 403,
-                            timestamp: '2024-05-02T11:24:03.152Z',
-                            path: '/api/booking/employee/create',
-                            message: 'Category already exists',
-                            error: 'Forbidden',
-                            data: null,
-                        },
-                    },
-                },
+            {
+                key: 'token_not_found',
+                summary: 'Token not found',
+                detail: 'Access Token not found',
+                error: 'Unauthorized',
             },
-        },
+            {
+                key: 'unauthorized_role',
+                summary: 'Role not verified',
+                detail: 'Unauthorized Role',
+                error: 'Unauthorized',
+            },
+            {
+                key: 'not_found',
+                summary: 'Services not found',
+                detail: 'Services not found',
+                error: 'Unauthorized',
+            },
+        ],
+        forbidden: [
+            {
+                key: 'forbidden_resource',
+                summary: 'Forbidden resource',
+                detail: 'Forbidden resource',
+            },
+            {
+                key: 'invalid_work_days',
+                summary: 'Invalid work days',
+                detail: 'Invalid work days',
+            },
+            {
+                key: 'invalid_work_shifts',
+                summary: 'Invalid work shifts',
+                detail: 'Invalid work shifts',
+            },
+            {
+                key: 'duplicate_work_days',
+                summary: 'Duplicate work days',
+                detail: 'Duplicate work days',
+            },
+            {
+                key: 'duplicate_work_shifts',
+                summary: 'Invalid work shifts',
+                detail: 'Invalid work shifts',
+            },
+        ],
     })
     async createEmployee(@Req() req: Request, @Body() data: CreateEmployee) {
         const payloadToken = req['user'];
@@ -176,79 +170,87 @@ export class EmployeeController {
     @UseGuards(AccessTokenGuard)
     @ApiBearerAuth('JWT-access-token-user')
     @ApiBearerAuth('JWT-access-token-tenant')
-    @ApiOperation({
-        summary: 'Find one employee by ID',
-        description: `
-## Use access token
-## Use id to path`,
+    @ApiEndpoint({
+        summary: `Find one employee by Id`,
+        details: `
+## Description
+Find an employee within a domain using an access token.
+## Requirements
+- **Access Token**: Must provide a valid access token.
+`,
     })
-    @ApiParam({
-        name: 'id',
-        description: 'ID of the employee',
-        example: 'd4112320-a998-4ff5-ba84-b31514f43bc6',
-        required: true,
-        // type: FindOne
-    })
-    @ApiCreatedResponse({
-        description: 'Get one employee successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after get one employee successfully',
-                        value: {
-                            statusCode: 200,
-                            timestamp: '2024-05-10T09:03:47.836Z',
-                            path: '/api/booking/employee/find/9705690b-45d9-4d3c-a118-4ac490f34ec5',
-                            message: null,
-                            error: null,
-                            data: {
-                                workDays: ['SATURDAY', 'SUNDAY'],
-                                workShift: ['MORNING', 'AFTERNOON'],
-                                services: ['[object Object]'],
-                                id: '9705690b-45d9-4d3c-a118-4ac490f34ec5',
-                                firstName: 'Nguyen',
-                                lastName: 'Khoi',
-                                email: 'nguyenvukhoi150402@gmail.com',
-                            },
-                        },
-                    },
-                },
-            },
+    @ApiParamExamples([
+        {
+            name: 'id',
+            description: 'ID of an employee',
+            example: 'edcc4096-3d88-4815-8e38-a87938b1e49d',
+            required: true,
         },
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    token_not_verified: {
-                        summary: 'Token not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T17:42:40.039Z',
-                            path: '/api/booking/employee/find/d4112320-a998-4ff5-ba84-b31514f43bc6',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
-                        },
-                    },
-                    category_not_found: {
-                        summary: 'Category not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-02T11:43:05.882Z',
-                            path: '/api/booking/employee/find/d4112320-a998-4ff5-ba84-b31514f43bc6',
-                            message: 'Category not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
+    ])
+    @ApiResponseExample(
+        'read',
+        'find an employee by Id',
+        {
+            workDays: ['FRIDAY', 'THURSDAY'],
+            workShift: ['MORNING', 'EVENING'],
+            services: [
+                {
+                    id: '2489bc57-5382-46a3-a03b-4276335261db',
+                    name: 'Cat toc',
                 },
-            },
+            ],
+            id: '5e264b60-1f69-4db5-b09b-5718fff6931d',
+            firstName: 'Vo',
+            lastName: 'Hoai',
+            email: 'volehoai@gmail.com',
         },
-    })
-    async findOneEmployee(@Req() req: Request, @Param() params: FindOneEmployeeRequest) {
+        '/api/booking/employee/find/edcc4096-3d88-4815-8e38-a87938b1e49d',
+    )
+    @ApiErrorResponses(
+        '/api/booking/employee/find/:id',
+        '/api/booking/employee/find/edcc4096-3d88-4815-8e38-a87938b1e49e',
+        {
+            badRequest: {
+                summary: 'Validation Error',
+                detail: 'id must be a UUID',
+            },
+
+            unauthorized: [
+                {
+                    key: 'token_not_verified',
+                    summary: 'Token not verified',
+                    detail: 'Unauthorized',
+                    error: null,
+                },
+                {
+                    key: 'token_not_found',
+                    summary: 'Token not found',
+                    detail: 'Access Token not found',
+                    error: 'Unauthorized',
+                },
+                {
+                    key: 'unauthorized_role',
+                    summary: 'Role not verified',
+                    detail: 'Unauthorized Role',
+                    error: 'Unauthorized',
+                },
+                {
+                    key: 'not_found',
+                    summary: 'Employee not found',
+                    detail: 'Employee not found',
+                    error: 'Unauthorized',
+                },
+            ],
+            forbidden: [
+                {
+                    key: 'forbidden_resource',
+                    summary: 'Forbidden resource',
+                    detail: 'Forbidden resource',
+                },
+            ],
+        },
+    )
+    async findOneEmployee(@Req() req: Request, @Param() params: FindOne) {
         const payloadToken = req['user'];
         // const header = req.headers;
         const userData = {
@@ -268,119 +270,126 @@ export class EmployeeController {
     @UseGuards(AccessTokenGuard)
     @ApiBearerAuth('JWT-access-token-user')
     @ApiBearerAuth('JWT-access-token-tenant')
-    @ApiOperation({
-        summary: 'Search one employee',
-        description: `
-## Use access token
-## Use query`,
+    @ApiEndpoint({
+        summary: `Find Employees by condition`,
+        details: `
+## Description
+Find Employess within a domain using an access token.
+## Requirements
+- **Access Token**: Must provide a valid access token.
+- Must has **services** in query to find all **employee** can do service.
+- API will return the result with **match all data in field of employee**.
+- Example: employee A has shift **[MORNING, EVENING]**. Query **workShift=MORNING** will return A
+- but return **none** with query is **workShift=MORNING&workShift=AFTERNOON**.
+`,
     })
-    @ApiQuery({
-        name: 'firstName',
-        description: 'First name of employee',
-        required: false,
-        example: 'Nguyen',
-    })
-    @ApiQuery({
-        name: 'lastName',
-        description: 'Last name of employee',
-        required: false,
-        example: 'Khoi',
-    })
-    @ApiQuery({
-        name: 'email',
-        description: 'Email of employee',
-        required: false,
-        example: 'nguyenvukhoi150402@gmail.com',
-    })
-    @ApiQuery({
-        name: 'workDays',
-        description:
-            'Array of workDays. Repeat the parameter for each value with square brackets (e.g., workDays[]=SUNDAY&workDays[]=FRIDAY).',
-        required: true,
-        enum: WorkDays,
-        isArray: true,
-        example: 'workDays[]=SUNDAY&workDays[]=FRIDAY',
-    })
-    @ApiQuery({
-        name: 'workShift',
-        description:
-            'Array of workShift. Repeat the parameter for each value with square brackets (e.g., workShift[]=MORNING&workShift[]=AFTERNOON).',
-        required: true,
-        enum: WorkShift,
-        isArray: true,
-        example: 'workShift[]=MORNING&workShift[]=AFTERNOON',
-    })
-    @ApiQuery({
-        name: 'services',
-        description:
-            'Array of services. Repeat the parameter for each value with square brackets).',
-        required: true,
-        isArray: true,
-        example: 'services[]=85351665-9e0a-41b4-9792-9001210f85f4',
-    })
-    @ApiCreatedResponse({
-        description: 'Find one service successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after find one service successfully',
-                        value: {
-                            statusCode: 200,
-                            timestamp: '2024-05-10T09:08:38.856Z',
-                            path: '/api/booking/employee/search?workDays[]=SUNDAY&workShift[]=MORNING&services[]=85351665-9e0a-41b4-9792-9001210f85f4&workDays[]=SUNDAY&firstName=Nguyen&lastName=Khoi&email=nguyenvukhoi150402@gmai.com',
-                            message: null,
-                            error: null,
-                            data: {
-                                employees: [
-                                    {
-                                        workDays: ['SATURDAY', 'SUNDAY'],
-                                        workShift: ['MORNING', 'AFTERNOON'],
-                                        services: ['[object Object]'],
-                                        id: '9705690b-45d9-4d3c-a118-4ac490f34ec5',
-                                        firstName: 'Nguyen',
-                                        lastName: 'Khoi',
-                                        email: 'nguyenvukhoi150402@gmail.com',
-                                    },
-                                ],
-                            },
-                        },
-                    },
-                },
-            },
+    @ApiQueryExamples([
+        {
+            name: 'firstName',
+            description: 'First name of employee',
+            required: false,
+            example: 'Nguyen',
         },
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    token_not_verified: {
-                        summary: 'Token not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T17:42:40.039Z',
-                            path: '/api/booking/employee/search?workDays[]=SUNDAY&workShift[]=MORNING&services[]=879101c7-7397-4e57-b196-b494acb6a76b&name=Ca%201',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
-                        },
-                    },
-                    category_not_found: {
-                        summary: 'Category not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-02T11:43:05.882Z',
-                            path: '/api/booking/employee/search?workDays[]=SUNDAY&workShift[]=MORNING&services[]=879101c7-7397-4e57-b196-b494acb6a76b&name=Ca%201',
-                            message: 'Category not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                },
-            },
+        {
+            name: 'lastName',
+            description: 'Last name of employee',
+            required: false,
+            example: 'Khoi',
         },
-    })
+        {
+            name: 'email',
+            description: 'Email of employee',
+            required: false,
+            example: 'nguyenvukhoi150402@gmail.com',
+        },
+        {
+            name: 'workDays',
+            description:
+                'Array of workDays. Repeat the parameter for each value with square brackets (e.g., workDays[]=SUNDAY&workDays[]=FRIDAY).',
+            required: false,
+            enum: WorkDays,
+            isArray: true,
+            example: 'workDays=SUNDAY&workDays=FRIDAY',
+        },
+        {
+            name: 'workShift',
+            description:
+                'Array of workShift. Repeat the parameter for each value with square brackets (e.g., workShift[]=MORNING&workShift[]=AFTERNOON).',
+            required: false,
+            enum: WorkShift,
+            isArray: true,
+            example: 'workShift=MORNING&workShift=AFTERNOON',
+        },
+        {
+            name: 'services',
+            description:
+                'Array of services. Repeat the parameter for each value with square brackets).',
+            required: true,
+            isArray: true,
+            example: 'services=85351665-9e0a-41b4-9792-9001210f85f4',
+        },
+    ])
+    @ApiResponseExample(
+        'read',
+        'find employees by condition',
+        {
+            employees: [
+                {
+                    workDays: ['SATURDAY', 'SUNDAY'],
+                    workShift: ['MORNING', 'AFTERNOON'],
+                    services: [
+                        {
+                            id: '2489bc57-5382-46a3-a03b-4276335261db',
+                            name: 'Cat toc',
+                        },
+                    ],
+                    id: 'edcc4096-3d88-4815-8e38-a87938b1e49d',
+                    firstName: 'Nguyen',
+                    lastName: 'Khoi',
+                    email: 'nguyenvukhoi150402@gmail.com',
+                },
+            ],
+        },
+        '/api/booking/employee/search?services=2489bc57-5382-46a3-a03b-4276335261db&workDays=SUNDAY&firstName=Nguyen&lastName=Khoi&email=nguyenvukhoi150402@gmai.com&workShift=MORNING',
+    )
+    @ApiErrorResponses(
+        '/api/booking/employee/search?services&firstName&lastName&email&workDays&workShift',
+        '/api/booking/employee/search?services=2489bc57-5382-46a3-a03b-4276335261db&workDays=SUNDAY&firstName=Nguyen&lastName=Khoi&email=nguyenvukhoi150402@gmai.com&workShift=MORNING',
+        {
+            badRequest: {
+                summary: 'Validation Error',
+                detail: 'email must be an email, each value in workDays must be one of the following values: SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, each value in workShift must be one of the following values: MORNING, AFTERNOON, EVENING, NIGHT, each value in services must be a UUID',
+            },
+
+            unauthorized: [
+                {
+                    key: 'token_not_verified',
+                    summary: 'Token not verified',
+                    detail: 'Unauthorized',
+                    error: null,
+                },
+                {
+                    key: 'token_not_found',
+                    summary: 'Token not found',
+                    detail: 'Access Token not found',
+                    error: 'Unauthorized',
+                },
+                {
+                    key: 'unauthorized_role',
+                    summary: 'Role not verified',
+                    detail: 'Unauthorized Role',
+                    error: 'Unauthorized',
+                },
+            ],
+            forbidden: [
+                {
+                    key: 'forbidden_resource',
+                    summary: 'Forbidden resource',
+                    detail: 'Forbidden resource',
+                },
+            ],
+        },
+    )
     async findEmployee(@Req() req: Request, @Query() query: FindEmployee) {
         const payloadToken = req['user'];
         // const header = req.headers;
@@ -390,7 +399,7 @@ export class EmployeeController {
             role: payloadToken.role,
             accessToken: payloadToken.accessToken,
         } as UserDto;
-        // console.log(query);
+        console.log(query);
         return await this.bookingEmployeeService.findEmployee({
             user: userData,
             ...query,
@@ -401,104 +410,96 @@ export class EmployeeController {
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.TENANT)
     @ApiBearerAuth('JWT-access-token-tenant')
-    @ApiOperation({
-        summary: 'Update employee of domain',
-        description: `
-## Use access token
-## Must use tenant account
-## Return new employee with update data`,
+    @ApiEndpoint({
+        summary: `Update an employee`,
+        details: `
+## Description
+Update an employee within a domain using an access token. This operation is restricted to tenant accounts only.
+        
+## Requirements
+- **Access Token**: Must provide a valid tenant access token.
+- **Permissions**: Requires tenant-level permissions.
+`,
     })
-    @ApiBody({
-        type: UpdateEmployee,
-        examples: {
-            category_1: {
-                value: {} as UpdateEmployee,
-            },
-        },
+    @ApiBodyExample(UpdateEmployee, {
+        firstName: 'Nguyen',
+        lastName: 'Khoi',
+        email: 'nguyenvukhoi150402@gmail.com',
+        workDays: ['SATURDAY', 'SUNDAY'],
+        workShift: ['MORNING'],
+        services: ['2489bc57-5382-46a3-a03b-4276335261db'],
+        id: 'edcc4096-3d88-4815-8e38-a87938b1e49d',
     })
-    @ApiCreatedResponse({
-        description: 'Update employee successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after Update employee successfully',
-                        value: {
-                            statusCode: 201,
-                            timestamp: '2024-05-08T18:57:45.555Z',
-                            path: '/api/booking/employee/update',
-                            message: null,
-                            error: null,
-                            data: {
-                                id: 'f49ae4e8-8c65-4a8f-a584-efb185a95beb',
-                            },
-                        },
-                    },
-                },
-            },
+    @ApiResponseExample(
+        'update',
+        'update Employee',
+        { id: 'edcc4096-3d88-4815-8e38-a87938b1e49d' },
+        '/api/booking/employee/update',
+    )
+    @ApiErrorResponses('/api/booking/employee/update', '/api/booking/employee/update', {
+        badRequest: {
+            summary: 'Validation Error',
+            detail: 'firstName should not be empty, firstName must be a string, lastName should not be empty, lastName must be a string, email should not be empty, email must be an email, each value in workDays must be one of the following values: SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, workDays must contain at least 1 elements, workDays should not be empty, workDays must be an array, each value in workShift must be one of the following values: MORNING, AFTERNOON, EVENING, NIGHT, workShift must contain at least 1 elements, workShift should not be empty, workShift must be an array, each value in services must be a UUID, services must contain at least 1 elements, services should not be empty, services must be an array, id should not be empty, id must be a UUID',
         },
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    token_not_verified: {
-                        summary: 'Token not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T12:31:30.700Z',
-                            path: '/api/booking/employee/update',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
-                        },
-                    },
-                    unauthorized_role: {
-                        summary: 'Role not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T12:31:30.700Z',
-                            path: '/api/booking/employee/update',
-                            message: 'Unauthorized Role',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                    token_not_found: {
-                        summary: 'Token not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-02T10:55:28.511Z',
-                            path: '/api/booking/employee/update',
-                            message: 'Access Token not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                },
+        unauthorized: [
+            {
+                key: 'token_not_verified',
+                summary: 'Token not verified',
+                detail: 'Unauthorized',
+                error: null,
             },
-        },
-    })
-    @ApiForbiddenResponse({
-        description: 'Forbidden',
-        content: {
-            'application/json': {
-                examples: {
-                    user_not_verified: {
-                        summary: 'Category already exists',
-                        value: {
-                            statusCode: 403,
-                            timestamp: '2024-05-02T11:24:03.152Z',
-                            path: '/api/booking/employee/create',
-                            message: 'Category already exists',
-                            error: 'Forbidden',
-                            data: null,
-                        },
-                    },
-                },
+            {
+                key: 'token_not_found',
+                summary: 'Token not found',
+                detail: 'Access Token not found',
+                error: 'Unauthorized',
             },
-        },
+            {
+                key: 'unauthorized_role',
+                summary: 'Role not verified',
+                detail: 'Unauthorized Role',
+                error: 'Unauthorized',
+            },
+            {
+                key: 'not_found',
+                summary: 'Services not found',
+                detail: 'Services not found',
+                error: 'Unauthorized',
+            },
+            {
+                key: 'employee_not_found',
+                summary: 'Employee not found',
+                detail: 'Employee not found',
+                error: 'Unauthorized',
+            },
+        ],
+        forbidden: [
+            {
+                key: 'forbidden_resource',
+                summary: 'Forbidden resource',
+                detail: 'Forbidden resource',
+            },
+            {
+                key: 'invalid_work_days',
+                summary: 'Invalid work days',
+                detail: 'Invalid work days',
+            },
+            {
+                key: 'invalid_work_shifts',
+                summary: 'Invalid work shifts',
+                detail: 'Invalid work shifts',
+            },
+            {
+                key: 'duplicate_work_days',
+                summary: 'Duplicate work days',
+                detail: 'Duplicate work days',
+            },
+            {
+                key: 'duplicate_work_shifts',
+                summary: 'Invalid work shifts',
+                detail: 'Invalid work shifts',
+            },
+        ],
     })
     async updateEmployee(@Req() req: Request, @Body() data: UpdateEmployee) {
         const payloadToken = req['user'];
@@ -510,7 +511,7 @@ export class EmployeeController {
             accessToken: payloadToken.accessToken,
         } as UserDto;
         // console.log(userData, data)
-        return await this.bookingEmployeeService.createEmployee({
+        return await this.bookingEmployeeService.updateEmployee({
             user: userData,
             ...data,
         } as UpdateEmployeeRequestDTO);
@@ -520,71 +521,75 @@ export class EmployeeController {
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.TENANT)
     @ApiBearerAuth('JWT-access-token-tenant')
-    @ApiOperation({
-        summary: 'Delete one employee',
-        description: `
-## Use access token
-## Must be TENANT`,
+    @ApiEndpoint({
+        summary: `Delete one Employee`,
+        details: `
+## Description
+Delete a Employee within a domain using an access token. This operation is restricted to tenant accounts only.
+        
+## Requirements
+- **Access Token**: Must provide a valid tenant access token.
+- **Permissions**: Requires tenant-level permissions.
+`,
     })
-    @ApiParam({
-        name: 'id',
-        description: 'ID of the employee',
-        example: 'd4112320-a998-4ff5-ba84-b31514f43bc6',
-        required: true,
-    })
-    @ApiCreatedResponse({
-        description: 'Delete one service successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after delete employee successfully',
-                        value: {
-                            statusCode: 200,
-                            timestamp: '2024-05-08T18:34:29.532Z',
-                            path: '/api/booking/employee/delete/d4112320-a998-4ff5-ba84-b31514f43bc6',
-                            message: null,
-                            error: null,
-                            data: {
-                                result: 'success',
-                            },
-                        },
-                    },
-                },
-            },
+    @ApiParamExamples([
+        {
+            name: 'id',
+            description: 'ID of an employee',
+            example: 'edcc4096-3d88-4815-8e38-a87938b1e49d',
+            required: true,
         },
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    token_not_verified: {
-                        summary: 'Token not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T17:42:40.039Z',
-                            path: '/api/booking/employee/delete/d4112320-a998-4ff5-ba84-b31514f43bc6',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
-                        },
-                    },
-                    category_not_found: {
-                        summary: 'Category not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-02T11:43:05.882Z',
-                            path: '/api/booking/employee/delete/d4112320-a998-4ff5-ba84-b31514f43bc6',
-                            message: 'Category not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                },
+    ])
+    @ApiResponseExample(
+        'delete',
+        'delete an employee by Id',
+        { result: 'success' },
+        '/api/booking/employee/delete/edcc4096-3d88-4815-8e38-a87938b1e49d',
+    )
+    @ApiErrorResponses(
+        '/api/booking/employee/delete/:id',
+        '/api/booking/employee/delete/edcc4096-3d88-4815-8e38-a87938b1e49e',
+        {
+            badRequest: {
+                summary: 'Validation Error',
+                detail: 'id must be a UUID',
             },
+
+            unauthorized: [
+                {
+                    key: 'token_not_verified',
+                    summary: 'Token not verified',
+                    detail: 'Unauthorized',
+                    error: null,
+                },
+                {
+                    key: 'token_not_found',
+                    summary: 'Token not found',
+                    detail: 'Access Token not found',
+                    error: 'Unauthorized',
+                },
+                {
+                    key: 'unauthorized_role',
+                    summary: 'Role not verified',
+                    detail: 'Unauthorized Role',
+                    error: 'Unauthorized',
+                },
+                {
+                    key: 'not_found',
+                    summary: 'Employee not found',
+                    detail: 'Employee not found',
+                    error: 'Unauthorized',
+                },
+            ],
+            forbidden: [
+                {
+                    key: 'forbidden_resource',
+                    summary: 'Forbidden resource',
+                    detail: 'Forbidden resource',
+                },
+            ],
         },
-    })
+    )
     async deleteEmployee(@Req() req: Request, @Param() param: DeleteEmployee) {
         const payloadToken = req['user'];
         // const header = req.headers;

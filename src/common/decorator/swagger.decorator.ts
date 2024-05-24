@@ -162,7 +162,7 @@ export function ApiErrorResponses(
 }
 
 export function ApiQueryExamples(
-    queries: Array<{ name: string; description: string; example: any; required?: boolean }>,
+    queries: Array<{ name: string; description: string; example: any; required?: boolean, enum?:any, isArray?: boolean }>,
 ) {
     return applyDecorators(
         ...queries.map(query =>
@@ -170,6 +170,8 @@ export function ApiQueryExamples(
                 name: query.name,
                 description: query.description,
                 example: query.example,
+                enum: query.enum,
+                isArray: query.isArray,
                 required: query.required !== undefined ? query.required : true,
             }),
         ),

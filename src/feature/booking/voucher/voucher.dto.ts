@@ -72,33 +72,39 @@ export class EditVoucher implements EditVoucherRequest {
     id: string;
 
     @IsString()
-    @IsNotEmpty()
+    // @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     voucherName: string;
 
     @IsString()
-    @IsNotEmpty()
+    // @IsNotEmpty()
+    @IsOptional()
     @Matches(/^[A-Z0-9]*$/, { message: 'Voucher code must be uppercase and contain no spaces' })
     @ApiProperty()
     voucherCode: string;
 
     @IsPositive()
-    @IsNotEmpty()
+    // @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     maxDiscountValue: number;
 
     @IsPositive()
-    @IsNotEmpty()
+    // @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     minAppValue: number;
 
     @IsNotEmpty()
-    @IsPositive()
+    // @IsPositive()
+    @IsOptional()
     @ApiProperty()
     discountPercent: number;
 
     @IsDateString()
-    @IsNotEmpty()
+    // @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     expiredTime: string;
 }
@@ -111,7 +117,7 @@ export class EditVoucherRequestDTO extends EditVoucher {
 }
 
 export class DeleteVoucher implements DeleteVoucherRequest {
-    @IsString()
+    @IsUUID()
     @IsNotEmpty()
     @ApiProperty()
     id: string;
@@ -132,7 +138,7 @@ export class FindAllVouchersRequestDTO implements FindAllVouchersRequest {
 }
 
 export class FindOneVoucher implements FindOneVoucherRequest {
-    @IsString()
+    @IsUUID()
     @IsNotEmpty()
     @ApiProperty()
     id: string;

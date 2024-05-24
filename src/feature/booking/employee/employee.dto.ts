@@ -94,22 +94,22 @@ export class FindOneEmployeeRequestDTO extends FindOneEmployee {
 
 export class FindEmployee implements FindEmployeeRequest {
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     firstName: string;
 
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     lastName: string;
 
     @IsEmail()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     email: string;
 
     @IsArray()
-    @IsNotEmpty()
+    @IsOptional()
     @ArrayMinSize(1)
     @IsEnum(WorkDays, { each: true })
     @Transform(({ value }) => (Array.isArray(value) ? value : Array(value)))
@@ -117,7 +117,7 @@ export class FindEmployee implements FindEmployeeRequest {
     workDays: WorkDays[];
 
     @IsArray()
-    @IsNotEmpty()
+    @IsOptional()
     @ArrayMinSize(1)
     @IsEnum(WorkShift, { each: true })
     @Transform(({ value }) => (Array.isArray(value) ? value : Array(value)))

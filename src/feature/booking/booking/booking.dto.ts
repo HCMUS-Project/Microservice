@@ -36,10 +36,10 @@ export class CreateBooking implements CreateBookingRequest {
     @ApiProperty()
     service: string;
 
-    @IsUUID('all')
-    @IsOptional()
-    @ApiProperty()
-    employee: string;
+    // @IsUUID('all')
+    // @IsOptional()
+    // @ApiProperty()
+    // employee: string;
 
     @IsDateString()
     @IsNotEmpty()
@@ -47,9 +47,9 @@ export class CreateBooking implements CreateBookingRequest {
     startTime: string;
 
     @IsString()
-    @IsNotEmpty()
+    @IsOptional() 
     @ApiProperty()
-    note: string;
+    note: string = 'Default note';
 }
 
 export class CreateBookingRequestDTO extends CreateBooking {
@@ -74,6 +74,9 @@ export class FindOneRequestDTO extends FindOne {
 }
 
 export class FindSlotBookings implements FindSlotBookingsRequest {
+    // @Matches(/^\d{4}-\d{2}-\d{2}$/, {
+    //     message: 'date must be a valid date in the format yyyy-mm-dd',
+    // })
     @IsDateString()
     @IsNotEmpty()
     @ApiProperty()
@@ -84,20 +87,20 @@ export class FindSlotBookings implements FindSlotBookingsRequest {
     @ApiProperty()
     service: string;
 
-    @IsUUID('all')
-    @IsOptional()
-    @ApiProperty()
-    employee: string;
+    // @IsUUID('all')
+    // @IsOptional()
+    // @ApiProperty()
+    // employee: string;
 
-    @IsDateString()
-    @IsOptional()
-    @ApiProperty()
-    startTime: string;
+    // @IsDateString()
+    // @IsOptional()
+    // @ApiProperty()
+    // startTime: string;
 
-    @IsDateString()
-    @IsOptional()
-    @ApiProperty()
-    endTime: string;
+    // @IsDateString()
+    // @IsOptional()
+    // @ApiProperty()
+    // endTime: string;
 }
 
 export class FindSlotBookingsRequestDTO extends FindSlotBookings {

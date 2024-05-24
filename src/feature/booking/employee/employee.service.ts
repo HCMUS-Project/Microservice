@@ -59,8 +59,16 @@ export class BookingEmployeeService implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'INVALID_WORK_DAYS') {
+                throw new ForbiddenException('Invalid work days', 'Forbidden');
+            } else if (errorDetails.error == 'INVALID_WORK_SHIFTS') {
+                throw new ForbiddenException('Invalid work shifts', 'Forbidden');
+            } else if (errorDetails.error == 'DUPLICATE_WORK_DAYS') {
+                throw new ForbiddenException('Duplicate work days', 'Forbidden');
+            } else if (errorDetails.error == 'DUPLICATE_WORK_SHIFTS') {
+                throw new ForbiddenException('Duplicate work shifts', 'Forbidden');
+            } else if (errorDetails.error == 'SERVICES_NOT_FOUND') {
+                throw new UserNotFoundException('Services not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -89,8 +97,8 @@ export class BookingEmployeeService implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'EMPLOYEE_NOT_FOUND') {
+                throw new UserNotFoundException('Employee not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -117,16 +125,11 @@ export class BookingEmployeeService implements OnModuleInit {
                 throw new NotFoundException(String(e), 'Error not recognized');
             }
             // console.log(errorDetails);
-            if (errorDetails.error == 'PERMISSION_DENIED') {
-                throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
-            } else {
-                throw new NotFoundException(
-                    `Unhandled error type: ${errorDetails.error}`,
-                    'Error not recognized',
-                );
-            }
+
+            throw new NotFoundException(
+                `Unhandled error type: ${errorDetails.error}`,
+                'Error not recognized',
+            );
         }
     }
 
@@ -149,8 +152,18 @@ export class BookingEmployeeService implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'INVALID_WORK_DAYS') {
+                throw new ForbiddenException('Invalid work days', 'Forbidden');
+            } else if (errorDetails.error == 'INVALID_WORK_SHIFTS') {
+                throw new ForbiddenException('Invalid work shifts', 'Forbidden');
+            } else if (errorDetails.error == 'DUPLICATE_WORK_DAYS') {
+                throw new ForbiddenException('Duplicate work days', 'Forbidden');
+            } else if (errorDetails.error == 'DUPLICATE_WORK_SHIFTS') {
+                throw new ForbiddenException('Duplicate work shifts', 'Forbidden');
+            } else if (errorDetails.error == 'SERVICES_NOT_FOUND') {
+                throw new UserNotFoundException('Services not found');
+            } else if (errorDetails.error == 'EMPLOYEE_NOT_FOUND') {
+                throw new UserNotFoundException('Employee not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -179,8 +192,8 @@ export class BookingEmployeeService implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'EMPLOYEE_NOT_FOUND') {
+                throw new UserNotFoundException('Employee not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,

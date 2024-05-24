@@ -56,8 +56,10 @@ export class BookingBookingsService implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'SERVICE_NOT_FOUND') {
+                throw new UserNotFoundException('Service not found');
+            } else if (errorDetails.error == 'NO_EMPLOYEE') {
+                throw new ForbiddenException('None of employee available for booking', 'Forbidden');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -86,8 +88,8 @@ export class BookingBookingsService implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'BOOKING_NOT_FOUND') {
+                throw new UserNotFoundException('Booking not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -116,8 +118,8 @@ export class BookingBookingsService implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'SERVICE_NOT_FOUND') {
+                throw new UserNotFoundException('Service not found');
             } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }
@@ -141,9 +143,9 @@ export class BookingBookingsService implements OnModuleInit {
     //             throw new ForbiddenException('Product already exists', 'Forbidden');
     //         } else {
     //             throw new NotFoundException(
-                //     `Unhandled error type: ${errorDetails.error}`,
-                //     'Error not recognized',
-                // );
+    //     `Unhandled error type: ${errorDetails.error}`,
+    //     'Error not recognized',
+    // );
     //         }
     //     }
     // }

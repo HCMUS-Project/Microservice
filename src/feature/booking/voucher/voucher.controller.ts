@@ -41,6 +41,14 @@ import {
     FindOneVoucherRequestDTO,
 } from './voucher.dto';
 import { CreateBookingRequestDTO } from '../booking/booking.dto';
+import {
+    ApiBodyExample,
+    ApiEndpoint,
+    ApiErrorResponses,
+    ApiParamExamples,
+    ApiResponseExample,
+} from 'src/common/decorator/swagger.decorator';
+import { UpdateVoucher } from 'src/feature/ecommerce/voucher/voucher.dto';
 
 @Controller('/booking/voucher')
 @ApiTags('booking/voucher')
@@ -54,111 +62,77 @@ export class VoucherController {
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.TENANT)
     @ApiBearerAuth('JWT-access-token-tenant')
-    @ApiOperation({
-        summary: 'Create voucher of domain',
-        description: `
-## Use access token
-## Must use tenant account`,
+    @ApiEndpoint({
+        summary: `Create a voucher`,
+        details: `
+## Description
+Create a voucher within a domain using an access token. This operation is restricted to tenant accounts only.
+        
+## Requirements
+- **Access Token**: Must provide a valid tenant access token.
+- **Permissions**: Requires tenant-level permissions.
+`,
     })
-    @ApiBody({
-        type: CreateVoucher,
-        examples: {
-            category_1: {
-                value: {
-                    serviceId: 'dfb82e86-2ecc-4eb3-8123-174b2299ad68',
-                    voucherName: 'Giam gia 50%',
-                    voucherCode: 'GIAM50',
-                    maxDiscountValue: 50000,
-                    minAppValue: 500000,
-                    discountPercent: 50,
-                    expiredTime: '2024-05-12T05:51:38.792Z',
-                } as CreateVoucher,
-            },
-        },
+    @ApiBodyExample(CreateVoucher, {
+        serviceId: '2489bc57-5382-46a3-a03b-4276335261db',
+        voucherName: 'Giam gia 50%',
+        voucherCode: 'GIAM50',
+        maxDiscountValue: 50000,
+        minAppValue: 500000,
+        discountPercent: 50,
+        expiredTime: '2024-05-31T05:51:38.792Z',
     })
-    @ApiCreatedResponse({
-        description: 'Create voucher successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after Create voucher successfully',
-                        value: {
-                            statusCode: 201,
-                            timestamp: '2024-05-09T09:08:59.970Z',
-                            path: '/api/booking/voucher/create',
-                            message: null,
-                            error: null,
-                            data: {
-                                id: 'b91cef5c-b0c7-4af9-a0cf-02c58adc87fb',
-                            },
-                        },
-                    },
-                },
-            },
+    @ApiResponseExample(
+        'create',
+        'create Voucher',
+        {
+            id: 'f21142ef-cece-4f14-83c1-eed2d485000a',
         },
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    token_not_verified: {
-                        summary: 'Token not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T12:31:30.700Z',
-                            path: '/api/booking/voucher/create',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
-                        },
-                    },
-                    unauthorized_role: {
-                        summary: 'Role not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T12:31:30.700Z',
-                            path: '/api/booking/voucher/create',
-                            message: 'Unauthorized Role',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                    token_not_found: {
-                        summary: 'Token not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-02T10:55:28.511Z',
-                            path: '/api/booking/voucher/create',
-                            message: 'Access Token not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                },
-            },
+        '/api/ecommerce/voucher/create',
+    )
+    @ApiErrorResponses('/api/ecommerce/voucher/create', '/api/ecommerce/voucher/create', {
+        badRequest: {
+            summary: 'Validation Error',
+            detail: 'voucherName should not be empty, voucherCode should not be empty, maxDiscount should not be empty, maxDiscount must be a positive number, minAppValue must not be less than 0, minAppValue should not be empty, minAppValue must be a number conforming to the specified constraints, discountPercent must not be greater than 1, discountPercent must not be less than 0, discountPercent should not be empty, discountPercent must be a number conforming to the specified constraints, expireAt should not be empty, expireAt must be a valid ISO 8601 date string',
         },
-    })
-    @ApiForbiddenResponse({
-        description: 'Forbidden',
-        content: {
-            'application/json': {
-                examples: {
-                    user_not_verified: {
-                        summary: 'Category already exists',
-                        value: {
-                            statusCode: 403,
-                            timestamp: '2024-05-02T11:24:03.152Z',
-                            path: '/api/booking/voucher/create',
-                            message: 'Category already exists',
-                            error: 'Forbidden',
-                            data: null,
-                        },
-                    },
-                },
+        unauthorized: [
+            {
+                key: 'token_not_verified',
+                summary: 'Token not verified',
+                detail: 'Unauthorized',
+                error: null,
             },
-        },
+            {
+                key: 'token_not_found',
+                summary: 'Token not found',
+                detail: 'Access Token not found',
+                error: 'Unauthorized',
+            },
+            {
+                key: 'unauthorized_role',
+                summary: 'Role not verified',
+                detail: 'Unauthorized Role',
+                error: 'Unauthorized',
+            },
+            {
+                key: 'not_found',
+                summary: 'Service not found',
+                detail: 'Service not found',
+                error: 'Unauthorized',
+            },
+        ],
+        forbidden: [
+            {
+                key: 'forbidden_resource',
+                summary: 'Forbidden resource',
+                detail: 'Forbidden resource',
+            },
+            {
+                key: 'already_exists',
+                summary: 'Voucher already exists',
+                detail: 'Voucher already exists',
+            },
+        ],
     })
     async createVoucher(@Req() req: Request, @Body() data: CreateVoucher) {
         const payloadToken = req['user'];
@@ -180,79 +154,77 @@ export class VoucherController {
     @UseGuards(AccessTokenGuard)
     @ApiBearerAuth('JWT-access-token-user')
     @ApiBearerAuth('JWT-access-token-tenant')
-    @ApiOperation({
-        summary: 'Find all vouchers',
-        description: `
-## Use access token`,
+    @ApiEndpoint({
+        summary: `Find all Vouchers`,
+        details: `
+## Description
+Return all vouchers within a domain using an access token.  
+        
+## Requirements
+- **Access Token**: Must provide a valid access token. 
+`,
     })
-    @ApiCreatedResponse({
-        description: 'Get all vouchers successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after get all vouchers successfully',
-                        value: {
-                            statusCode: 200,
-                            timestamp: '2024-05-09T09:15:14.420Z',
-                            path: '/api/booking/voucher/find/all',
-                            message: null,
-                            error: null,
-                            data: {
-                                vouchers: [
-                                    {
-                                        id: 'b91cef5c-b0c7-4af9-a0cf-02c58adc87fb',
-                                        serviceId: 'dfb82e86-2ecc-4eb3-8123-174b2299ad68',
-                                        voucherName: 'Giam gia 50%',
-                                        voucherCode: 'GIAM50',
-                                        maxDiscountValue: 50000,
-                                        minAppValue: 500000,
-                                        discountPercent: 50,
-                                        expiredTime:
-                                            'Sun May 12 2024 12:51:38 GMT+0700 (Indochina Time)',
-                                        createdAt:
-                                            'Thu May 09 2024 16:08:59 GMT+0700 (Indochina Time)',
-                                    },
-                                    {
-                                        id: 'fb6e2999-cc79-42cf-826a-a1e346ceccc6',
-                                        serviceId: 'dfb82e86-2ecc-4eb3-8123-174b2299ad68',
-                                        voucherName: 'Giam gia 30%',
-                                        voucherCode: 'GIAM30',
-                                        maxDiscountValue: 30000,
-                                        minAppValue: 200000,
-                                        discountPercent: 30,
-                                        expiredTime:
-                                            'Sun May 12 2024 12:51:38 GMT+0700 (Indochina Time)',
-                                        createdAt:
-                                            'Thu May 09 2024 16:14:11 GMT+0700 (Indochina Time)',
-                                    },
-                                ],
-                            },
-                        },
-                    },
+    @ApiResponseExample(
+        'read',
+        'find all vouchers',
+        {
+            vouchers: [
+                {
+                    id: 'f21142ef-cece-4f14-83c1-eed2d485000a',
+                    type: 'booking',
+                    serviceId: '2489bc57-5382-46a3-a03b-4276335261db',
+                    voucherName: 'Giam gia 50%',
+                    voucherCode: 'GIAM50',
+                    maxDiscountValue: 50000,
+                    minAppValue: 500000,
+                    discountPercent: 50,
+                    expiredTime: 'Fri May 31 2024 12:51:38 GMT+0700 (Indochina Time)',
+                    createdAt: 'Fri May 24 2024 15:41:43 GMT+0700 (Indochina Time)',
                 },
-            },
-        },
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    token_not_verified: {
-                        summary: 'Token not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-02T11:30:43.976Z',
-                            path: '/api/booking/voucher/find/all',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
-                        },
-                    },
+                {
+                    id: 'dc479988-a135-41f7-8c75-206768808957',
+                    type: 'booking',
+                    serviceId: '2489bc57-5382-46a3-a03b-4276335261db',
+                    voucherName: 'Giam gia 70%',
+                    voucherCode: 'GIAM70',
+                    maxDiscountValue: 70000,
+                    minAppValue: 700000,
+                    discountPercent: 70,
+                    expiredTime: 'Fri May 31 2024 12:51:38 GMT+0700 (Indochina Time)',
+                    createdAt: 'Fri May 24 2024 15:53:06 GMT+0700 (Indochina Time)',
                 },
-            },
+            ],
         },
+        '/api/ecommerce/voucher/find/all',
+    )
+    @ApiErrorResponses('/api/ecommerce/voucher/find/all', '/api/ecommerce/voucher/find/all', {
+        unauthorized: [
+            {
+                key: 'token_not_verified',
+                summary: 'Token not verified',
+                detail: 'Unauthorized',
+                error: null,
+            },
+            {
+                key: 'token_not_found',
+                summary: 'Token not found',
+                detail: 'Access Token not found',
+                error: 'Unauthorized',
+            },
+            {
+                key: 'unauthorized_role',
+                summary: 'Role not verified',
+                detail: 'Unauthorized Role',
+                error: 'Unauthorized',
+            },
+        ],
+        forbidden: [
+            {
+                key: 'forbidden_resource',
+                summary: 'Forbidden resource',
+                detail: 'Forbidden resource',
+            },
+        ],
     })
     async findAllVouchers(@Req() req: Request) {
         const payloadToken = req['user'];
@@ -273,82 +245,86 @@ export class VoucherController {
     @UseGuards(AccessTokenGuard)
     @ApiBearerAuth('JWT-access-token-user')
     @ApiBearerAuth('JWT-access-token-tenant')
-    @ApiOperation({
-        summary: 'Find one voucher by ID',
-        description: `
-## Use access token
-## Use id to path`,
+    @ApiEndpoint({
+        summary: `Find one voucher by ID`,
+        details: `
+## Description
+Find a voucher within a domain using an access token.
+## Requirements
+- **Access Token**: Must provide a valid access token.
+`,
     })
-    @ApiParam({
-        name: 'id',
-        description: 'ID of the voucher',
-        example: 'fb6e2999-cc79-42cf-826a-a1e346ceccc6',
-        required: true,
-    })
-    @ApiCreatedResponse({
-        description: 'Get one voucher successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after get one voucher successfully',
-                        value: {
-                            statusCode: 200,
-                            timestamp: '2024-05-09T09:17:46.940Z',
-                            path: '/api/booking/voucher/find/fb6e2999-cc79-42cf-826a-a1e346ceccc6',
-                            message: null,
-                            error: null,
-                            data: {
-                                voucher: {
-                                    id: 'fb6e2999-cc79-42cf-826a-a1e346ceccc6',
-                                    serviceId: 'dfb82e86-2ecc-4eb3-8123-174b2299ad68',
-                                    voucherName: 'Giam gia 30%',
-                                    voucherCode: 'GIAM30',
-                                    maxDiscountValue: 30000,
-                                    minAppValue: 200000,
-                                    discountPercent: 30,
-                                    expiredTime:
-                                        'Sun May 12 2024 12:51:38 GMT+0700 (Indochina Time)',
-                                    createdAt: 'Thu May 09 2024 16:14:11 GMT+0700 (Indochina Time)',
-                                },
-                            },
-                        },
-                    },
-                },
+    @ApiParamExamples([
+        {
+            name: 'id',
+            description: 'ID of the voucher',
+            example: 'f21142ef-cece-4f14-83c1-eed2d485000a',
+            required: true,
+        },
+    ])
+    @ApiResponseExample(
+        'read',
+        'find a voucher by Id',
+        {
+            voucher: {
+                id: 'f21142ef-cece-4f14-83c1-eed2d485000a',
+                type: 'booking',
+                serviceId: '2489bc57-5382-46a3-a03b-4276335261db',
+                voucherName: 'Giam gia 50%',
+                voucherCode: 'GIAM50',
+                maxDiscountValue: 50000,
+                minAppValue: 500000,
+                discountPercent: 50,
+                expiredTime: 'Fri May 31 2024 12:51:38 GMT+0700 (Indochina Time)',
+                createdAt: 'Fri May 24 2024 15:41:43 GMT+0700 (Indochina Time)',
             },
         },
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    token_not_verified: {
-                        summary: 'Token not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T17:42:40.039Z',
-                            path: '/api/booking/voucher/find/fb6e2999-cc79-42cf-826a-a1e346ceccc6',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
-                        },
-                    },
-                    category_not_found: {
-                        summary: 'Category not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-02T11:43:05.882Z',
-                            path: '/api/booking/voucher/find/fb6e2999-cc79-42cf-826a-a1e346ceccc6',
-                            message: 'Category not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                },
+        '/api/booking/voucher/find/f21142ef-cece-4f14-83c1-eed2d485000a',
+    )
+    @ApiErrorResponses(
+        '/api/booking/voucher/find/:id',
+        '/api/booking/voucher/find/f21142ef-cece-4f14-83c1-eed2d485000a',
+        {
+            badRequest: {
+                summary: 'Validation Error',
+                detail: 'id must be a UUID',
             },
+
+            unauthorized: [
+                {
+                    key: 'token_not_verified',
+                    summary: 'Token not verified',
+                    detail: 'Unauthorized',
+                    error: null,
+                },
+                {
+                    key: 'token_not_found',
+                    summary: 'Token not found',
+                    detail: 'Access Token not found',
+                    error: 'Unauthorized',
+                },
+                {
+                    key: 'unauthorized_role',
+                    summary: 'Role not verified',
+                    detail: 'Unauthorized Role',
+                    error: 'Unauthorized',
+                },
+                {
+                    key: 'voucher_not_found',
+                    summary: 'Voucher not found',
+                    detail: 'Voucher not found',
+                    error: 'Unauthorized',
+                },
+            ],
+            forbidden: [
+                {
+                    key: 'forbidden_resource',
+                    summary: 'Forbidden resource',
+                    detail: 'Forbidden resource',
+                },
+            ],
         },
-    })
+    )
     async findVoucherById(@Req() req: Request, @Param() params: FindOneVoucher) {
         const payloadToken = req['user'];
         // const header = req.headers;
@@ -369,80 +345,65 @@ export class VoucherController {
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.TENANT)
     @ApiBearerAuth('JWT-access-token-tenant')
-    @ApiOperation({
-        summary: 'Update one voucher',
-        description: `
-## Use access token
-## Must be TENANT`,
+    @ApiEndpoint({
+        summary: `Update a voucher`,
+        details: `
+## Description
+Update a voucher within a domain using an access token. This operation is restricted to tenant accounts only.
+        
+## Requirements
+- **Access Token**: Must provide a valid tenant access token.
+- **Permissions**: Requires tenant-level permissions.
+`,
     })
-    @ApiBody({
-        type: EditVoucher,
-        examples: {
-            category_1: {
-                value: {
-                    id: 'b91cef5c-b0c7-4af9-a0cf-02c58adc87fb',
-                    voucherName: 'Giam gia 55%',
-                    voucherCode: 'GIAM55',
-                    maxDiscountValue: 50000,
-                    minAppValue: 500000,
-                    discountPercent: 50,
-                    expiredTime: '2024-05-12T05:51:38.792Z',
-                } as EditVoucher,
-            },
+    @ApiBodyExample(EditVoucher, {})
+    @ApiResponseExample(
+        'update',
+        'update Voucher',
+        {
+            id: 'f21142ef-cece-4f14-83c1-eed2d485000a',
+            voucherName: 'Giam gia 55%',
         },
-    })
-    @ApiCreatedResponse({
-        description: 'Update one voucher successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after update voucher successfully',
-                        value: {
-                            statusCode: 201,
-                            timestamp: '2024-05-09T09:24:00.450Z',
-                            path: '/api/booking/voucher/update',
-                            message: null,
-                            error: null,
-                            data: {
-                                result: 'success edit voucher',
-                            },
-                        },
-                    },
-                },
-            },
+        '/api/booking/voucher/update',
+    )
+    @ApiErrorResponses('/api/booking/voucher/update', '/api/booking/voucher/update', {
+        badRequest: {
+            summary: 'Validation Error',
+            detail: 'id should not be empty, id must be a UUID',
         },
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    token_not_verified: {
-                        summary: 'Token not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T17:42:40.039Z',
-                            path: '/api/booking/voucher/update',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
-                        },
-                    },
-                    category_not_found: {
-                        summary: 'Category not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-02T11:43:05.882Z',
-                            path: '/api/booking/voucher/update',
-                            message: 'Category not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                },
+        unauthorized: [
+            {
+                key: 'token_not_verified',
+                summary: 'Token not verified',
+                detail: 'Unauthorized',
+                error: null,
             },
-        },
+            {
+                key: 'token_not_found',
+                summary: 'Token not found',
+                detail: 'Access Token not found',
+                error: 'Unauthorized',
+            },
+            {
+                key: 'unauthorized_role',
+                summary: 'Role not verified',
+                detail: 'Unauthorized Role',
+                error: 'Unauthorized',
+            },
+            {
+                key: 'voucher_not_found',
+                summary: 'Voucher not found',
+                detail: 'Voucher not found',
+                error: 'Unauthorized',
+            },
+        ],
+        forbidden: [
+            {
+                key: 'forbidden_resource',
+                summary: 'Forbidden resource',
+                detail: 'Forbidden resource',
+            },
+        ],
     })
     async updateVoucher(@Req() req: Request, @Body() editVoucher: EditVoucher) {
         const payloadToken = req['user'];
@@ -464,71 +425,75 @@ export class VoucherController {
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.TENANT)
     @ApiBearerAuth('JWT-access-token-tenant')
-    @ApiOperation({
-        summary: 'Delete one voucher',
-        description: `
-## Use access token
-## Must be TENANT`,
+    @ApiEndpoint({
+        summary: `Delete one voucher by ID`,
+        details: `
+## Description
+Delete a voucher within a domain using an access token. This operation is restricted to tenant accounts only.
+        
+## Requirements
+- **Access Token**: Must provide a valid tenant access token.
+- **Permissions**: Requires tenant-level permissions.
+`,
     })
-    @ApiParam({
-        name: 'id',
-        description: 'ID of the voucher',
-        example: 'b91cef5c-b0c7-4af9-a0cf-02c58adc87fb',
-        required: true,
-    })
-    @ApiCreatedResponse({
-        description: 'Delete one voucher successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after delete voucher successfully',
-                        value: {
-                            statusCode: 200,
-                            timestamp: '2024-05-09T09:26:26.854Z',
-                            path: '/api/booking/voucher/delete/b91cef5c-b0c7-4af9-a0cf-02c58adc87fb',
-                            message: null,
-                            error: null,
-                            data: {
-                                result: 'success',
-                            },
-                        },
-                    },
-                },
-            },
+    @ApiParamExamples([
+        {
+            name: 'id',
+            description: 'ID of the voucher',
+            example: 'f21142ef-cece-4f14-83c1-eed2d485000a',
+            required: true,
         },
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    token_not_verified: {
-                        summary: 'Token not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T17:42:40.039Z',
-                            path: '/api/ecommerce/category/update',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
-                        },
-                    },
-                    category_not_found: {
-                        summary: 'Category not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-02T11:43:05.882Z',
-                            path: '/api/ecommerce/category/update',
-                            message: 'Category not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                },
+    ])
+    @ApiResponseExample(
+        'delete',
+        'delete a voucher by Id',
+        { result: 'success' },
+        '/api/booking/voucher/delete/f21142ef-cece-4f14-83c1-eed2d485000a',
+    )
+    @ApiErrorResponses(
+        '/api/booking/voucher/delete/:id',
+        '/api/booking/voucher/delete/f21142ef-cece-4f14-83c1-eed2d485000a',
+        {
+            badRequest: {
+                summary: 'Validation Error',
+                detail: 'id must be a UUID',
             },
+
+            unauthorized: [
+                {
+                    key: 'token_not_verified',
+                    summary: 'Token not verified',
+                    detail: 'Unauthorized',
+                    error: null,
+                },
+                {
+                    key: 'token_not_found',
+                    summary: 'Token not found',
+                    detail: 'Access Token not found',
+                    error: 'Unauthorized',
+                },
+                {
+                    key: 'unauthorized_role',
+                    summary: 'Role not verified',
+                    detail: 'Unauthorized Role',
+                    error: 'Unauthorized',
+                },
+                {
+                    key: 'voucher_not_found',
+                    summary: 'Voucher not found',
+                    detail: 'Voucher not found',
+                    error: 'Unauthorized',
+                },
+            ],
+            forbidden: [
+                {
+                    key: 'forbidden_resource',
+                    summary: 'Forbidden resource',
+                    detail: 'Forbidden resource',
+                },
+            ],
         },
-    })
+    )
     async deleteVoucher(@Req() req: Request, @Param() params: DeleteVoucher) {
         const payloadToken = req['user'];
         // const header = req.headers;
