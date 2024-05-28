@@ -129,14 +129,14 @@ Find a Policy and Term by TenantId within a domain using an access token.
 
     @Get('return')
     async getPaymentUrl(@Req() req: Request, @Query() data: any) {
-        const payloadToken = req['user'];
-        // const header = req.headers;
-        const userData = {
-            email: payloadToken.email,
-            domain: payloadToken.domain,
-            role: payloadToken.role,
-            accessToken: payloadToken.accessToken,
-        } as UserDto;
+        // const payloadToken = req['user'];
+        // // const header = req.headers;
+        // const userData = {
+        //     email: payloadToken.email,
+        //     domain: payloadToken.domain,
+        //     role: payloadToken.role,
+        //     accessToken: payloadToken.accessToken,
+        // } as UserDto;
         console.log(data);
         // console.log(userData, dataCategory)
         return {
