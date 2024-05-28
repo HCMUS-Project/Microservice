@@ -14,8 +14,8 @@ import { PolicyAndTermController } from './policyAndTerm/policyAndTerm.controlle
 import { TenantPolictyAndTermService } from './policyAndTerm/policyAndTerm.service';
 import { BannerController } from './banner/banner.controller';
 import { TenantBannerService } from './banner/banner.service';
-import {VNPayController} from './vnpayConfig/vnpayConfig.controller';
-import {TenantVNPayConfigService} from './vnpayConfig/vnpayConfig.service';
+import { VNPayController } from './vnpayConfig/vnpayConfig.controller';
+import { TenantVNPayConfigService } from './vnpayConfig/vnpayConfig.service';
 
 @Module({
     imports: [ClientsModule],
@@ -26,7 +26,7 @@ import {TenantVNPayConfigService} from './vnpayConfig/vnpayConfig.service';
         SubscriptionController,
         PolicyAndTermController,
         BannerController,
-        VNPayController
+        VNPayController,
     ],
     providers: [
         {
@@ -72,7 +72,7 @@ import {TenantVNPayConfigService} from './vnpayConfig/vnpayConfig.service';
                             'tenant',
                             'tenantProfile',
                             'themeConfig',
-                            'vnpayConfig'
+                            'vnpayConfig',
                         ],
                         protoPath: join(__dirname, '../../../src/proto/tenant/tenantService.proto'),
                         url: configService.get<string>('TENANT_SERVICE_URL'),

@@ -6,7 +6,7 @@ import { CreateCategoryRequestDTO } from '../category/category.dto';
 import { CreateProductRequest } from 'src/proto_build/e_commerce/product/CreateProductRequest';
 import { ProductResponse } from 'src/proto_build/e_commerce/product/ProductResponse';
 import {
-    AddProductQuantityDTO,
+    AddProductQuantityRequestDTO,
     CreateProductRequestDTO,
     DeleteProductRequestDTO,
     FindAllProductsRequestDTO,
@@ -25,7 +25,7 @@ interface ProductService {
     deleteProduct(data: DeleteProductRequestDTO): Observable<ProductResponse>;
     searchProducts(data: SearchProductRequestDTO): Observable<FindAllProductsResponse>;
     increaseProductView(data: IncreaseProductViewDTO): Observable<ProductResponse>;
-    addProductQuantity(data: AddProductQuantityDTO): Observable<ProductResponse>;
+    addProductQuantity(data: AddProductQuantityRequestDTO): Observable<ProductResponse>;
 }
 
 @Injectable()
@@ -138,8 +138,9 @@ export class EcommerceProductService implements OnModuleInit {
                 console.error('Error parsing details:', parseError);
                 throw new NotFoundException(String(e), 'Error not recognized');
             }
-            // console.log(errorDetails);
-            if (errorDetails.error == 'PRODUCT_NOT_FOUND') {
+            if (errorDetails.error == 'PERMISSION_DENIED') {
+                throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
+            } else if (errorDetails.error == 'PRODUCT_NOT_FOUND') {
                 throw new UserNotFoundException('Product not found', 'Unauthorized');
             } else {
                 throw new NotFoundException(
@@ -165,8 +166,9 @@ export class EcommerceProductService implements OnModuleInit {
                 console.error('Error parsing details:', parseError);
                 throw new NotFoundException(String(e), 'Error not recognized');
             }
-            // console.log(errorDetails);
-            if (errorDetails.error == 'PRODUCT_NOT_FOUND') {
+            if (errorDetails.error == 'PERMISSION_DENIED') {
+                throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
+            } else if (errorDetails.error == 'PRODUCT_NOT_FOUND') {
                 throw new UserNotFoundException('Product not found', 'Unauthorized');
             } else {
                 throw new NotFoundException(
@@ -228,7 +230,7 @@ export class EcommerceProductService implements OnModuleInit {
         }
     }
 
-    async addProductQuantity(data: AddProductQuantityDTO): Promise<ProductResponse> {
+    async addProductQuantity(data: AddProductQuantityRequestDTO): Promise<ProductResponse> {
         try {
             const productResponse: ProductResponse = await firstValueFrom(
                 this.iProductService.addProductQuantity(data),
@@ -244,14 +246,10 @@ export class EcommerceProductService implements OnModuleInit {
                 throw new NotFoundException(String(e), 'Error not recognized');
             }
             // console.log(errorDetails);
-            if (errorDetails.error == 'PRODUCT_NOT_FOUND') {
-                throw new UserNotFoundException('Product not found', 'Unauthorized');
-            } else {
-                throw new NotFoundException(
-                    `Unhandled error type: ${errorDetails.error}`,
-                    'Error not recognized',
-                );
-            }
+            throw new NotFoundException(
+                `Unhandled error type: ${errorDetails.error}`,
+                'Error not recognized',
+            );
         }
     }
 }

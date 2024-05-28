@@ -10,9 +10,15 @@ import {
     IsOptional,
     IsPositive,
     IsUUID,
+    IsUrl,
+    ArrayMinSize,
+    IsEnum,
+    ValidateNested,
 } from 'class-validator';
+import { AddQuantityType } from 'src/common/enums/productAdditionType.enum';
 import { IsBase64DataURI } from 'src/common/validator/is-base-64-dataURI.validator';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
+import { AddProduct } from 'src/proto_build/e_commerce/product/AddProduct';
 import { AddProductQuantityRequest } from 'src/proto_build/e_commerce/product/AddProductQuantityRequest';
 import { CreateProductRequest } from 'src/proto_build/e_commerce/product/CreateProductRequest';
 import { DeleteProductRequest } from 'src/proto_build/e_commerce/product/DeleteProductRequest';
@@ -69,25 +75,25 @@ export class CreateProductRequestDTO extends CreateProduct {
 }
 
 export class FindAllProductsRequestDTO implements FindAllProductsRequest {
-    @IsObject()
+    @IsUrl()
     @IsNotEmpty()
     @ApiProperty()
-    user: UserDto;
+    domain: string;
 }
 
-export class FindProductById implements FindProductByIdRequest {
+export class FindProduct implements FindProductByIdRequest {
     @IsUUID()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     id: string;
-}
 
-export class FindProductByIdRequestDTO extends FindProductById {
-    @IsObject()
+    @IsUrl()
     @IsNotEmpty()
     @ApiProperty()
-    user: UserDto;
+    domain: string;
 }
+
+export class FindProductByIdRequestDTO extends FindProduct {}
 
 export class UpdateProduct implements UpdateProductRequest {
     @IsUUID()
@@ -150,7 +156,12 @@ export class DeleteProductRequestDTO extends DeleteProduct {
     user: UserDto;
 }
 
-export class SearchProduct implements SearchProductsRequest {
+export class SearchProductRequestDTO implements SearchProductsRequest {
+    @IsUrl()
+    @IsNotEmpty()
+    @ApiProperty()
+    domain: string;
+
     @IsString()
     @IsOptional()
     @ApiProperty()
@@ -173,18 +184,11 @@ export class SearchProduct implements SearchProductsRequest {
     @ApiProperty()
     maxPrice: number;
 
-    @IsInt()
+    @IsNumber()
     @Type(() => Number)
     @IsOptional()
     @ApiProperty()
     rating: number;
-}
-
-export class SearchProductRequestDTO extends SearchProduct {
-    @IsObject()
-    @IsNotEmpty()
-    @ApiProperty()
-    user: UserDto;
 }
 
 export class IncreaseProductView implements IncreaseProductViewRequest {
@@ -201,20 +205,46 @@ export class IncreaseProductViewDTO extends IncreaseProductView {
     user: UserDto;
 }
 
-export class AddProductQuantity implements AddProductQuantityRequest {
+export class AddProductElement implements AddProduct {
     @IsUUID()
     @IsNotEmpty()
     @ApiProperty()
     id: string;
 
     @IsInt()
-    @IsPositive()
     @IsNotEmpty()
     @ApiProperty()
     quantity: number;
 }
 
-export class AddProductQuantityDTO extends AddProductQuantity {
+export class AddProductQuantity implements AddProductQuantityRequest {
+    @IsString()
+    @IsOptional()
+    @ApiProperty()
+    description: string = "Default description";
+
+    @IsArray()
+    @IsNotEmpty()
+    @ArrayMinSize(1)
+    @ValidateNested({ each: true })
+    @Type(() => AddProductElement)
+    @ApiProperty({ type: [AddProductElement] })
+    products: AddProductElement[];
+
+    @IsString()
+    @IsEnum(AddQuantityType, {
+        message: 'Must be a valid type: import, export',
+    })
+    @IsOptional()
+    @ApiProperty({
+        enum: AddQuantityType,
+        enumName: 'Add Quantity Type',
+        example: AddQuantityType.INCREMENT,
+    })
+    type: string;
+}
+
+export class AddProductQuantityRequestDTO extends AddProductQuantity {
     @IsObject()
     @IsNotEmpty()
     @ApiProperty()

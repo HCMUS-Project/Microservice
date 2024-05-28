@@ -13,6 +13,7 @@ import {
     CancelOrderRequestDTO,
     CreateOrderRequestDTO,
     GetOrderRequestDTO,
+    ListOrdersForTenantRequestDTO,
     ListOrdersRequestDTO,
     UpdateStageOrderRequestDTO,
 } from './order.dto';
@@ -26,6 +27,7 @@ interface OrderService {
     createOrder(data: CreateOrderRequestDTO): Observable<CreateOrderResponse>;
     getOrder(data: GetOrderRequestDTO): Observable<GetOrderResponse>;
     listOrders(data: ListOrdersRequestDTO): Observable<ListOrdersResponse>;
+    listOrdersForTenant(data: ListOrdersForTenantRequestDTO): Observable<ListOrdersResponse>;
     updateStageOrder(data: UpdateStageOrderRequestDTO): Observable<UpdateStageOrderResponse>;
     cancelOrder(data: CancelOrderRequestDTO): Observable<CancelOrderResponse>;
 }
@@ -77,10 +79,14 @@ export class EcommerceOrderService implements OnModuleInit {
 
     async getOrder(data: GetOrderRequestDTO): Promise<GetOrderResponse> {
         try {
-            // console.log(this.iProductService.createProduct(data));
             const getOrderResponse: GetOrderResponse = await firstValueFrom(
                 this.iOrderService.getOrder(data),
             );
+
+            // Removing the user property if it exists
+            if ('user' in getOrderResponse) {
+                delete getOrderResponse.user;
+            }
             return getOrderResponse;
         } catch (e) {
             // console.log(e)
@@ -110,6 +116,38 @@ export class EcommerceOrderService implements OnModuleInit {
             // console.log(data);
             const listOrdersResponse: ListOrdersResponse = await firstValueFrom(
                 this.iOrderService.listOrders(data),
+            );
+            // Removing the user property from each order if it exists
+            listOrdersResponse.orders?.forEach(order => {
+                if ('user' in order) {
+                    delete order.user;
+                }
+            });
+
+            return listOrdersResponse;
+        } catch (e) {
+            // console.log(e)
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
+            // console.log(errorDetails);
+
+            throw new NotFoundException(
+                `Unhandled error type: ${errorDetails.error}`,
+                'Error not recognized',
+            );
+        }
+    }
+
+    async listOrdersForTenant(data: ListOrdersForTenantRequestDTO): Promise<ListOrdersResponse> {
+        try {
+            // console.log(data);
+            const listOrdersResponse: ListOrdersResponse = await firstValueFrom(
+                this.iOrderService.listOrdersForTenant(data),
             );
             return listOrdersResponse;
         } catch (e) {

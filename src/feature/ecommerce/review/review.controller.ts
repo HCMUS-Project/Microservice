@@ -33,7 +33,6 @@ import {
     CreateReviewRequestDTO,
     DeleteReview,
     DeleteReviewRequestDTO,
-    FindAllReviews,
     FindAllReviewsRequestDTO,
     UpdateReview,
     UpdateReviewRequestDTO,
@@ -147,23 +146,26 @@ Create within a domain using an access token. This operation is restricted to us
         } as CreateReviewRequestDTO);
     }
 
-    @Get('find/all')
-    @UseGuards(AccessTokenGuard)
-    @ApiBearerAuth('JWT-access-token-user')
-    @ApiBearerAuth('JWT-access-token-tenant')
+    @Get('find')
     @ApiEndpoint({
-        summary: `Find all Reviews by token`,
+        summary: `Find Reviews`,
         details: `
 ## Description
-Return all Reviews within a domain using an access token.  
+Return all Reviews within a domain.  
         
-## Requirements
-- **Access Token**: Must provide a valid access token. 
+## Requirements 
+- **domain** must be in query, default to query all reviews
 - **pageSize** and **page** to limit result
 - **Default** is 10 for **pageSize** and 1 for **page** without pass
 `,
     })
     @ApiQueryExamples([
+        {
+            name: 'domain',
+            description: 'domain to get review',
+            example: '30shine.com',
+            required: true,
+        },
         {
             name: 'productId',
             description: 'Id of product want to get review',
@@ -194,71 +196,43 @@ Return all Reviews within a domain using an access token.
                     domain: '30shine.com',
                     productId: 'c886a59c-7293-4239-8052-eb611b68e890',
                     user: 'volehoai070902@gmail.com',
-                    rating: 3.5,
-                    review: 'San pham nay nhin chung cung duoc, ko nen mua',
+                    rating: 5,
+                    review: 'Toi nghi lai roi',
                     createdAt: '2024-05-17T09:59:32.887Z',
-                    updatedAt: '2024-05-17T10:00:17.338Z',
+                    updatedAt: '2024-05-17T10:21:53.443Z',
                 },
             ],
             totalPages: 1,
             page: 1,
             pageSize: 10,
         },
-        '/api/ecommerce/review/find/all?productId=c886a59c-7293-4239-8052-eb611b68e890&pageSize=10&page=1',
+        '/api/ecommerce/review/find/?productId=c886a59c-7293-4239-8052-eb611b68e890&pageSize=10&page=1&domain=30shine.com',
     )
     @ApiErrorResponses(
-        '/api/ecommerce/review/find/all?productId&pageSize&page',
-        '/api/ecommerce/review/find/all?productId=c886a59c-7293-4239-8052-eb611b68e890&pageSize=10&page=1',
+        '/api/ecommerce/review/find/?productId=&pageSize=&page=&domain=',
+        '/api/ecommerce/review/find/?productId=c886a59c-7293-4239-8052-eb611b68e890&pageSize=10&page=1&domain=30shine.com',
         {
             badRequest: {
                 summary: 'Validation Error',
-                detail: 'productId must be a UUID, pageSize must not be less than 1, page must not be less than 1',
-            },
-            unauthorized: [
-                {
-                    key: 'token_not_verified',
-                    summary: 'Token not verified',
-                    detail: 'Unauthorized',
-                    error: null,
-                },
-                {
-                    key: 'token_not_found',
-                    summary: 'Token not found',
-                    detail: 'Access Token not found',
-                    error: 'Unauthorized',
-                },
-                {
-                    key: 'unauthorized_role',
-                    summary: 'Role not verified',
-                    detail: 'Unauthorized Role',
-                    error: 'Unauthorized',
-                },
-            ],
-            forbidden: [
-                {
-                    key: 'forbidden_resource',
-                    summary: 'Forbidden resource',
-                    detail: 'Forbidden resource',
-                },
-            ],
+                detail: 'domain should not be empty, domain must be a URL address, productId must be a UUID, pageSize must not be less than 1, page must not be less than 1',
+            }, 
         },
     )
     async findAllReviews(
         @Req() req: Request,
         @Query()
-        query: FindAllReviews,
+        query: FindAllReviewsRequestDTO,
     ) {
-        const payloadToken = req['user'];
-        // const header = req.headers;
-        const userData = {
-            email: payloadToken.email,
-            domain: payloadToken.domain,
-            role: payloadToken.role,
-            accessToken: payloadToken.accessToken,
-        } as UserDto;
+        // const payloadToken = req['user'];
+        // // const header = req.headers;
+        // const userData = {
+        //     email: payloadToken.email,
+        //     domain: payloadToken.domain,
+        //     role: payloadToken.role,
+        //     accessToken: payloadToken.accessToken,
+        // } as UserDto;
         // console.log(userData, dataCategory)
         return await this.ecommerceReviewService.findAllReviews({
-            user: userData,
             ...query,
         } as FindAllReviewsRequestDTO);
     }

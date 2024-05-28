@@ -32,17 +32,16 @@ import { UserDto } from 'src/feature/commonDTO/user.dto';
 import { EcommerceProductService } from './product.service';
 import {
     AddProductQuantity,
-    AddProductQuantityDTO,
+    AddProductQuantityRequestDTO,
     CreateProduct,
     CreateProductRequestDTO,
     DeleteProduct,
     DeleteProductRequestDTO,
     FindAllProductsRequestDTO,
-    FindProductById,
+    FindProduct,
     FindProductByIdRequestDTO,
     IncreaseProductView,
     IncreaseProductViewDTO,
-    SearchProduct,
     SearchProductRequestDTO,
     UpdateProduct,
     UpdateProductRequestDTO,
@@ -54,6 +53,7 @@ import {
     ApiParamExamples,
     ApiQueryExamples,
     ApiResponseExample,
+    ApiResponseReadExample,
 } from 'src/common/decorator/swagger.decorator';
 
 @Controller('/ecommerce/product')
@@ -181,229 +181,144 @@ Create a product within a domain using an access token. This operation is restri
         } as CreateProductRequestDTO);
     }
 
-    @Get('find/all')
-    @UseGuards(AccessTokenGuard)
-    @ApiBearerAuth('JWT-access-token-user')
-    @ApiBearerAuth('JWT-access-token-tenant')
+    @Get('find')
     @ApiEndpoint({
-        summary: `Find all Products`,
+        summary: `Find Products`,
         details: `
 ## Description
-Return all products within a domain using an access token.  
-        
-## Requirements
-- **Access Token**: Must provide a valid tenant access token. 
-`,
-    })
-    @ApiResponseExample(
-        'read',
-        'find all products',
-        {
-            products: [
-                {
-                    images: [
-                        'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.product/service/08bab169-9075-4593-a057-7bdca1f624d6',
-                        'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.product/service/08a44a33-cc81-4656-a60f-3be3c1fadff9',
-                    ],
-                    categories: [],
-                    id: 'a83854d9-b3db-49b8-b5bc-5fac19042b91',
-                    domain: '30shine.com',
-                    name: 'Sách thiếu nhi',
-                    price: 50,
-                    quantity: 2,
-                    tenantId: 'nguyenvukhoi150402@gmail.com',
-                    description: 'dung de học tập',
-                    views: 0,
-                    rating: 1,
-                    numberRating: 0,
-                    sold: 0,
-                    createdAt: '2024-05-01T05:43:33.666Z',
-                    updatedAt: '2024-05-01T05:43:33.666Z',
-                },
-                {
-                    images: [
-                        'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.product/service/a9ee9f86-8c51-465f-bb0c-49d7bc80b37c',
-                    ],
-                    categories: [
-                        {
-                            id: '6553fcfc-f8ad-400c-971f-dfd2670193d2',
-                            name: 'Esport',
-                        },
-                        {
-                            id: '840316ea-7675-4c18-8a40-795ee361b5b5',
-                            name: 'Learning',
-                        },
-                    ],
-                    id: 'c3437006-c9d3-473b-97b5-7660a45ea8b4',
-                    domain: '30shine.com',
-                    name: 'Kem chống nắng',
-                    price: 1.1,
-                    quantity: 42,
-                    tenantId: 'nguyenvukhoi150402@gmail.com',
-                    description: 'abcde',
-                    views: 0,
-                    rating: 1,
-                    numberRating: 0,
-                    sold: 0,
-                    createdAt: '2024-05-02T18:18:30.720Z',
-                    updatedAt: '2024-05-02T18:18:30.720Z',
-                },
-            ],
-        },
-        '/api/ecommerce/product/find/all',
-    )
-    @ApiErrorResponses('/api/ecommerce/product/find/all', '/api/ecommerce/product/find/all', {
-        unauthorized: [
-            {
-                key: 'token_not_verified',
-                summary: 'Token not verified',
-                detail: 'Unauthorized',
-                error: null,
-            },
-            {
-                key: 'token_not_found',
-                summary: 'Token not found',
-                detail: 'Access Token not found',
-                error: 'Unauthorized',
-            },
-            {
-                key: 'unauthorized_role',
-                summary: 'Role not verified',
-                detail: 'Unauthorized Role',
-                error: 'Unauthorized',
-            },
-        ],
-        forbidden: [
-            {
-                key: 'forbidden_resource',
-                summary: 'Forbidden resource',
-                detail: 'Forbidden resource',
-            },
-        ],
-    })
-    async findAllProducts(@Req() req: Request) {
-        const payloadToken = req['user'];
-        // const header = req.headers;
-        const userData = {
-            email: payloadToken.email,
-            domain: payloadToken.domain,
-            role: payloadToken.role,
-            accessToken: payloadToken.accessToken,
-        } as UserDto;
-        // console.log(userData, dataCategory)
-        return await this.ecommerceProductService.findAllProducts({
-            user: userData,
-        } as FindAllProductsRequestDTO);
-    }
+Return all Products or Product by Id within a domain.  
 
-    @Get('find/:id')
-    @UseGuards(AccessTokenGuard)
-    @ApiBearerAuth('JWT-access-token-user')
-    @ApiBearerAuth('JWT-access-token-tenant')
-    @ApiEndpoint({
-        summary: `Find one product by ID`,
-        details: `
-## Description
-Find a product within a domain using an access token.
-## Requirements
-- **Access Token**: Must provide a valid tenant access token.
+## Requirement
+- Use only **domain** to find all Products.
+- Use **domain** and **id** to find only one Product
 `,
     })
-    @ApiParamExamples([
+    @ApiQueryExamples([
         {
-            name: 'id',
-            description: 'ID of product in DB',
-            example: 'a83854d9-b3db-49b8-b5bc-5fac19042b91',
+            name: 'domain',
+            description: 'domain of Product',
+            example: '30shine.com',
             required: true,
         },
-    ])
-    @ApiResponseExample(
-        'read',
-        'find a product by Id',
         {
-            images: [
-                'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.product/service/ef1db65b-9a19-4b7c-9c31-fcc3d69d5c41',
-            ],
-            categories: [
-                {
-                    id: '58e6613d-41b0-4f31-93cf-91a211b12c9c',
-                    name: 'SKinCare Khang oi',
-                },
-            ],
-            id: '775d2a87-09a6-4d51-834e-76ab9a448543',
-            domain: '30shine.com',
-            name: 'Kem chống nắng',
-            price: 100000,
-            quantity: 42,
-            tenantId: 'nguyenvukhoi150402@gmail.com',
-            description: 'abcde',
-            views: 0,
-            rating: 0,
-            numberRating: 0,
-            sold: 0,
-            createdAt: '2024-05-13T09:40:12.150Z',
-            updatedAt: '2024-05-13T09:40:12.150Z',
+            name: 'id',
+            description: 'id of Product in Db',
+            example: '',
+            required: false,
         },
-        '/api/ecommerce/product/find/775d2a87-09a6-4d51-834e-76ab9a448543',
-    )
+    ])
+    @ApiResponseReadExample('Products', {
+        getAll: {
+            data: {
+                products: [
+                    {
+                        images: [
+                            'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.product/service/f7168243-d6b0-4d17-b2d2-82b5123c02c7',
+                        ],
+                        categories: [
+                            {
+                                id: 'b382de76-b34b-4321-ad43-840439bc24c4',
+                                name: 'Dưỡng da',
+                            },
+                        ],
+                        id: 'f9e75324-a8f4-4cbd-af6d-0210c5e9a5d9',
+                        domain: '30shine.com',
+                        name: 'Kem chống nắng',
+                        price: 100000,
+                        quantity: 47,
+                        tenantId: 'nguyenvukhoi150402@gmail.com',
+                        description: 'abcde',
+                        views: 0,
+                        rating: 0,
+                        numberRating: 0,
+                        sold: 15,
+                        createdAt: '2024-05-16T05:29:33.090Z',
+                        updatedAt: '2024-05-17T09:22:08.392Z',
+                    },
+                    {
+                        images: [
+                            'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.product/service/b8a8bb5f-1cbc-4a2b-a3d9-ce1e94d96f7f',
+                        ],
+                        categories: [
+                            {
+                                id: '4432abc7-7ef1-4517-9a90-a97ca51691fa',
+                                name: 'Sách vở',
+                            },
+                        ],
+                        id: 'c886a59c-7293-4239-8052-eb611b68e890',
+                        domain: '30shine.com',
+                        name: 'Sách dạy làm giàu',
+                        price: 200000,
+                        quantity: 35,
+                        tenantId: 'nguyenvukhoi150402@gmail.com',
+                        description: 'abcde',
+                        views: 0,
+                        rating: 0,
+                        numberRating: 0,
+                        sold: 9,
+                        createdAt: '2024-05-16T05:30:08.225Z',
+                        updatedAt: '2024-05-17T09:22:08.395Z',
+                    },
+                ],
+            },
+            path: '/api/ecommerce/product/find/?domain=30shine.com',
+        },
+        findOne: {
+            data: {
+                images: [
+                    'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.product/service/b8a8bb5f-1cbc-4a2b-a3d9-ce1e94d96f7f',
+                ],
+                categories: [
+                    {
+                        id: '4432abc7-7ef1-4517-9a90-a97ca51691fa',
+                        name: 'Sách vở',
+                    },
+                ],
+                id: 'c886a59c-7293-4239-8052-eb611b68e890',
+                domain: '30shine.com',
+                name: 'Sách dạy làm giàu',
+                price: 200000,
+                quantity: 35,
+                tenantId: 'nguyenvukhoi150402@gmail.com',
+                description: 'abcde',
+                views: 0,
+                rating: 0,
+                numberRating: 0,
+                sold: 9,
+                createdAt: '2024-05-16T05:30:08.225Z',
+                updatedAt: '2024-05-17T09:22:08.395Z',
+            },
+            path: '/api/ecommerce/product/find/?domain=30shine.com&id=c886a59c-7293-4239-8052-eb611b68e890',
+        },
+    })
     @ApiErrorResponses(
-        '/api/ecommerce/product/find/:id',
-        '/api/ecommerce/product/find/a83854d9-b3db-49b8-b5bc-5fac19042b9',
+        '/api/ecommerce/product/find/?domain=&id=',
+        '/api/ecommerce/product/find/?domain=30shine.com&id=c886a59c-7293-4239-8052-eb611b68e891',
         {
             badRequest: {
                 summary: 'Validation Error',
-                detail: 'id must be a UUID',
+                detail: 'id must be a UUID, domain should not be empty, domain must be a URL address',
             },
-
             unauthorized: [
                 {
-                    key: 'token_not_verified',
-                    summary: 'Token not verified',
-                    detail: 'Unauthorized',
-                    error: null,
-                },
-                {
-                    key: 'token_not_found',
-                    summary: 'Token not found',
-                    detail: 'Access Token not found',
-                    error: 'Unauthorized',
-                },
-                {
-                    key: 'unauthorized_role',
-                    summary: 'Role not verified',
-                    detail: 'Unauthorized Role',
-                    error: 'Unauthorized',
-                },
-                {
-                    key: 'product_not_found',
+                    key: 'not_found',
                     summary: 'Product not found',
                     detail: 'Product not found',
                     error: 'Unauthorized',
                 },
             ],
-            forbidden: [
-                {
-                    key: 'forbidden_resource',
-                    summary: 'Forbidden resource',
-                    detail: 'Forbidden resource',
-                },
-            ],
         },
     )
-    async findOneProduct(@Req() req: Request, @Param() data: FindProductById) {
-        const payloadToken = req['user'];
-        // const header = req.headers;
-        const userData = {
-            email: payloadToken.email,
-            domain: payloadToken.domain,
-            role: payloadToken.role,
-            accessToken: payloadToken.accessToken,
-        } as UserDto;
-        // console.log(userData, dataCategory)
-        return await this.ecommerceProductService.findOneProduct({
-            user: userData,
-            ...data,
-        } as FindProductByIdRequestDTO);
+    async findProducts(@Req() req: Request, @Query() data: FindProduct) {
+        if (data.id === undefined) {
+            return await this.ecommerceProductService.findAllProducts({
+                domain: data.domain,
+            } as FindAllProductsRequestDTO);
+        } else {
+            return await this.ecommerceProductService.findOneProduct({
+                ...data,
+            } as FindProductByIdRequestDTO);
+        }
     }
 
     @Post('update')
@@ -629,20 +544,26 @@ Delete a product within a domain using an access token. This operation is restri
     }
 
     @Get('search')
-    @UseGuards(AccessTokenGuard)
-    @ApiBearerAuth('JWT-access-token-user')
-    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiEndpoint({
         summary: `Search products by query`,
         details: `
 ## Description
-Search products within a domain using an access token.  
+Search products within a domain.  
         
 ## Requirements
-- **Access Token**: Must provide a valid tenant access token. 
+- Dont need token
+- **Domain**: return all products in domain.
+- **minPrice** <= **maxPrice**: return products in range
+- **rating**: return all products are greater than  
 `,
     })
     @ApiQueryExamples([
+        {
+            name: 'domain',
+            description: 'Domain',
+            required: true,
+            example: '30shine.com',
+        },
         {
             name: 'name',
             description: 'Product name',
@@ -666,109 +587,48 @@ Search products within a domain using an access token.
             products: [
                 {
                     images: [
-                        'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.product/service/d1bf76d1-5c88-4485-bc1e-eaec85f8adf0',
+                        'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.product/service/f7168243-d6b0-4d17-b2d2-82b5123c02c7',
                     ],
                     categories: [
                         {
-                            id: '58e6613d-41b0-4f31-93cf-91a211b12c9c',
-                            name: 'Kem chong nang',
+                            id: 'b382de76-b34b-4321-ad43-840439bc24c4',
+                            name: 'Dưỡng da',
                         },
                     ],
-                    id: '07c76975-915a-4d8f-b01b-d4567ff68014',
+                    id: 'f9e75324-a8f4-4cbd-af6d-0210c5e9a5d9',
                     domain: '30shine.com',
                     name: 'Kem chống nắng',
                     price: 100000,
-                    quantity: 82,
-                    tenantId: 'nguyenvukhoi150402@gmail.com',
-                    description: 'abcde',
-                    views: 3,
-                    rating: 0,
-                    numberRating: 0,
-                    sold: 0,
-                    createdAt: '2024-05-13T12:15:09.374Z',
-                    updatedAt: '2024-05-13T13:07:24.952Z',
-                },
-                {
-                    images: [
-                        'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.product/service/c53408ab-c83d-4a6c-9fdc-70cbb8db4ca0',
-                    ],
-                    categories: [
-                        {
-                            id: '58e6613d-41b0-4f31-93cf-91a211b12c9c',
-                            name: 'Kem chong nang',
-                        },
-                    ],
-                    id: '48c630c1-03cf-4528-8258-b933aec20bba',
-                    domain: '30shine.com',
-                    name: 'Kem chống nắng 2',
-                    price: 100000,
-                    quantity: 42,
+                    quantity: 47,
                     tenantId: 'nguyenvukhoi150402@gmail.com',
                     description: 'abcde',
                     views: 0,
                     rating: 0,
                     numberRating: 0,
-                    sold: 0,
-                    createdAt: '2024-05-13T15:15:53.886Z',
-                    updatedAt: '2024-05-13T15:15:53.886Z',
+                    sold: 15,
+                    createdAt: '2024-05-16T05:29:33.090Z',
+                    updatedAt: '2024-05-17T09:22:08.392Z',
                 },
             ],
         },
-        '/api/ecommerce/product/search/?name=Kem&category=Khang&minPrice=20000&maxPrice=100000&rating=0',
+        '/api/ecommerce/product/search/?name=Kem&category=Khang&minPrice=20000&maxPrice=100000&rating=0&domain=30shine.com',
     )
     @ApiErrorResponses(
-        '/api/ecommerce/product/search/?name=2&category=1&minPrice=%22%22&maxPrice=%22%22&rating=%22%22',
-        '/api/ecommerce/product/search/?name=Kem&category=Esport&minPrice=20&maxPrice=100&rating=1',
+        '"/api/ecommerce/product/search/?name=&category=&minPrice=&maxPrice=&rating=&domain="',
+        '/api',
         {
             badRequest: {
                 summary: 'Validation Error',
-                detail: 'minPrice must be a number conforming to the specified constraints, maxPrice must be a number conforming to the specified constraints, rating must be an integer number',
+                detail: 'domain should not be empty, domain must be a URL address, minPrice must be a positive number, maxPrice must be a positive number, rating must be a positive number',
             },
-
-            unauthorized: [
-                {
-                    key: 'token_not_verified',
-                    summary: 'Token not verified',
-                    detail: 'Unauthorized',
-                    error: null,
-                },
-                {
-                    key: 'token_not_found',
-                    summary: 'Token not found',
-                    detail: 'Access Token not found',
-                    error: 'Unauthorized',
-                },
-                {
-                    key: 'unauthorized_role',
-                    summary: 'Role not verified',
-                    detail: 'Unauthorized Role',
-                    error: 'Unauthorized',
-                },
-            ],
-            forbidden: [
-                {
-                    key: 'forbidden_resource',
-                    summary: 'Forbidden resource',
-                    detail: 'Forbidden resource',
-                },
-            ],
         },
     )
     async searchProducts(
         @Req() req: Request,
         @Query()
-        query: SearchProduct,
+        query: SearchProductRequestDTO,
     ) {
-        const payloadToken = req['user'];
-        // const header = req.headers;
-        const userData = {
-            email: payloadToken.email,
-            domain: payloadToken.domain,
-            role: payloadToken.role,
-            accessToken: payloadToken.accessToken,
-        } as UserDto;
         return await this.ecommerceProductService.searchProducts({
-            user: userData,
             ...query,
         } as SearchProductRequestDTO);
     }
@@ -890,7 +750,7 @@ Increase product view by Id within a domain using an access token. This operatio
     @Roles(Role.TENANT)
     @ApiBearerAuth('JWT-access-token-tenant')
     @ApiEndpoint({
-        summary: `Add quantity product`,
+        summary: `Add Quantity Products List`,
         details: `
 ## Description
 Add quantity to product within a domain using an access token. This operation is restricted to tenant accounts only.
@@ -898,38 +758,78 @@ Add quantity to product within a domain using an access token. This operation is
 ## Requirements
 - **Access Token**: Must provide a valid tenant access token.
 - **Permissions**: Requires tenant-level permissions.
+- **type** is import or export (add more Product or decrease Product)
+- **product** is list of object contains **id** and **quantity**
 `,
     })
     @ApiBodyExample(AddProductQuantity, {
-        id: '07c76975-915a-4d8f-b01b-d4567ff68014',
-        quantity: 20,
+        type: 'import',
+        products: [
+            {
+                id: 'c886a59c-7293-4239-8052-eb611b68e890',
+                quantity: 20,
+            },
+            {
+                id: 'f9e75324-a8f4-4cbd-af6d-0210c5e9a5d9',
+                quantity: 10,
+            },
+        ],
+        description: 'test add',
     })
     @ApiResponseExample(
         'update',
         'add quantity Product',
         {
-            images: [
-                'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.product/service/d1bf76d1-5c88-4485-bc1e-eaec85f8adf0',
-            ],
-            categories: [
+            products: [
                 {
-                    id: '58e6613d-41b0-4f31-93cf-91a211b12c9c',
-                    name: 'Kem chong nang',
+                    images: [
+                        'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.product/service/b8a8bb5f-1cbc-4a2b-a3d9-ce1e94d96f7f',
+                    ],
+                    categories: [
+                        {
+                            id: '4432abc7-7ef1-4517-9a90-a97ca51691fa',
+                            name: 'Sách vở',
+                        },
+                    ],
+                    id: 'c886a59c-7293-4239-8052-eb611b68e890',
+                    domain: '30shine.com',
+                    name: 'Sách dạy làm giàu',
+                    price: 200000,
+                    quantity: 15,
+                    tenantId: 'nguyenvukhoi150402@gmail.com',
+                    description: 'abcde',
+                    views: 0,
+                    rating: 0,
+                    numberRating: 0,
+                    sold: 9,
+                    createdAt: '2024-05-16T05:30:08.225Z',
+                    updatedAt: '2024-05-28T08:33:02.108Z',
+                },
+                {
+                    images: [
+                        'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.product/service/f7168243-d6b0-4d17-b2d2-82b5123c02c7',
+                    ],
+                    categories: [
+                        {
+                            id: 'b382de76-b34b-4321-ad43-840439bc24c4',
+                            name: 'Dưỡng da',
+                        },
+                    ],
+                    id: 'f9e75324-a8f4-4cbd-af6d-0210c5e9a5d9',
+                    domain: '30shine.com',
+                    name: 'Kem chống nắng',
+                    price: 100000,
+                    quantity: 77,
+                    tenantId: 'nguyenvukhoi150402@gmail.com',
+                    description: 'abcde',
+                    views: 0,
+                    rating: 0,
+                    numberRating: 0,
+                    sold: 15,
+                    createdAt: '2024-05-16T05:29:33.090Z',
+                    updatedAt: '2024-05-28T08:33:02.108Z',
                 },
             ],
-            id: '07c76975-915a-4d8f-b01b-d4567ff68014',
-            domain: '30shine.com',
-            name: 'Kem chống nắng',
-            price: 100000,
-            quantity: 82,
-            tenantId: 'nguyenvukhoi150402@gmail.com',
-            description: 'abcde',
-            views: 3,
-            rating: 0,
-            numberRating: 0,
-            sold: 0,
-            createdAt: '2024-05-13T12:15:09.374Z',
-            updatedAt: '2024-05-13T13:07:24.952Z',
         },
         '/api/ecommerce/product/add/quantity',
     )
@@ -939,7 +839,7 @@ Add quantity to product within a domain using an access token. This operation is
         {
             badRequest: {
                 summary: 'Validation Error',
-                detail: 'id should not be empty, id must be a UUID, quantity should not be empty, quantity must be a positive number, quantity must be an integer number',
+                detail: 'products.0.id should not be empty, products.0.id must be a UUID, products.0.quantity should not be empty, products.0.quantity must be an integer number, Must be a valid type: import, export',
             },
             unauthorized: [
                 {
@@ -989,6 +889,6 @@ Add quantity to product within a domain using an access token. This operation is
         return await this.ecommerceProductService.addProductQuantity({
             user: userData,
             ...data,
-        } as AddProductQuantityDTO);
+        } as AddProductQuantityRequestDTO);
     }
 }

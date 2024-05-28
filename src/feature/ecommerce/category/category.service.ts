@@ -93,7 +93,7 @@ export class EcommerceCategoryService implements OnModuleInit {
             );
             return findOneCategoryResponse;
         } catch (e) {
-            console.log(e);
+            // console.log(e);
             let errorDetails: { error?: string };
             try {
                 errorDetails = JSON.parse(e.details);

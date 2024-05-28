@@ -63,7 +63,7 @@ export class BookingVoucherService implements OnModuleInit {
                 throw new ForbiddenException('Voucher already exists', 'Forbidden');
             } else if (errorDetails.error == 'SERVICE_NOT_FOUND') {
                 throw new UserNotFoundException('Service not found');
-            }else {
+            } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
                     'Error not recognized',

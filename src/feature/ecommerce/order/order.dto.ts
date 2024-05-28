@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Exclude } from 'class-transformer';
 import {
     ArrayNotEmpty,
     IsArray,
@@ -19,7 +20,10 @@ import { UserDto } from 'src/feature/commonDTO/user.dto';
 import { CancelOrderRequest } from 'src/proto_build/e_commerce/order/CancelOrderRequest';
 import { CreateOrderRequest } from 'src/proto_build/e_commerce/order/CreateOrderRequest';
 import { GetOrderRequest } from 'src/proto_build/e_commerce/order/GetOrderRequest';
+import { GetOrderResponse } from 'src/proto_build/e_commerce/order/GetOrderResponse';
+import { ListOrdersForTenantRequest } from 'src/proto_build/e_commerce/order/ListOrdersForTenantRequest';
 import { ListOrdersRequest } from 'src/proto_build/e_commerce/order/ListOrdersRequest';
+import { ListOrdersResponse } from 'src/proto_build/e_commerce/order/ListOrdersResponse';
 import { UpdateStageOrderRequest } from 'src/proto_build/e_commerce/order/UpdateStageOrderRequest';
 
 export class CreateOrder implements CreateOrderRequest {
@@ -77,7 +81,6 @@ export class GetOrderRequestDTO extends GetOrder {
     @ApiProperty()
     user: UserDto;
 }
-
 export class ListOrders implements ListOrdersRequest {
     @IsString()
     @IsEnum(StageOrder, {
@@ -89,6 +92,23 @@ export class ListOrders implements ListOrdersRequest {
 }
 
 export class ListOrdersRequestDTO extends ListOrders {
+    @IsObject()
+    @IsNotEmpty()
+    @ApiProperty()
+    user: UserDto;
+}
+
+export class ListOrdersForTenant implements ListOrdersForTenantRequest {
+    @IsString()
+    @IsEnum(StageOrder, {
+        message: 'Must be a valid stage: pending, shipping, completed, cancelled',
+    })
+    @IsOptional()
+    @ApiProperty({ enum: StageOrder, enumName: 'Stage of Order', example: StageOrder.SHIPPING })
+    stage: StageOrder;
+}
+
+export class ListOrdersForTenantRequestDTO extends ListOrdersForTenant {
     @IsObject()
     @IsNotEmpty()
     @ApiProperty()

@@ -22,19 +22,19 @@ import {
     ApiErrorResponses,
     ApiQueryExamples,
     ApiParamExamples,
+    ApiResponseReadExample,
 } from 'src/common/decorator/swagger.decorator';
 import {
     CreateVoucher,
     CreateVoucherDTO,
-    FindVoucherById,
     UpdateVoucher,
     DeleteVoucher,
-    FindVoucherByCode,
     FindAllVouchersRequestDTO,
     FindVoucherByIdRequestDTO,
     UpdateVoucherRequestDTO,
     DeleteVoucherRequestDTO,
     FindVoucherByCodeRequestDTO,
+    FindVoucher,
 } from './voucher.dto';
 import { AccessTokenGuard } from 'src/common/guards/token/accessToken.guard';
 import { RolesGuard } from 'src/common/guards/role/role.guard';
@@ -145,27 +145,78 @@ Create a voucher within a domain using an access token. This operation is restri
         } as CreateVoucherDTO);
     }
 
-    @Get('find/all')
-    @UseGuards(AccessTokenGuard)
-    @ApiBearerAuth('JWT-access-token-user')
-    @ApiBearerAuth('JWT-access-token-tenant')
+    @Get('find')
     @ApiEndpoint({
-        summary: `Find all Vouchers`,
+        summary: `Find Vouchers`,
         details: `
 ## Description
-Return all vouchers within a domain using an access token.  
-        
-## Requirements
-- **Access Token**: Must provide a valid access token. 
+Return all Vouchers within a domain.  
+
+## Requirement
+- Use only **domain** to find all Vouchers.
+- Use **domain** and **id** to find only one Voucher
+- User **domain** and **code** to find only one Voucher
+- If use **domain** and **code** and **id**, Voucher will find by **domain** and **id**
 `,
     })
-    @ApiResponseExample(
-        'read',
-        'find all vouchers',
+    @ApiQueryExamples([
         {
-            vouchers: [
-                {
-                    id: '8f8b55c7-f0ae-427a-aec8-201beb10295f',
+            name: 'domain',
+            description: 'domain of Voucher',
+            example: '30shine.com',
+            required: true,
+        },
+        {
+            name: 'id',
+            description: 'id of Voucher in Db',
+            example: '384589ac-108a-4972-bbed-49771df4c7cb',
+            required: false,
+        },
+        {
+            name: 'code',
+            description: 'code of Voucher in Db',
+            example: 'GIAM30',
+            required: false,
+        },
+    ])
+    @ApiResponseReadExample('Vouchers', {
+        getAll: {
+            data: {
+                vouchers: [
+                    {
+                        id: '384589ac-108a-4972-bbed-49771df4c7cb',
+                        type: 'ecommerce',
+                        domain: '30shine.com',
+                        voucherName: 'giam gia 30%',
+                        voucherCode: 'GIAM30',
+                        maxDiscount: 30000,
+                        minAppValue: 50000,
+                        discountPercent: 0.3,
+                        expireAt: 'Tue May 21 2024 00:29:45 GMT+0700 (Indochina Time)',
+                        createdAt: 'Thu May 16 2024 17:05:02 GMT+0700 (Indochina Time)',
+                        updatedAt: 'Thu May 16 2024 17:07:17 GMT+0700 (Indochina Time)',
+                    },
+                    {
+                        id: '0bd91aad-69f2-4187-8141-9d04bd344f16',
+                        type: 'ecommerce',
+                        domain: '30shine.com',
+                        voucherName: 'giam gia 60%',
+                        voucherCode: 'GIAM60',
+                        maxDiscount: 60000,
+                        minAppValue: 2000000,
+                        discountPercent: 0.6,
+                        expireAt: 'Sat Jun 01 2024 00:29:45 GMT+0700 (Indochina Time)',
+                        createdAt: 'Tue May 28 2024 16:46:06 GMT+0700 (Indochina Time)',
+                        updatedAt: 'Tue May 28 2024 16:46:06 GMT+0700 (Indochina Time)',
+                    },
+                ],
+            },
+            path: '/api/ecommerce/voucher/find?domain=30shine.com',
+        },
+        findOne: {
+            data: {
+                voucher: {
+                    id: '384589ac-108a-4972-bbed-49771df4c7cb',
                     type: 'ecommerce',
                     domain: '30shine.com',
                     voucherName: 'giam gia 30%',
@@ -173,170 +224,48 @@ Return all vouchers within a domain using an access token.
                     maxDiscount: 30000,
                     minAppValue: 50000,
                     discountPercent: 0.3,
-                    expireAt: 'Sun May 05 2024 00:29:45 GMT+0700 (Indochina Time)',
-                    createdAt: 'Tue May 14 2024 00:52:19 GMT+0700 (Indochina Time)',
-                    updatedAt: 'Tue May 14 2024 00:52:19 GMT+0700 (Indochina Time)',
+                    expireAt: 'Tue May 21 2024 00:29:45 GMT+0700 (Indochina Time)',
+                    createdAt: 'Thu May 16 2024 17:05:02 GMT+0700 (Indochina Time)',
+                    updatedAt: 'Thu May 16 2024 17:07:17 GMT+0700 (Indochina Time)',
                 },
-                {
-                    id: '7f461f30-e540-4f5e-ba1f-bdc6ffa0e4c0',
-                    type: 'ecommerce',
-                    domain: '30shine.com',
-                    voucherName: 'giam gia 50%',
-                    voucherCode: 'GIAM50',
-                    maxDiscount: 50000,
-                    minAppValue: 500000,
-                    discountPercent: 0.5,
-                    expireAt: 'Thu May 16 2024 00:29:45 GMT+0700 (Indochina Time)',
-                    createdAt: 'Tue May 14 2024 00:53:18 GMT+0700 (Indochina Time)',
-                    updatedAt: 'Tue May 14 2024 00:53:18 GMT+0700 (Indochina Time)',
-                },
-            ],
+            },
+            path: '/api/ecommerce/voucher/find?domain=30shine.com&id=384589ac-108a-4972-bbed-49771df4c7cb',
         },
-        '/api/ecommerce/voucher/find/all',
-    )
-    @ApiErrorResponses('/api/ecommerce/voucher/find/all', '/api/ecommerce/voucher/find/all', {
-        unauthorized: [
-            {
-                key: 'token_not_verified',
-                summary: 'Token not verified',
-                detail: 'Unauthorized',
-                error: null,
-            },
-            {
-                key: 'token_not_found',
-                summary: 'Token not found',
-                detail: 'Access Token not found',
-                error: 'Unauthorized',
-            },
-            {
-                key: 'unauthorized_role',
-                summary: 'Role not verified',
-                detail: 'Unauthorized Role',
-                error: 'Unauthorized',
-            },
-        ],
-        forbidden: [
-            {
-                key: 'forbidden_resource',
-                summary: 'Forbidden resource',
-                detail: 'Forbidden resource',
-            },
-        ],
     })
-    async findAllVouchers(@Req() req: Request) {
-        const payloadToken = req['user'];
-        // const header = req.headers;
-        const userData = {
-            email: payloadToken.email,
-            domain: payloadToken.domain,
-            role: payloadToken.role,
-            accessToken: payloadToken.accessToken,
-        } as UserDto;
-        // console.log(userData, dataCategory)
-        return await this.ecommerceVoucherService.findAllVouchers({
-            user: userData,
-        } as FindAllVouchersRequestDTO);
-    }
-
-    @Get('find/:id')
-    @UseGuards(AccessTokenGuard)
-    @ApiBearerAuth('JWT-access-token-user')
-    @ApiBearerAuth('JWT-access-token-tenant')
-    @ApiEndpoint({
-        summary: `Find one voucher by ID`,
-        details: `
-## Description
-Find a voucher within a domain using an access token.
-## Requirements
-- **Access Token**: Must provide a valid access token.
-`,
-    })
-    @ApiParamExamples([
-        {
-            name: 'id',
-            description: 'ID of the voucher',
-            example: '3bb423de-2b81-4526-a1d3-9c3ca84633df',
-            required: true,
-        },
-    ])
-    @ApiResponseExample(
-        'read',
-        'find a voucher by Id',
-        {
-            voucher: {
-                id: '7f461f30-e540-4f5e-ba1f-bdc6ffa0e4c0',
-                type: 'ecommerce',
-                domain: '30shine.com',
-                voucherName: 'giam gia 50%',
-                voucherCode: 'GIAM50',
-                maxDiscount: 50000,
-                minAppValue: 500000,
-                discountPercent: 0.5,
-                expireAt: 'Thu May 16 2024 00:29:45 GMT+0700 (Indochina Time)',
-                createdAt: 'Tue May 14 2024 00:53:18 GMT+0700 (Indochina Time)',
-                updatedAt: 'Tue May 14 2024 00:53:18 GMT+0700 (Indochina Time)',
-            },
-        },
-        '/api/ecommerce/voucher/find/7f461f30-e540-4f5e-ba1f-bdc6ffa0e4c0',
-    )
     @ApiErrorResponses(
-        '/api/ecommerce/voucher/find/:id',
-        '/api/ecommerce/voucher/find/3bb423de-2b81-4526-a1d3-9c3ca84633df',
+        '/api/ecommerce/voucher/find?domain=&id=&code=x',
+        '/api/ecommerce/voucher/find?domain=30shine.com&id=384589ac-108a-4972-bbed-49771df4c7cc',
         {
             badRequest: {
                 summary: 'Validation Error',
-                detail: 'id must be a UUID',
+                detail: 'id must be a UUID, domain should not be empty, domain must be a URL address',
             },
-
             unauthorized: [
                 {
-                    key: 'token_not_verified',
-                    summary: 'Token not verified',
-                    detail: 'Unauthorized',
-                    error: null,
-                },
-                {
-                    key: 'token_not_found',
-                    summary: 'Token not found',
-                    detail: 'Access Token not found',
-                    error: 'Unauthorized',
-                },
-                {
-                    key: 'unauthorized_role',
-                    summary: 'Role not verified',
-                    detail: 'Unauthorized Role',
-                    error: 'Unauthorized',
-                },
-                {
-                    key: 'voucher_not_found',
+                    key: 'not_found',
                     summary: 'Voucher not found',
                     detail: 'Voucher not found',
                     error: 'Unauthorized',
                 },
             ],
-            forbidden: [
-                {
-                    key: 'forbidden_resource',
-                    summary: 'Forbidden resource',
-                    detail: 'Forbidden resource',
-                },
-            ],
         },
     )
-    async findVoucherById(@Req() req: Request, @Param() data: FindVoucherById) {
-        const payloadToken = req['user'];
-        // const header = req.headers;
-        const userData = {
-            email: payloadToken.email,
-            domain: payloadToken.domain,
-            role: payloadToken.role,
-            accessToken: payloadToken.accessToken,
-        } as UserDto;
-        // console.log(userData, dataCategory)
-        return await this.ecommerceVoucherService.findVoucherById({
-            user: userData,
-            ...data,
-        } as FindVoucherByIdRequestDTO);
+    async findVoucher(@Req() req: Request, @Query() data: FindVoucher) {
+        if (data.id === undefined) {
+            if (data.code === undefined) {
+                return await this.ecommerceVoucherService.findAllVouchers({
+                    domain: data.domain,
+                } as FindAllVouchersRequestDTO);
+            } else {
+                return await this.ecommerceVoucherService.findVoucherByCode({
+                    ...data,
+                } as FindVoucherByCodeRequestDTO);
+            }
+        } else {
+            return await this.ecommerceVoucherService.findVoucherById({
+                ...data,
+            } as FindVoucherByIdRequestDTO);
+        }
     }
 
     @Post('update')
@@ -539,112 +468,5 @@ Delete a voucher within a domain using an access token. This operation is restri
             user: userData,
             ...data,
         } as DeleteVoucherRequestDTO);
-    }
-
-    @Get('search')
-    @UseGuards(AccessTokenGuard)
-    @ApiBearerAuth('JWT-access-token-user')
-    @ApiBearerAuth('JWT-access-token-tenant')
-    @ApiEndpoint({
-        summary: `Search one voucher by voucher code`,
-        details: `
-## Description
-Search a voucher within a domain using an access token.
-        
-## Requirements
-- **Access Token**: Must provide a valid access token. 
-`,
-    })
-    @ApiQueryExamples([
-        {
-            name: 'code',
-            description: 'Voucher code',
-            example: 'GIAM30',
-            required: true,
-        },
-    ])
-    @ApiResponseExample(
-        'read',
-        'search a voucher by code',
-        {
-            voucher: {
-                id: '8f8b55c7-f0ae-427a-aec8-201beb10295f',
-                type: 'ecommerce',
-                domain: '30shine.com',
-                voucherName: 'giam gia 30%',
-                voucherCode: 'GIAM30',
-                maxDiscount: 30000,
-                minAppValue: 50000,
-                discountPercent: 0.3,
-                expireAt: 'Sun May 05 2024 00:29:45 GMT+0700 (Indochina Time)',
-                createdAt: 'Tue May 14 2024 00:52:19 GMT+0700 (Indochina Time)',
-                updatedAt: 'Tue May 14 2024 00:52:19 GMT+0700 (Indochina Time)',
-            },
-        },
-        '/api/ecommerce/voucher/search/?code=GIAM30',
-    )
-    @ApiErrorResponses(
-        '/api/ecommerce/voucher/search/',
-        '/api/ecommerce/voucher/search/?code=GIAM70',
-        {
-            badRequest: {
-                summary: 'Validation Error',
-                detail: 'Voucher code must be uppercase and contain no spaces, code should not be empty, code must be a string',
-            },
-
-            unauthorized: [
-                {
-                    key: 'token_not_verified',
-                    summary: 'Token not verified',
-                    detail: 'Unauthorized',
-                    error: null,
-                },
-                {
-                    key: 'token_not_found',
-                    summary: 'Token not found',
-                    detail: 'Access Token not found',
-                    error: 'Unauthorized',
-                },
-                {
-                    key: 'unauthorized_role',
-                    summary: 'Role not verified',
-                    detail: 'Unauthorized Role',
-                    error: 'Unauthorized',
-                },
-                {
-                    key: 'voucher_not_found',
-                    summary: 'Voucher not found',
-                    detail: 'Voucher not found',
-                    error: 'Unauthorized',
-                },
-            ],
-            forbidden: [
-                {
-                    key: 'forbidden_resource',
-                    summary: 'Forbidden resource',
-                    detail: 'Forbidden resource',
-                },
-            ],
-        },
-    )
-    async findVoucherByCode(
-        @Req() req: Request,
-        @Query()
-        query: FindVoucherByCode,
-    ) {
-        const payloadToken = req['user'];
-        // const header = req.headers;
-        const userData = {
-            email: payloadToken.email,
-            domain: payloadToken.domain,
-            role: payloadToken.role,
-            accessToken: payloadToken.accessToken,
-        } as UserDto;
-        // console.log(userData, dataCategory)
-        // console.log(code)
-        return await this.ecommerceVoucherService.findVoucherByCode({
-            user: userData,
-            ...query,
-        } as FindVoucherByCodeRequestDTO);
     }
 }

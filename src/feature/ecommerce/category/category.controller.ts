@@ -1,4 +1,15 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Req, UseGuards } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Inject,
+    Param,
+    Post,
+    Query,
+    Req,
+    UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { EcommerceCategoryService } from './category.service';
 import { AccessTokenGuard } from 'src/common/guards/token/accessToken.guard';
@@ -9,7 +20,7 @@ import {
     CreateCategory,
     CreateCategoryRequestDTO,
     FindAllCategoriesRequestDTO,
-    FindOneCategory,
+    FindCategory,
     FindOneCategoryRequestDTO,
     RemoveCategory,
     RemoveCategoryRequestDTO,
@@ -24,6 +35,7 @@ import {
     ApiParamExamples,
     ApiQueryExamples,
     ApiResponseExample,
+    ApiResponseReadExample,
 } from 'src/common/decorator/swagger.decorator';
 
 @Controller('/ecommerce/category')
@@ -116,163 +128,89 @@ Create a category within a domain using an access token. This operation is restr
         } as CreateCategoryRequestDTO);
     }
 
-    @Get('find/all')
-    @UseGuards(AccessTokenGuard)
-    @ApiBearerAuth('JWT-access-token-user')
-    @ApiBearerAuth('JWT-access-token-tenant')
+    @Get('find')
     @ApiEndpoint({
-        summary: `Find all Categories`,
+        summary: `Find Categories`,
         details: `
 ## Description
-Return all categories within a domain using an access token.  
-        
-## Requirements
-- **Access Token**: Must provide a valid access token. 
-`,
-    })
-    @ApiResponseExample(
-        'read',
-        'find all categories',
-        {
-            categories: [
-                {
-                    id: '58e6613d-41b0-4f31-93cf-91a211b12c9c',
-                    name: 'Kem chong nang',
-                    description: 'Kem chong nang gi do',
-                    createdAt: {
-                        low: 1893381955,
-                        high: 399,
-                        unsigned: false,
-                    },
-                    domain: '30shine.com',
-                    totalProducts: 2,
-                },
-                {
-                    id: 'a09716f7-7b6e-4d29-a26f-ed3f321df4c9',
-                    name: 'Sách vở',
-                    description: 'Sách vở học tâp',
-                    createdAt: {
-                        low: 1921856393,
-                        high: 399,
-                        unsigned: false,
-                    },
-                    domain: '30shine.com',
-                    totalProducts: 0,
-                },
-            ],
-        },
-        '/api/ecommerce/category/find/all',
-    )
-    @ApiErrorResponses('/api/ecommerce/category/find/all', '/api/ecommerce/category/find/all', {
-        unauthorized: [
-            {
-                key: 'token_not_verified',
-                summary: 'Token not verified',
-                detail: 'Unauthorized',
-                error: null,
-            },
-            {
-                key: 'token_not_found',
-                summary: 'Token not found',
-                detail: 'Access Token not found',
-                error: 'Unauthorized',
-            },
-            {
-                key: 'unauthorized_role',
-                summary: 'Role not verified',
-                detail: 'Unauthorized Role',
-                error: 'Unauthorized',
-            },
-        ],
-        forbidden: [
-            {
-                key: 'forbidden_resource',
-                summary: 'Forbidden resource',
-                detail: 'Forbidden resource',
-            },
-        ],
-    })
-    async findAllCategory(@Req() req: Request) {
-        const payloadToken = req['user'];
-        // const header = req.headers;
-        const userData = {
-            email: payloadToken.email,
-            domain: payloadToken.domain,
-            role: payloadToken.role,
-            accessToken: payloadToken.accessToken,
-        } as UserDto;
-        // console.log(userData, dataCategory)
-        return await this.ecommerceCategoryService.findAllCategories({
-            user: userData,
-        } as FindAllCategoriesRequestDTO);
-    }
+Return all categories within a domain.  
 
-    @Get('find/:id')
-    @UseGuards(AccessTokenGuard)
-    @ApiBearerAuth('JWT-access-token-user')
-    @ApiBearerAuth('JWT-access-token-tenant')
-    @ApiEndpoint({
-        summary: `Find one category by ID`,
-        details: `
-## Description
-Find a category within a domain using an access token.
-## Requirements
-- **Access Token**: Must provide a valid access token.
+## Requirement
+- Use only **domain** to find all Categories.
+- Use **domain** and **id** to find only one Category
 `,
     })
-    @ApiParamExamples([
+    @ApiQueryExamples([
         {
-            name: 'id',
-            description: 'ID of category in DB',
-            example: '58e6613d-41b0-4f31-93cf-91a211b12c9c',
+            name: 'domain',
+            description: 'domain of Category',
+            example: '30shine.com',
             required: true,
         },
-    ])
-    @ApiResponseExample(
-        'read',
-        'find a category by Id',
         {
-            id: '58e6613d-41b0-4f31-93cf-91a211b12c9c',
-            name: 'Kem chong nang',
-            description: 'Kem chong nang gi do',
-            createdAt: {
-                low: 1893381955,
-                high: 399,
-                unsigned: false,
-            },
-            domain: '30shine.com',
-            totalProducts: 2,
+            name: 'id',
+            description: 'id of Category in Db',
+            example: '4432abc7-7ef1-4517-9a90-a97ca51691fa',
+            required: false,
         },
-        '/api/ecommerce/category/find/58e6613d-41b0-4f31-93cf-91a211b12c9c',
-    )
+    ])
+    @ApiResponseReadExample('Categories', {
+        getAll: {
+            data: {
+                categories: [
+                    {
+                        id: '4432abc7-7ef1-4517-9a90-a97ca51691fa',
+                        name: 'Sách vở',
+                        description: 'Sách vở học tâp',
+                        createdAt: {
+                            low: 2145213018,
+                            high: 399,
+                            unsigned: false,
+                        },
+                        domain: '30shine.com',
+                        totalProducts: 1,
+                    },
+                    {
+                        id: 'b382de76-b34b-4321-ad43-840439bc24c4',
+                        name: 'Dưỡng da',
+                        description: 'Cho dồ dưỡng da',
+                        createdAt: {
+                            low: 2145238845,
+                            high: 399,
+                            unsigned: false,
+                        },
+                        domain: '30shine.com',
+                        totalProducts: 1,
+                    },
+                ],
+            },
+            path: '/api/ecommerce/category/find/?domain=30shine.com',
+        },
+        findOne: {
+            data: {
+                id: '4432abc7-7ef1-4517-9a90-a97ca51691fa',
+                name: 'Sách vở',
+                description: 'Sách vở học tâp',
+                createdAt: {
+                    low: 2145213018,
+                    high: 399,
+                    unsigned: false,
+                },
+                domain: '30shine.com',
+                totalProducts: 1,
+            },
+            path: '/api/ecommerce/category/find/?domain=30shine.com&id=4432abc7-7ef1-4517-9a90-a97ca51691fa',
+        },
+    })
     @ApiErrorResponses(
-        '/api/ecommerce/category/find/:id',
-        '/api/ecommerce/category/find/3bb423de-2b81-4526-a1d3-9c3ca84633df',
+        '/api/ecommerce/category/find/?domain=&id=',
+        '/api/ecommerce/category/find/?domain=30shine.com&id=4432abc7-7ef1-4517-9a90-a97ca51691fa',
         {
             badRequest: {
                 summary: 'Validation Error',
-                detail: 'id must be a UUID',
+                detail: 'id must be a UUID, domain should not be empty, domain must be a URL address',
             },
-
             unauthorized: [
-                {
-                    key: 'token_not_verified',
-                    summary: 'Token not verified',
-                    detail: 'Unauthorized',
-                    error: null,
-                },
-                {
-                    key: 'token_not_found',
-                    summary: 'Token not found',
-                    detail: 'Access Token not found',
-                    error: 'Unauthorized',
-                },
-                {
-                    key: 'unauthorized_role',
-                    summary: 'Role not verified',
-                    detail: 'Unauthorized Role',
-                    error: 'Unauthorized',
-                },
                 {
                     key: 'category_not_found',
                     summary: 'Category not found',
@@ -280,30 +218,18 @@ Find a category within a domain using an access token.
                     error: 'Unauthorized',
                 },
             ],
-            forbidden: [
-                {
-                    key: 'forbidden_resource',
-                    summary: 'Forbidden resource',
-                    detail: 'Forbidden resource',
-                },
-            ],
         },
     )
-    async findOneCategory(@Req() req: Request, @Param() data: FindOneCategory) {
-        console.log(data);
-        const payloadToken = req['user'];
-        // const header = req.headers;
-        const userData = {
-            email: payloadToken.email,
-            domain: payloadToken.domain,
-            role: payloadToken.role,
-            accessToken: payloadToken.accessToken,
-        } as UserDto;
-        // console.log(userData, dataCategory)
-        return await this.ecommerceCategoryService.findOneCategory({
-            user: userData,
-            ...data,
-        } as FindOneCategoryRequestDTO);
+    async findCategory(@Req() req: Request, @Query() data: FindCategory) {
+        if (data.id === undefined) {
+            return await this.ecommerceCategoryService.findAllCategories({
+                domain: data.domain,
+            } as FindAllCategoriesRequestDTO);
+        } else {
+            return await this.ecommerceCategoryService.findOneCategory({
+                ...data,
+            } as FindOneCategoryRequestDTO);
+        }
     }
 
     @Post('update')

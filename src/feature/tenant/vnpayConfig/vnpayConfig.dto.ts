@@ -18,10 +18,10 @@ import {
 import { IsBase64DataURI } from 'src/common/validator/is-base-64-dataURI.validator';
 import { IsSpecificUrl } from 'src/common/validator/is-specific-url.validator';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
-import {CreateVNPayConfigRequest} from 'src/proto_build/tenant/vnpayConfig/CreateVNPayConfigRequest';
-import {DeleteVNPayConfigRequest} from 'src/proto_build/tenant/vnpayConfig/DeleteVNPayConfigRequest';
-import {GetVNPayConfigByTenantIdRequest} from 'src/proto_build/tenant/vnpayConfig/GetVNPayConfigByTenantIdRequest';
-import {UpdateVNPayConfigRequest} from 'src/proto_build/tenant/vnpayConfig/UpdateVNPayConfigRequest';
+import { CreateVNPayConfigRequest } from 'src/proto_build/tenant/vnpayConfig/CreateVNPayConfigRequest';
+import { DeleteVNPayConfigRequest } from 'src/proto_build/tenant/vnpayConfig/DeleteVNPayConfigRequest';
+import { GetVNPayConfigByTenantIdRequest } from 'src/proto_build/tenant/vnpayConfig/GetVNPayConfigByTenantIdRequest';
+import { UpdateVNPayConfigRequest } from 'src/proto_build/tenant/vnpayConfig/UpdateVNPayConfigRequest';
 
 export class CreateVNPayConfig implements CreateVNPayConfigRequest {
     @IsUUID()

@@ -8,6 +8,7 @@ import {
     IsOptional,
     IsString,
     IsUUID,
+    IsUrl,
     Min,
 } from 'class-validator';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
@@ -41,7 +42,12 @@ export class CreateReviewRequestDTO extends CreateReview {
     user: UserDto;
 }
 
-export class FindAllReviews implements FindAllReviewsRequest {
+export class FindAllReviewsRequestDTO implements FindAllReviewsRequest {
+    @IsUrl()
+    @IsNotEmpty()
+    @ApiProperty()
+    domain: string;
+
     @IsUUID()
     @IsOptional()
     @ApiProperty()
@@ -60,13 +66,6 @@ export class FindAllReviews implements FindAllReviewsRequest {
     @IsOptional()
     @ApiProperty()
     page: number;
-}
-
-export class FindAllReviewsRequestDTO extends FindAllReviews {
-    @IsObject()
-    @IsNotEmpty()
-    @ApiProperty()
-    user: UserDto;
 }
 
 export class UpdateReview implements UpdateReviewRequest {

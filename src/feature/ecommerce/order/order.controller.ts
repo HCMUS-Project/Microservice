@@ -36,6 +36,8 @@ import {
     GetOrder,
     GetOrderRequestDTO,
     ListOrders,
+    ListOrdersForTenant,
+    ListOrdersForTenantRequestDTO,
     ListOrdersRequestDTO,
     UpdateStageOrder,
     UpdateStageOrderRequestDTO,
@@ -227,9 +229,9 @@ Find an Order by OrderId within a domain using an access token.
                     error: 'Unauthorized',
                 },
                 {
-                    key: 'cart_not_found',
-                    summary: 'Cart not found',
-                    detail: 'Cart not found',
+                    key: 'not_found',
+                    summary: 'Order not found',
+                    detail: 'Order not found',
                     error: 'Unauthorized',
                 },
             ],
@@ -259,32 +261,33 @@ Find an Order by OrderId within a domain using an access token.
     }
 
     @Get('search')
-    @UseGuards(AccessTokenGuard)
+    @UseGuards(AccessTokenGuard, RolesGuard)
+    @Roles(Role.USER)
     @ApiBearerAuth('JWT-access-token-user')
-    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiEndpoint({
-        summary: `List Orders by Query with: stage`,
+        summary: `List all Orders of User by Query with: Stage`,
         details: `
 ## Description
-Find an Order by Query within a domain using an access token.
+Find all Orders by Query within a domain using an access token. This operation is restricted to user accounts only.
         
 ## Requirements
-- **Access Token**: Must provide a valid access token.
+- **Access Token**: Must provide a valid user access token.
+- **Permissions**: Requires user-level permissions.
 - **stage**: Must is a valid stage
-- **default**: without no query, list all orders
+- **default**: without no query, list all orders of User
 `,
     })
     @ApiQueryExamples([
         {
             name: 'stage',
-            description: 'Search all request Order by stage',
+            description: 'Search all request Order of User by stage',
             example: 'pending',
             required: true,
         },
     ])
     @ApiResponseExample(
         'read',
-        'find an Order by OrderId',
+        'find all Orders of User by Stage',
         {
             orders: [
                 {
@@ -363,6 +366,115 @@ Find an Order by Query within a domain using an access token.
             user: userData,
             ...query,
         } as ListOrdersRequestDTO);
+    }
+
+    @Get('tenant/search')
+    @UseGuards(AccessTokenGuard, RolesGuard)
+    @Roles(Role.TENANT)
+    @ApiBearerAuth('JWT-access-token-tenant')
+    @ApiEndpoint({
+        summary: `List all Orders of Tenant by Query with: Stage`,
+        details: `
+## Description
+Find all Orders by Query within a domain using an access token. This operation is restricted to user accounts only.
+        
+## Requirements
+- **Access Token**: Must provide a valid tenant access token.
+- **Permissions**: Requires tenant-level permissions.
+- **stage**: Must is a valid stage
+- **default**: without no query, list all orders of User
+`,
+    })
+    @ApiQueryExamples([
+        {
+            name: 'stage',
+            description: 'Search all Orders of domain by stage',
+            example: 'pending',
+            required: true,
+        },
+    ])
+    @ApiResponseExample(
+        'read',
+        'find all Orders of Domain by Stage',
+        {
+            orders: [
+                {
+                    products: [
+                        {
+                            productId: 'f9e75324-a8f4-4cbd-af6d-0210c5e9a5d9',
+                            quantity: 5,
+                        },
+                        {
+                            productId: 'c886a59c-7293-4239-8052-eb611b68e890',
+                            quantity: 3,
+                        },
+                    ],
+                    orderId: '4ccce500-26ca-4cd7-957d-bb6ebb8653ba',
+                    phone: '+84912345678',
+                    address: '123 abc, def, gh',
+                    voucherId: '384589ac-108a-4972-bbed-49771df4c7cb',
+                    stage: 'pending',
+                    user: 'volehoai070902@gmail.com',
+                },
+            ],
+        },
+        '/api/ecommerce/order/tenant/search/?stage=pending',
+    )
+    @ApiErrorResponses(
+        '/api/ecommerce/order/tenant/search/?stage=',
+        '/api/ecommerce/order/tenant/search/?stage=pending',
+        {
+            badRequest: {
+                summary: 'Validation Error',
+                detail: 'Must be a valid stage: pending, shipping, completed, CANCELLED',
+            },
+            unauthorized: [
+                {
+                    key: 'token_not_verified',
+                    summary: 'Token not verified',
+                    detail: 'Unauthorized',
+                    error: null,
+                },
+                {
+                    key: 'token_not_found',
+                    summary: 'Token not found',
+                    detail: 'Access Token not found',
+                    error: 'Unauthorized',
+                },
+                {
+                    key: 'unauthorized_role',
+                    summary: 'Role not verified',
+                    detail: 'Unauthorized Role',
+                    error: 'Unauthorized',
+                },
+            ],
+            forbidden: [
+                {
+                    key: 'forbidden_resource',
+                    summary: 'Forbidden resource',
+                    detail: 'Forbidden resource',
+                },
+            ],
+        },
+    )
+    async listOrdersForTenant(
+        @Req() req: Request,
+        @Query()
+        query: ListOrdersForTenant,
+    ) {
+        const payloadToken = req['user'];
+        // const header = req.headers;
+        const userData = {
+            email: payloadToken.email,
+            domain: payloadToken.domain,
+            role: payloadToken.role,
+            accessToken: payloadToken.accessToken,
+        } as UserDto;
+        // console.log(userData, dataCategory)
+        return await this.ecommerceOrderService.listOrdersForTenant({
+            user: userData,
+            ...query,
+        } as ListOrdersForTenantRequestDTO);
     }
 
     @Post('update/stage')

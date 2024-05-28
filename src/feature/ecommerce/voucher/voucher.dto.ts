@@ -9,6 +9,7 @@ import {
     IsString,
     IsUUID,
     IsUppercase,
+    IsUrl,
     Matches,
     Max,
     Min,
@@ -66,24 +67,53 @@ export class CreateVoucherDTO extends CreateVoucher {
 }
 
 export class FindAllVouchersRequestDTO implements FindAllVouchersRequest {
-    @IsObject()
+    @IsUrl()
     @IsNotEmpty()
     @ApiProperty()
-    user: UserDto;
+    domain: string;
 }
 
-export class FindVoucherById implements FindVoucherByIdRequest {
+export class FindVoucher implements FindVoucherByIdRequest {
     @IsUUID()
+    @IsOptional()
+    @ApiProperty()
+    id: string;
+
+    @IsString()
+    @IsOptional()
+    @Matches(/^[A-Z0-9]*$/, { message: 'Voucher code must be uppercase and contain no spaces' })
+    @ApiProperty()
+    code: string;
+
+    @IsUrl()
     @IsNotEmpty()
+    @ApiProperty()
+    domain: string;
+}
+
+export class FindVoucherByIdRequestDTO implements FindVoucherByIdRequest {
+    @IsUrl()
+    @IsNotEmpty()
+    @ApiProperty()
+    domain: string;
+
+    @IsUUID()
+    @IsOptional()
     @ApiProperty()
     id: string;
 }
 
-export class FindVoucherByIdRequestDTO extends FindVoucherById {
-    @IsObject()
+export class FindVoucherByCodeRequestDTO implements CheckVoucherByCodeRequest {
+    @IsString()
+    @IsOptional()
+    @Matches(/^[A-Z0-9]*$/, { message: 'Voucher code must be uppercase and contain no spaces' })
+    @ApiProperty()
+    code: string;
+
+    @IsUrl()
     @IsNotEmpty()
     @ApiProperty()
-    user: UserDto;
+    domain: string;
 }
 
 export class UpdateVoucher implements UpdateVoucherRequest {
@@ -142,21 +172,6 @@ export class DeleteVoucher implements DeleteVoucherRequest {
 }
 
 export class DeleteVoucherRequestDTO extends DeleteVoucher {
-    @IsObject()
-    @IsNotEmpty()
-    @ApiProperty()
-    user: UserDto;
-}
-
-export class FindVoucherByCode implements CheckVoucherByCodeRequest {
-    @IsString()
-    @IsNotEmpty()
-    @Matches(/^[A-Z0-9]*$/, { message: 'Voucher code must be uppercase and contain no spaces' })
-    @ApiProperty()
-    code: string;
-}
-
-export class FindVoucherByCodeRequestDTO extends FindVoucherByCode {
     @IsObject()
     @IsNotEmpty()
     @ApiProperty()

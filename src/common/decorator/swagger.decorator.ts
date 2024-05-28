@@ -69,6 +69,48 @@ export function ApiResponseExample(
     );
 }
 
+export function ApiResponseReadExample(
+    nameApi: string,
+    examples: {
+        getAll: { data: object; path: string };
+        findOne: { data: object; path: string };
+    },
+) {
+    return applyDecorators(
+        ApiOkResponse({
+            description: `Read operations successfully executed.`,
+            content: {
+                'application/json': {
+                    examples: {
+                        getAll: {
+                            summary: `Response after find all ${nameApi} successfully`,
+                            value: {
+                                statusCode: 200,
+                                timestamp: new Date().toISOString(),
+                                path: examples.getAll.path,
+                                message: null,
+                                error: null,
+                                data: examples.getAll.data,
+                            },
+                        },
+                        findOne: {
+                            summary: `Response after find one ${nameApi} successfully`,
+                            value: {
+                                statusCode: 200,
+                                timestamp: new Date().toISOString(),
+                                path: examples.findOne.path,
+                                message: null,
+                                error: null,
+                                data: examples.findOne.data,
+                            },
+                        },
+                    },
+                },
+            },
+        }),
+    );
+}
+
 function createErrorResponseDecorator(statusCode: number, description: string, examples: any) {
     const decorators = {
         400: ApiBadRequestResponse,
@@ -162,7 +204,14 @@ export function ApiErrorResponses(
 }
 
 export function ApiQueryExamples(
-    queries: Array<{ name: string; description: string; example: any; required?: boolean, enum?:any, isArray?: boolean }>,
+    queries: Array<{
+        name: string;
+        description: string;
+        example: any;
+        required?: boolean;
+        enum?: any;
+        isArray?: boolean;
+    }>,
 ) {
     return applyDecorators(
         ...queries.map(query =>

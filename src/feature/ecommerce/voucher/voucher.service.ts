@@ -112,9 +112,7 @@ export class EcommerceVoucherService implements OnModuleInit {
                 throw new NotFoundException(String(e), 'Error not recognized');
             }
             // console.log(errorDetails);
-            if (errorDetails.error == 'PERMISSION_DENIED') {
-                throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'VOUCHER_NOT_FOUND') {
+            if (errorDetails.error == 'VOUCHER_NOT_FOUND') {
                 throw new UserNotFoundException('Voucher not found');
             } else {
                 throw new NotFoundException(

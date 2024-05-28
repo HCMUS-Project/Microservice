@@ -2,8 +2,13 @@ import { Observable, firstValueFrom, lastValueFrom, take, toArray } from 'rxjs';
 import { Inject, Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { ForbiddenException, UserNotFoundException } from 'src/common/exceptions/exceptions';
-import {VNPayConfigResponse} from 'src/proto_build/tenant/vnpayConfig/VNPayConfigResponse';
-import {CreateVNPayConfigRequestDTO, DeleteVNPayConfigRequestDTO, GetVNPayConfigByTenantIdRequestDTO, UpdateVNPayConfigRequestDTO} from './vnpayConfig.dto';
+import { VNPayConfigResponse } from 'src/proto_build/tenant/vnpayConfig/VNPayConfigResponse';
+import {
+    CreateVNPayConfigRequestDTO,
+    DeleteVNPayConfigRequestDTO,
+    GetVNPayConfigByTenantIdRequestDTO,
+    UpdateVNPayConfigRequestDTO,
+} from './vnpayConfig.dto';
 
 interface VNPayConfigService {
     CreateVNPayConfig(data: CreateVNPayConfigRequestDTO): Observable<VNPayConfigResponse>;
@@ -21,8 +26,7 @@ export class TenantVNPayConfigService implements OnModuleInit {
     constructor(@Inject('GRPC_TENANT_SERVICE') private client: ClientGrpc) {}
 
     onModuleInit() {
-        this.iVNPayConfigService =
-            this.client.getService<VNPayConfigService>('VNPayConfigService');
+        this.iVNPayConfigService = this.client.getService<VNPayConfigService>('VNPayConfigService');
     }
 
     async CreateVNPayConfig(data: CreateVNPayConfigRequestDTO): Promise<VNPayConfigResponse> {
@@ -106,7 +110,7 @@ export class TenantVNPayConfigService implements OnModuleInit {
                 throw new UserNotFoundException('VNPay config not found');
             } else if (errorDetails.error == 'TENANT_ID_NOT_FOUND') {
                 throw new UserNotFoundException('Tenant Id not found');
-            }else {
+            } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
                     'Error not recognized',

@@ -47,7 +47,7 @@ export class CreateBooking implements CreateBookingRequest {
     startTime: string;
 
     @IsString()
-    @IsOptional() 
+    @IsOptional()
     @ApiProperty()
     note: string = 'Default note';
 }
