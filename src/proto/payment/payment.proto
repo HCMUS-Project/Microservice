@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package payment;
+
+import "../auth/user_token.proto";
+
+service PaymentService {
+    rpc CreatePaymentUrl(CreatePaymentUrlRequest) returns (CreatePaymentUrlResponse);
+}
+
+message CreatePaymentUrlRequest {
+    userToken.User user = 1;
+    string payment_method_id = 2;
+    float amount = 3; 
+    repeated string order_products_id = 4;
+    repeated string order_booking_id = 5;
+    string description = 6;
+    string vnp_return_url = 7;
+} 
+
+message CreatePaymentUrlResponse {
+    string payment_url = 1;
+}

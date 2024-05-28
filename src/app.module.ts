@@ -21,6 +21,7 @@ import { AuthModule } from './feature/auth/auth.module';
 import { EcommerceModule } from './feature/ecommerce/ecommerce.module';
 import { BookingModule } from './feature/booking/booking.module';
 import { TenantModule } from './feature/tenant/tenant.module';
+import {PaymentModule} from './feature/payment/payment.module';
 
 @Module({
     imports: [
@@ -34,6 +35,7 @@ import { TenantModule } from './feature/tenant/tenant.module';
         EcommerceModule,
         BookingModule,
         TenantModule,
+        PaymentModule
         // CacheModule.registerAsync(RedisOptions)
     ],
     controllers: [AppController],

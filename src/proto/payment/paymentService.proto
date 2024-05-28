@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+import "bank.proto";
+import "payment_method.proto";
+import "payment.proto";
+
+package paymentService;
+
+service AppService {
+  rpc FindOne (HeroById) returns (Hero) {}
+}
+
+message HeroById {
+  int32 id = 1;
+}
+
+message Hero {
+  int32 id = 1;
+  string name = 2;
+}

@@ -29,6 +29,7 @@ generate_types "auth"
 generate_types "e_commerce"
 generate_types "booking"
 generate_types "tenant"
+generate_types "payment"
 
 echo "Proto files have been compiled successfully!"
 # chmod +x ./scripts/gen_proto.sh
