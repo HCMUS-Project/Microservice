@@ -51,7 +51,7 @@ export class TenantVNPayConfigService implements OnModuleInit {
             } else if (errorDetails.error == 'VN_PAY_CONFIG_ALREADY_EXISTS') {
                 throw new ForbiddenException('VNPay Config already exists', 'Forbidden');
             } else if (errorDetails.error == 'TENANT_ID_NOT_FOUND') {
-                throw new UserNotFoundException('Tenant Id not found');
+                throw new ForbiddenException('Tenant Id not found');
             } else {
                 throw new NotFoundException(e, 'Not found');
             }
@@ -77,7 +77,7 @@ export class TenantVNPayConfigService implements OnModuleInit {
             }
             // console.log(errorDetails);
             if (errorDetails.error == 'VN_PAY_CONFIG_NOT_FOUND') {
-                throw new UserNotFoundException('VNPay config not found');
+                throw new ForbiddenException('VNPay config not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -107,9 +107,9 @@ export class TenantVNPayConfigService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'VN_PAY_CONFIG_NOT_FOUND') {
-                throw new UserNotFoundException('VNPay config not found');
+                throw new ForbiddenException('VNPay config not found');
             } else if (errorDetails.error == 'TENANT_ID_NOT_FOUND') {
-                throw new UserNotFoundException('Tenant Id not found');
+                throw new ForbiddenException('Tenant Id not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -138,7 +138,7 @@ export class TenantVNPayConfigService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'VN_PAY_CONFIG_NOT_FOUND') {
-                throw new UserNotFoundException('VNPay config not found');
+                throw new ForbiddenException('VNPay config not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,

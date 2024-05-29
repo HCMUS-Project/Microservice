@@ -78,7 +78,7 @@ export class TenantPolictyAndTermService implements OnModuleInit {
             }
             // console.log(errorDetails);
             if (errorDetails.error == 'POLICY_AND_TERM_NOT_FOUND') {
-                throw new UserNotFoundException('Policy and term not found');
+                throw new ForbiddenException('Policy and term not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -108,7 +108,7 @@ export class TenantPolictyAndTermService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'POLICY_AND_TERM_NOT_FOUND') {
-                throw new UserNotFoundException('Policy and term not found');
+                throw new ForbiddenException('Policy and term not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -137,7 +137,7 @@ export class TenantPolictyAndTermService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'POLICY_AND_TERM_NOT_FOUND') {
-                throw new UserNotFoundException('Policy and term not found');
+                throw new ForbiddenException('Policy and term not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,

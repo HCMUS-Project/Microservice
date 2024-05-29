@@ -4,6 +4,7 @@ import {
     ValidationArguments,
     isBase64,
 } from 'class-validator';
+import {firstValueFrom} from 'rxjs';
 
 export function IsBase64DataURI(validationOptions?: ValidationOptions) {
     return function (object: Object, propertyName: string) {

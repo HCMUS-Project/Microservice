@@ -61,7 +61,7 @@ export class EcommerceProductService implements OnModuleInit {
             } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
                 throw new ForbiddenException('Product already exists', 'Forbidden');
             } else if (errorDetails.error == 'CATEGORY_NOT_FOUND') {
-                throw new UserNotFoundException('Category not found', 'Unauthorized');
+                throw new ForbiddenException('Category not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -112,7 +112,7 @@ export class EcommerceProductService implements OnModuleInit {
             }
             // console.log(errorDetails);
             if (errorDetails.error == 'PRODUCT_NOT_FOUND') {
-                throw new UserNotFoundException('Product not found', 'Unauthorized');
+                throw new ForbiddenException('Product not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -141,7 +141,7 @@ export class EcommerceProductService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'PRODUCT_NOT_FOUND') {
-                throw new UserNotFoundException('Product not found', 'Unauthorized');
+                throw new ForbiddenException('Product not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -169,7 +169,7 @@ export class EcommerceProductService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'PRODUCT_NOT_FOUND') {
-                throw new UserNotFoundException('Product not found', 'Unauthorized');
+                throw new ForbiddenException('Product not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -220,7 +220,7 @@ export class EcommerceProductService implements OnModuleInit {
             }
             // console.log(errorDetails);
             if (errorDetails.error == 'PRODUCT_NOT_FOUND') {
-                throw new UserNotFoundException('Product not found', 'Unauthorized');
+                throw new ForbiddenException('Product not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,

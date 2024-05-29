@@ -17,6 +17,7 @@ import {
 } from 'class-validator';
 import { AddQuantityType } from 'src/common/enums/productAdditionType.enum';
 import { IsBase64DataURI } from 'src/common/validator/is-base-64-dataURI.validator';
+import {IsEitherUrlOrBase64DataURI} from 'src/common/validator/is-either-base-64-dataURI-or-URL.validator';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
 import { AddProduct } from 'src/proto_build/e_commerce/product/AddProduct';
 import { AddProductQuantityRequest } from 'src/proto_build/e_commerce/product/AddProductQuantityRequest';
@@ -130,7 +131,9 @@ export class UpdateProduct implements UpdateProductRequest {
 
     @IsArray()
     @IsNotEmpty()
-    @IsBase64DataURI({ each: true, message: 'Each image must be a valid Base64 data URI.' })
+    // @IsUrl({},{each: true})
+    // @IsBase64DataURI({ each: true, message: 'Each image must be a valid Base64 data URI.' })
+    @IsEitherUrlOrBase64DataURI({each: true, message: 'Each image must be either a valid Base64 data URI or an valid URL.'})
     @ApiProperty()
     images: string[];
 }

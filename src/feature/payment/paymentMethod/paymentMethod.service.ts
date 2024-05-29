@@ -85,7 +85,7 @@ export class PaymentPaymentMethodService implements OnModuleInit {
             }
             // console.log(errorDetails);
             if (errorDetails.error == 'PAYMENT_METHOD_NOT_FOUND') {
-                throw new UserNotFoundException('Payment method not found');
+                throw new ForbiddenException('Payment method not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -141,7 +141,7 @@ export class PaymentPaymentMethodService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'PAYMENT_METHOD_NOT_FOUND') {
-                throw new UserNotFoundException('Payment method not found');
+                throw new ForbiddenException('Payment method not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -172,7 +172,7 @@ export class PaymentPaymentMethodService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'PAYMENT_METHOD_NOT_FOUND') {
-                throw new UserNotFoundException('Payment method not found');
+                throw new ForbiddenException('Payment method not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,

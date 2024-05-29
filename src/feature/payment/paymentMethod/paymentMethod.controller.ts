@@ -10,6 +10,18 @@ import {
     Req,
     UseGuards,
 } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Inject,
+    Param,
+    Post,
+    Query,
+    Req,
+    UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/common/guards/token/accessToken.guard';
 import { RolesGuard } from 'src/common/guards/role/role.guard';
@@ -122,7 +134,7 @@ Create a Payment Method within a domain using an access token. This operation is
         } as CreatePaymentMethodRequestDTO);
     }
 
-    @Get('find/:id')
+    @Get('find/all')
     @UseGuards(AccessTokenGuard)
     @ApiBearerAuth('JWT-access-token-user')
     @ApiBearerAuth('JWT-access-token-tenant')
@@ -212,14 +224,14 @@ Find a Policy and Term by TenantId within a domain using an access token.
             role: payloadToken.role,
             accessToken: payloadToken.accessToken,
         } as UserDto;
+        console.log('abc');
         // console.log(userData, dataCategory)
-        return await this.paymentPaymentMethodService.getPaymentMethod({
+        return await this.paymentPaymentMethodService.listPaymentMethod({
             user: userData,
-            ...data,
-        } as GetPaymentMethodRequestDTO);
+        } as ListPaymentMethodRequestDTO);
     }
 
-    @Get('find/all')
+    @Get('find/:id')
     @UseGuards(AccessTokenGuard)
     @ApiBearerAuth('JWT-access-token-user')
     @ApiBearerAuth('JWT-access-token-tenant')
@@ -299,7 +311,7 @@ Find a Policy and Term by TenantId within a domain using an access token.
             ],
         },
     )
-    async findAllPaymentMethod(@Req() req: Request) {
+    async findOnePaymentMethod(@Req() req: Request, @Query() data: GetPaymentMethod) {
         // console.log(data);
         const payloadToken = req['user'];
         // const header = req.headers;
@@ -310,9 +322,10 @@ Find a Policy and Term by TenantId within a domain using an access token.
             accessToken: payloadToken.accessToken,
         } as UserDto;
         // console.log(userData, dataCategory)
-        return await this.paymentPaymentMethodService.listPaymentMethod({
+        return await this.paymentPaymentMethodService.getPaymentMethod({
             user: userData,
-        } as ListPaymentMethodRequestDTO);
+            ...data,
+        } as GetPaymentMethodRequestDTO);
     }
 
     @Post('update')

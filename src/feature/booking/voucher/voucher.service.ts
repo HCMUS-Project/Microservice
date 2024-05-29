@@ -62,7 +62,7 @@ export class BookingVoucherService implements OnModuleInit {
             } else if (errorDetails.error == 'VOUCHER_EXIST') {
                 throw new ForbiddenException('Voucher already exists', 'Forbidden');
             } else if (errorDetails.error == 'SERVICE_NOT_FOUND') {
-                throw new UserNotFoundException('Service not found');
+                throw new ForbiddenException('Service not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -92,7 +92,7 @@ export class BookingVoucherService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'VOUCHER_NOT_FOUND') {
-                throw new UserNotFoundException('Voucher not found');
+                throw new ForbiddenException('Voucher not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -122,7 +122,7 @@ export class BookingVoucherService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'VOUCHER_NOT_EXIST') {
-                throw new UserNotFoundException('Voucher not found');
+                throw new ForbiddenException('Voucher not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -180,7 +180,7 @@ export class BookingVoucherService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'VOUCHER_NOT_FOUND') {
-                throw new UserNotFoundException('Voucher not found', 'Forbidden');
+                    
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
