@@ -10,18 +10,6 @@ import {
     Req,
     UseGuards,
 } from '@nestjs/common';
-import {
-    Body,
-    Controller,
-    Delete,
-    Get,
-    Inject,
-    Param,
-    Post,
-    Query,
-    Req,
-    UseGuards,
-} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/common/guards/token/accessToken.guard';
 import { RolesGuard } from 'src/common/guards/role/role.guard';
@@ -214,7 +202,7 @@ Find a Policy and Term by TenantId within a domain using an access token.
             ],
         },
     )
-    async findOnePaymentMethod(@Req() req: Request, @Query() data: GetPaymentMethod) {
+    async findAllPaymentMethod(@Req() req: Request, @Query() data: GetPaymentMethod) {
         // console.log(data);
         const payloadToken = req['user'];
         // const header = req.headers;
