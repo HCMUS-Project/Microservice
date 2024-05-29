@@ -30,7 +30,7 @@ import { CreatePaymentUrl, CreatePaymentUrlRequestDTO } from './paymentURL.dto';
 @ApiTags('payment/url')
 export class PaymentURLController {
     constructor(
-        @Inject('GRPC_PAYMENT_SERVICE_BANK')
+        @Inject('GRPC_PAYMENT_SERVICE_PAYMENT_URL')
         private readonly paymentURLService: PaymentURLService,
     ) {}
 
