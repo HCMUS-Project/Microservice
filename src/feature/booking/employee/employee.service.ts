@@ -68,7 +68,7 @@ export class BookingEmployeeService implements OnModuleInit {
             } else if (errorDetails.error == 'DUPLICATE_WORK_SHIFTS') {
                 throw new ForbiddenException('Duplicate work shifts', 'Forbidden');
             } else if (errorDetails.error == 'SERVICES_NOT_FOUND') {
-                throw new UserNotFoundException('Services not found');
+                throw new ForbiddenException('Services not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -98,7 +98,7 @@ export class BookingEmployeeService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'EMPLOYEE_NOT_FOUND') {
-                throw new UserNotFoundException('Employee not found');
+                throw new ForbiddenException('Employee not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -161,9 +161,9 @@ export class BookingEmployeeService implements OnModuleInit {
             } else if (errorDetails.error == 'DUPLICATE_WORK_SHIFTS') {
                 throw new ForbiddenException('Duplicate work shifts', 'Forbidden');
             } else if (errorDetails.error == 'SERVICES_NOT_FOUND') {
-                throw new UserNotFoundException('Services not found');
+                throw new ForbiddenException('Services not found');
             } else if (errorDetails.error == 'EMPLOYEE_NOT_FOUND') {
-                throw new UserNotFoundException('Employee not found');
+                throw new ForbiddenException('Employee not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -193,7 +193,7 @@ export class BookingEmployeeService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'EMPLOYEE_NOT_FOUND') {
-                throw new UserNotFoundException('Employee not found');
+                throw new ForbiddenException('Employee not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,

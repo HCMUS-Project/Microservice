@@ -78,7 +78,7 @@ export class TenantTenantProfileService implements OnModuleInit {
                 throw new NotFoundException(String(e), 'Error not recognized');
             } // console.log(errorDetails);
             if (errorDetails.error == 'TENANT_PROFILE_NOT_FOUND') {
-                throw new UserNotFoundException('Tenant profile not found');
+                throw new ForbiddenException('Tenant profile not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -107,7 +107,7 @@ export class TenantTenantProfileService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'TENANT_PROFILE_NOT_FOUND') {
-                throw new UserNotFoundException('Tenant profile not found');
+                throw new ForbiddenException('Tenant profile not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -136,7 +136,7 @@ export class TenantTenantProfileService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'TENANT_PROFILE_NOT_FOUND') {
-                throw new UserNotFoundException('Tenant profile not found');
+                throw new ForbiddenException('Tenant profile not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,

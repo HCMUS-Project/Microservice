@@ -90,7 +90,7 @@ export class BookingServicesService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'SERVICE_NOT_EXIST') {
-                throw new UserNotFoundException('Service not found');
+                throw new ForbiddenException('Service not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -150,7 +150,7 @@ export class BookingServicesService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'SERVICE_NOT_EXIST') {
-                throw new UserNotFoundException('Service not found');
+                throw new ForbiddenException('Service not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -180,7 +180,7 @@ export class BookingServicesService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'SERVICE_NOT_EXIST') {
-                throw new UserNotFoundException('Service not found');
+                throw new ForbiddenException('Service not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,

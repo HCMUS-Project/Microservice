@@ -111,7 +111,7 @@ export class EcommerceReviewService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'REVIEW_NOT_FOUND') {
-                throw new UserNotFoundException('Review not found');
+                throw new ForbiddenException('Review not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -141,7 +141,7 @@ export class EcommerceReviewService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'REVIEW_NOT_FOUND') {
-                throw new UserNotFoundException('Review not found');
+                throw new ForbiddenException('Review not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,

@@ -76,7 +76,7 @@ export class TenantTenantService implements OnModuleInit {
             }
             // console.log(errorDetails);
             if (errorDetails.error == 'TENANT_NOT_FOUND') {
-                throw new UserNotFoundException('Tenant not found');
+                throw new ForbiddenException('Tenant not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -103,7 +103,7 @@ export class TenantTenantService implements OnModuleInit {
             }
             // console.log(errorDetails);
             if (errorDetails.error == 'TENANT_NOT_FOUND') {
-                throw new UserNotFoundException('Tenant not found');
+                throw new ForbiddenException('Tenant not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -132,7 +132,7 @@ export class TenantTenantService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'TENANT_NOT_FOUND') {
-                throw new UserNotFoundException('Tenant not found');
+                throw new ForbiddenException('Tenant not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -161,7 +161,7 @@ export class TenantTenantService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'TENANT_NOT_FOUND') {
-                throw new UserNotFoundException('Tenant not found');
+                throw new ForbiddenException('Tenant not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,

@@ -89,7 +89,7 @@ export class EcommerceCartService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'CART_NOT_FOUND') {
-                throw new UserNotFoundException('Cart not found');
+                throw new ForbiddenException('Cart not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -119,7 +119,7 @@ export class EcommerceCartService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'CART_NOT_FOUND') {
-                throw new UserNotFoundException('Cart not found');
+                throw new ForbiddenException('Cart not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -183,7 +183,7 @@ export class EcommerceCartService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'CART_NOT_FOUND') {
-                throw new UserNotFoundException('Cart not found');
+                throw new ForbiddenException('Cart not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,

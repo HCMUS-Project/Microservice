@@ -77,7 +77,7 @@ export class TenantThemeConfigService implements OnModuleInit {
                 throw new NotFoundException(String(e), 'Error not recognized');
             } // console.log(errorDetails);
             if (errorDetails.error == 'THEME_CONFIG_NOT_FOUND') {
-                throw new UserNotFoundException('Theme config not found');
+                throw new ForbiddenException('Theme config not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -106,7 +106,7 @@ export class TenantThemeConfigService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'THEME_CONFIG_NOT_FOUND') {
-                throw new UserNotFoundException('Theme config not found');
+                throw new ForbiddenException('Theme config not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -135,7 +135,7 @@ export class TenantThemeConfigService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'THEME_CONFIG_NOT_FOUND') {
-                throw new UserNotFoundException('Theme config not found');
+                throw new ForbiddenException('Theme config not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,

@@ -78,7 +78,7 @@ export class TenantSubscriptionService implements OnModuleInit {
             }
             // console.log(errorDetails);
             if (errorDetails.error == 'SUBSCRIPTION_NOT_FOUND') {
-                throw new UserNotFoundException('Subscription not found');
+                throw new ForbiddenException('Subscription not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -108,7 +108,7 @@ export class TenantSubscriptionService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'SUBSCRIPTION_NOT_FOUND') {
-                throw new UserNotFoundException('Subscription not found');
+                throw new ForbiddenException('Subscription not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -137,7 +137,7 @@ export class TenantSubscriptionService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'SUBSCRIPTION_NOT_FOUND') {
-                throw new UserNotFoundException('Subscription not found');
+                throw new ForbiddenException('Subscription not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,

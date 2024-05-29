@@ -113,7 +113,7 @@ export class EcommerceVoucherService implements OnModuleInit {
             }
             // console.log(errorDetails);
             if (errorDetails.error == 'VOUCHER_NOT_FOUND') {
-                throw new UserNotFoundException('Voucher not found');
+                throw new ForbiddenException('Voucher not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -143,7 +143,7 @@ export class EcommerceVoucherService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'VOUCHER_NOT_FOUND') {
-                throw new UserNotFoundException('Voucher not found');
+                throw new ForbiddenException('Voucher not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -173,7 +173,7 @@ export class EcommerceVoucherService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'VOUCHER_NOT_FOUND') {
-                throw new UserNotFoundException('Voucher not found');
+                throw new ForbiddenException('Voucher not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -203,7 +203,7 @@ export class EcommerceVoucherService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'VOUCHER_NOT_FOUND') {
-                throw new UserNotFoundException('Voucher not found');
+                throw new ForbiddenException('Voucher not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,

@@ -56,7 +56,7 @@ export class ValidationFailedException extends BadRequestException {
  * Extends the HttpException class from the '@nestjs/common' module.
  */
 export class ForbiddenException extends HttpException {
-    constructor(message: string, error: string) {
+    constructor(message: string, error?: string) {
         super({ message, error }, HttpStatus.FORBIDDEN);
     }
 }

@@ -67,7 +67,7 @@ export class EcommerceOrderService implements OnModuleInit {
             } else if (errorDetails.error == 'VOUCHER_EXPIRED') {
                 throw new ForbiddenException('Voucher expired', 'Forbidden');
             } else if (errorDetails.error == 'VOUCHER_NOT_FOUND') {
-                throw new UserNotFoundException('Voucher not found');
+                throw new ForbiddenException('Voucher not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -101,7 +101,7 @@ export class EcommerceOrderService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'ORDER_NOT_FOUND') {
-                throw new UserNotFoundException('Order not found');
+                throw new ForbiddenException('Order not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -190,7 +190,7 @@ export class EcommerceOrderService implements OnModuleInit {
             } else if (errorDetails.error == 'INVALID_ARGUMENT') {
                 throw new ForbiddenException('Invalid argument stage', 'Forbidden');
             } else if (errorDetails.error == 'ORDER_NOT_FOUND') {
-                throw new UserNotFoundException('Order not found');
+                throw new ForbiddenException('Order not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -220,7 +220,7 @@ export class EcommerceOrderService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'ORDER_NOT_FOUND') {
-                throw new UserNotFoundException('Order not found');
+                throw new ForbiddenException('Order not found');
             } else if (errorDetails.error == 'ORDER_CANCELLED') {
                 throw new ForbiddenException('Order already cancelled', 'Forbidden');
             } else if (errorDetails.error == 'CANNOT_CANCEL_ORDER') {

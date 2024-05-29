@@ -75,7 +75,7 @@ export class TenantBannerService implements OnModuleInit {
             }
             // console.log(errorDetails);
             if (errorDetails.error == 'BANNER_NOT_FOUND') {
-                throw new UserNotFoundException('Banner not found');
+                throw new ForbiddenException('Banner not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -105,7 +105,7 @@ export class TenantBannerService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'BANNER_NOT_FOUND') {
-                throw new UserNotFoundException('Banner not found');
+                throw new ForbiddenException('Banner not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -134,7 +134,7 @@ export class TenantBannerService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'BANNER_NOT_FOUND') {
-                throw new UserNotFoundException('Banner not found');
+                throw new ForbiddenException('Banner not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,

@@ -103,7 +103,7 @@ export class EcommerceCategoryService implements OnModuleInit {
             }
             console.log(errorDetails);
             if (errorDetails.error == 'CATEGORY_NOT_FOUND') {
-                throw new UserNotFoundException('Category not found', 'Unauthorized');
+                throw new ForbiddenException('Category not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -130,7 +130,7 @@ export class EcommerceCategoryService implements OnModuleInit {
             }
             console.log(errorDetails);
             if (errorDetails.error == 'CATEGORY_NOT_FOUND') {
-                throw new UserNotFoundException('Category not found', 'Unauthorized');
+                throw new ForbiddenException('Category not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -157,7 +157,7 @@ export class EcommerceCategoryService implements OnModuleInit {
             }
             console.log(errorDetails);
             if (errorDetails.error == 'CATEGORY_NOT_FOUND') {
-                throw new UserNotFoundException('Category not found', 'Unauthorized');
+                throw new ForbiddenException('Category not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
