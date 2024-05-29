@@ -34,7 +34,10 @@ async function bootstrap() {
     app.setGlobalPrefix('api');
 
     // Enable CORS
-    app.enableCors();
+    app.enableCors({
+        origin: '*',
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    });
 
     // Config the logger
     const customLogger = app.get(NestjsLoggerServiceAdapter);

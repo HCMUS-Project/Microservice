@@ -1,4 +1,15 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Inject,
+    Param,
+    Post,
+    Query,
+    Req,
+    UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/common/guards/token/accessToken.guard';
 import { RolesGuard } from 'src/common/guards/role/role.guard';
@@ -12,10 +23,19 @@ import {
     ApiParamExamples,
     ApiResponseExample,
 } from 'src/common/decorator/swagger.decorator';
-import {PaymentPaymentMethodService} from './paymentMethod.service';
-import {CreatePaymentMethod, CreatePaymentMethodRequestDTO, DeletePaymentMethod, DeletePaymentMethodRequestDTO, GetPaymentMethod, GetPaymentMethodRequestDTO, ListPaymentMethodRequestDTO, UpdatePaymentMethod, UpdatePaymentMethodRequestDTO} from './paymentMethod.dto';
-import {GetPaymentMethodRequest} from 'src/proto_build/payment/paymentMethod/GetPaymentMethodRequest';
- 
+import { PaymentPaymentMethodService } from './paymentMethod.service';
+import {
+    CreatePaymentMethod,
+    CreatePaymentMethodRequestDTO,
+    DeletePaymentMethod,
+    DeletePaymentMethodRequestDTO,
+    GetPaymentMethod,
+    GetPaymentMethodRequestDTO,
+    ListPaymentMethodRequestDTO,
+    UpdatePaymentMethod,
+    UpdatePaymentMethodRequestDTO,
+} from './paymentMethod.dto';
+import { GetPaymentMethodRequest } from 'src/proto_build/payment/paymentMethod/GetPaymentMethodRequest';
 
 @Controller('payment/method')
 @ApiTags('payment/method')
@@ -41,16 +61,8 @@ Create a Payment Method within a domain using an access token. This operation is
 - **status** is optional
 `,
     })
-    @ApiBodyExample(CreatePaymentMethod, { 
-    })
-    @ApiResponseExample(
-        'create',
-        'create Policy and Term',
-        {
-             
-        },
-        '/api/tenant/policy/create',
-    )
+    @ApiBodyExample(CreatePaymentMethod, {})
+    @ApiResponseExample('create', 'create Policy and Term', {}, '/api/tenant/policy/create')
     @ApiErrorResponses('/api/tenant/policy/create', '/api/tenant/policy/create', {
         badRequest: {
             summary: 'Validation Error',
@@ -190,10 +202,7 @@ Find a Policy and Term by TenantId within a domain using an access token.
             ],
         },
     )
-    async findOnePaymentMethod(
-        @Req() req: Request,
-        @Query() data: GetPaymentMethod,
-    ) {
+    async findOnePaymentMethod(@Req() req: Request, @Query() data: GetPaymentMethod) {
         // console.log(data);
         const payloadToken = req['user'];
         // const header = req.headers;
@@ -217,11 +226,11 @@ Find a Policy and Term by TenantId within a domain using an access token.
     @ApiEndpoint({
         summary: `Find one Policy and Term by TenantID`,
         details: `
-## Description
-Find a Policy and Term by TenantId within a domain using an access token.
-## Requirements
-- **Access Token**: Must provide a valid access token.
-`,
+        ## Description
+        Find a Policy and Term by TenantId within a domain using an access token.
+        ## Requirements
+        - **Access Token**: Must provide a valid access token.
+        `,
     })
     @ApiParamExamples([
         {
@@ -290,10 +299,7 @@ Find a Policy and Term by TenantId within a domain using an access token.
             ],
         },
     )
-    async findAllPaymentMethod(
-        @Req() req: Request,
-        
-    ) {
+    async findAllPaymentMethod(@Req() req: Request) {
         // console.log(data);
         const payloadToken = req['user'];
         // const header = req.headers;
@@ -324,8 +330,7 @@ Update a Policy and Term within a domain using an access token. This operation i
 - **Permissions**: Requires tenant-level permissions.
         `,
     })
-    @ApiBodyExample(UpdatePaymentMethod, { 
-    })
+    @ApiBodyExample(UpdatePaymentMethod, {})
     @ApiResponseExample(
         'update',
         'update Policy and Term',

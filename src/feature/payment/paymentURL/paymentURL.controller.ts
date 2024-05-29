@@ -1,15 +1,4 @@
-import {
-    Body,
-    Controller,
-    Delete,
-    Get,
-    Inject,
-    Param,
-    Post,
-    Query,
-    Req,
-    UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Inject, Post, Query, Req, Res } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/common/guards/token/accessToken.guard';
 import { RolesGuard } from 'src/common/guards/role/role.guard';
@@ -25,12 +14,13 @@ import {
 } from 'src/common/decorator/swagger.decorator';
 import { PaymentURLService } from './paymentURL.service';
 import { CreatePaymentUrl, CreatePaymentUrlRequestDTO } from './paymentURL.dto';
+import { FastifyReply, FastifyRequest } from 'fastify';
 
 @Controller('payment/url')
 @ApiTags('payment/url')
 export class PaymentURLController {
     constructor(
-        @Inject('GRPC_PAYMENT_SERVICE_BANK')
+        @Inject('GRPC_PAYMENT_SERVICE_PAYMENT_URL')
         private readonly paymentURLService: PaymentURLService,
     ) {}
 
@@ -128,19 +118,10 @@ Find a Policy and Term by TenantId within a domain using an access token.
     }
 
     @Get('return')
-    async getPaymentUrl(@Req() req: Request, @Query() data: any) {
-        // const payloadToken = req['user'];
-        // // const header = req.headers;
-        // const userData = {
-        //     email: payloadToken.email,
-        //     domain: payloadToken.domain,
-        //     role: payloadToken.role,
-        //     accessToken: payloadToken.accessToken,
-        // } as UserDto;
+    async getPaymentUrl(@Query() data: any, @Res() reply: FastifyReply) {
         console.log(data);
-        // console.log(userData, dataCategory)
-        return {
-            result: 'success',
-        };
+        await this.paymentURLService.callbackVnpay(data);
+        reply.status(HttpStatus.FOUND).redirect('https://google.com');
+        return 'success';
     }
 }
