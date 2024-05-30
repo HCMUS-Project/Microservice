@@ -28,7 +28,7 @@ export function IsEitherUrlOrBase64DataURI(validationOptions?: ValidationOptions
 }
 
 function checkSingleValue(value: any): boolean {
-    console.log(value)
+    // console.log(value)
     if (isURL(value)) {
         return true; // Validate as URL
     }

@@ -16,6 +16,7 @@ import {
     isURL,
 } from 'class-validator';
 import { IsBase64DataURI } from 'src/common/validator/is-base-64-dataURI.validator';
+import {IsEitherUrlOrBase64DataURI} from 'src/common/validator/is-either-base-64-dataURI-or-URL.validator';
 import { IsSpecificUrl } from 'src/common/validator/is-specific-url.validator';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
 import { CreateBannerRequest } from 'src/proto_build/tenant/banner/CreateBannerRequest';
@@ -100,7 +101,8 @@ export class UpdateBanner implements UpdateBannerRequest {
 
     @IsString()
     @IsOptional()
-    @IsBase64DataURI({ each: true, message: 'image must be a valid Base64 data URI.' })
+    // @IsBase64DataURI({ each: true, message: 'image must be a valid Base64 data URI.' })
+    @IsEitherUrlOrBase64DataURI({each: true, message: 'Each image must be either a valid Base64 data URI or an valid URL.'})
     @ApiProperty()
     image: string;
 }
