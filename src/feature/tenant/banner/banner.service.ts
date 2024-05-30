@@ -9,10 +9,11 @@ import {
     FindBannerByTenantIdRequestDTO,
     UpdateBannerRequestDTO,
 } from './banner.dto';
+import { FindAllBannersResponse } from 'src/proto_build/tenant/banner/FindAllBannersResponse';
 
 interface BannerService {
     createBanner(data: CreateBannerRequestDTO): Observable<BannerResponse>;
-    findBannerByTenantId(data: FindBannerByTenantIdRequestDTO): Observable<BannerResponse>;
+    findBannerByTenantId(data: FindBannerByTenantIdRequestDTO): Observable<FindAllBannersResponse>;
     updateBanner(data: UpdateBannerRequestDTO): Observable<BannerResponse>;
     deleteBanner(data: DeleteBannerRequestDTO): Observable<BannerResponse>;
 }
@@ -58,12 +59,14 @@ export class TenantBannerService implements OnModuleInit {
         }
     }
 
-    async findBannerByTenantId(data: FindBannerByTenantIdRequestDTO): Promise<BannerResponse> {
+    async findBannerByTenantId(
+        data: FindBannerByTenantIdRequestDTO,
+    ): Promise<FindAllBannersResponse> {
         try {
-            const bannerResponse: BannerResponse = await firstValueFrom(
+            const findAllBannersResponse: FindAllBannersResponse = await firstValueFrom(
                 this.iBannerService.findBannerByTenantId(data),
             );
-            return bannerResponse;
+            return findAllBannersResponse;
         } catch (e) {
             // console.log(e);
             let errorDetails: { error?: string };

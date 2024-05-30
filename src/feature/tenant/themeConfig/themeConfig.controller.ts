@@ -144,16 +144,12 @@ Create a them config within a domain using an access token. This operation is re
     }
 
     @Get('find/:tenantId')
-    @UseGuards(AccessTokenGuard)
-    @ApiBearerAuth('JWT-access-token-user')
-    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiEndpoint({
         summary: `Find one Theme Config by TenantID`,
         details: `
 ## Description
-Find a Theme Config by TenantId within a domain using an access token.
+Find a Theme Config by TenantId within a domain.
 ## Requirements
-- **Access Token**: Must provide a valid access token.
 `,
     })
     @ApiParamExamples([
@@ -232,18 +228,7 @@ Find a Theme Config by TenantId within a domain using an access token.
         },
     )
     async findThemeConfigByTenantId(@Req() req: Request, @Param() data: FindThemeConfigByTenantId) {
-        // console.log(data);
-        const payloadToken = req['user'];
-        // const header = req.headers;
-        const userData = {
-            email: payloadToken.email,
-            domain: payloadToken.domain,
-            role: payloadToken.role,
-            accessToken: payloadToken.accessToken,
-        } as UserDto;
-        // console.log(userData, dataCategory)
         return await this.tenantThemeConfigService.findThemeConfigByTenantId({
-            user: userData,
             ...data,
         } as FindThemeConfigByTenantIdRequestDTO);
     }

@@ -29,6 +29,11 @@ export class CreateTenantProfile implements CreateTenantProfileRequest {
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
+    serviceName: string;
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty()
     address: string;
 
     @IsMobilePhone(
@@ -103,6 +108,11 @@ export class UpdateTenantProfile implements UpdateTenantProfileRequest {
     @IsOptional()
     @ApiProperty()
     email: string;
+
+    @IsEmail()
+    @IsOptional()
+    @ApiProperty()
+    serviceName: string;
 
     @IsString()
     @IsOptional()

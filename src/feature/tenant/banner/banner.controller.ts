@@ -136,16 +136,15 @@ Create a Banner within a domain using an access token. This operation is restric
     }
 
     @Get('find/:tenantId')
-    @UseGuards(AccessTokenGuard)
-    @ApiBearerAuth('JWT-access-token-user')
-    @ApiBearerAuth('JWT-access-token-tenant')
+    // @UseGuards(AccessTokenGuard)
+    // @ApiBearerAuth('JWT-access-token-user')
+    // @ApiBearerAuth('JWT-access-token-tenant')
     @ApiEndpoint({
-        summary: `Find one Banner by TenantID`,
+        summary: `Find Banners by TenantID`,
         details: `
 ## Description
-Find a Banner by TenantId within a domain using an access token.
+Find all Banners by TenantId within a domain.
 ## Requirements
-- **Access Token**: Must provide a valid access token.
 `,
     })
     @ApiParamExamples([
@@ -158,18 +157,30 @@ Find a Banner by TenantId within a domain using an access token.
     ])
     @ApiResponseExample(
         'read',
-        'find a Banner by tenantId',
+        'find Banners by tenantId',
         {
-            banner: {
-                id: '3b9d9a2e-cfc4-42cd-bc8c-be1faebe738a',
-                tenantId: 'd4d98d4c-d2f4-4d91-a6e7-2555715ce144',
-                title: 'Sale sap sang',
-                description: 'rat nhieu thu qua la chill dang sale',
-                textColor: '#FFE6A8',
-                image: 'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.tenant/service/af7f97ed-89e2-4a1e-bd0b-5502dacc2b6f',
-                createdAt: '2024-05-22T04:30:17.404Z',
-                updatedAt: '2024-05-22T04:30:17.404Z',
-            },
+            banners: [
+                {
+                    id: '2fc03b21-11fe-4537-816e-bc60ba5d04dd',
+                    tenantId: 'd4d98d4c-d2f4-4d91-a6e7-2555715ce144',
+                    title: 'Sale sap sang',
+                    description: 'rat nhieu thu qua la chill dang sale',
+                    textColor: '#FFE6A8',
+                    image: 'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.tenant/service/69a5aa92-9dbe-44c3-88b0-2ddb07b7b3b0',
+                    createdAt: '2024-05-30T09:42:45.612Z',
+                    updatedAt: '2024-05-30T09:42:45.612Z',
+                },
+                {
+                    id: 'da86b31f-4ad5-4227-b5d3-a92129f28d94',
+                    tenantId: 'd4d98d4c-d2f4-4d91-a6e7-2555715ce144',
+                    title: 'Sale sap san g',
+                    description: 'rat nhieu thu qua la chill dang sale',
+                    textColor: '#FFE6A8',
+                    image: 'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.tenant/service/03feae34-bd8c-4c76-868c-95058200a493',
+                    createdAt: '2024-05-30T09:49:58.354Z',
+                    updatedAt: '2024-05-30T09:49:58.354Z',
+                },
+            ],
         },
         '/api/tenant/banner/find/d4d98d4c-d2f4-4d91-a6e7-2555715ce144',
     )
@@ -183,24 +194,6 @@ Find a Banner by TenantId within a domain using an access token.
             },
 
             unauthorized: [
-                {
-                    key: 'token_not_verified',
-                    summary: 'Token not verified',
-                    detail: 'Unauthorized',
-                    error: null,
-                },
-                {
-                    key: 'token_not_found',
-                    summary: 'Token not found',
-                    detail: 'Access Token not found',
-                    error: 'Unauthorized',
-                },
-                {
-                    key: 'unauthorized_role',
-                    summary: 'Role not verified',
-                    detail: 'Unauthorized Role',
-                    error: 'Unauthorized',
-                },
                 {
                     key: 'not_found',
                     summary: 'Banner not found',
@@ -218,18 +211,8 @@ Find a Banner by TenantId within a domain using an access token.
         },
     )
     async findBannerByTenantId(@Req() req: Request, @Param() data: FindBannerByTenantId) {
-        // console.log(data);
-        const payloadToken = req['user'];
-        // const header = req.headers;
-        const userData = {
-            email: payloadToken.email,
-            domain: payloadToken.domain,
-            role: payloadToken.role,
-            accessToken: payloadToken.accessToken,
-        } as UserDto;
-        // console.log(userData, dataCategory)
         return await this.tenantBannerService.findBannerByTenantId({
-            user: userData,
+            // user: userData,
             ...data,
         } as FindBannerByTenantIdRequestDTO);
     }

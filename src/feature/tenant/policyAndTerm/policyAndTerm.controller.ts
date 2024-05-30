@@ -127,16 +127,12 @@ Create a policy and term within a domain using an access token. This operation i
     }
 
     @Get('find/:tenantId')
-    @UseGuards(AccessTokenGuard)
-    @ApiBearerAuth('JWT-access-token-user')
-    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiEndpoint({
         summary: `Find one Policy and Term by TenantID`,
         details: `
 ## Description
-Find a Policy and Term by TenantId within a domain using an access token.
-## Requirements
-- **Access Token**: Must provide a valid access token.
+Find a Policy and Term by TenantId within a domain.
+## Requirements 
 `,
     })
     @ApiParamExamples([
@@ -173,24 +169,6 @@ Find a Policy and Term by TenantId within a domain using an access token.
 
             unauthorized: [
                 {
-                    key: 'token_not_verified',
-                    summary: 'Token not verified',
-                    detail: 'Unauthorized',
-                    error: null,
-                },
-                {
-                    key: 'token_not_found',
-                    summary: 'Token not found',
-                    detail: 'Access Token not found',
-                    error: 'Unauthorized',
-                },
-                {
-                    key: 'unauthorized_role',
-                    summary: 'Role not verified',
-                    detail: 'Unauthorized Role',
-                    error: 'Unauthorized',
-                },
-                {
                     key: 'not_found',
                     summary: 'Policy and term not found',
                     detail: 'Policy and term not found',
@@ -210,18 +188,7 @@ Find a Policy and Term by TenantId within a domain using an access token.
         @Req() req: Request,
         @Param() data: FindPolicyAndTermByTenantId,
     ) {
-        // console.log(data);
-        const payloadToken = req['user'];
-        // const header = req.headers;
-        const userData = {
-            email: payloadToken.email,
-            domain: payloadToken.domain,
-            role: payloadToken.role,
-            accessToken: payloadToken.accessToken,
-        } as UserDto;
-        // console.log(userData, dataCategory)
         return await this.tenantPolictyAndTermService.findPolicyAndTermByTenantId({
-            user: userData,
             ...data,
         } as FindPolicyAndTermByTenantIdRequestDTO);
     }
