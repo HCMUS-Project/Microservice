@@ -202,7 +202,7 @@ Find a Policy and Term by TenantId within a domain using an access token.
             ],
         },
     )
-    async findAllPaymentMethod(@Req() req: Request) {
+    async findAllPaymentMethod(@Req() req: Request, @Query() data: GetPaymentMethod) {
         // console.log(data);
         const payloadToken = req['user'];
         // const header = req.headers;
@@ -226,11 +226,11 @@ Find a Policy and Term by TenantId within a domain using an access token.
     @ApiEndpoint({
         summary: `Find one Policy and Term by TenantID`,
         details: `
-## Description
-Find a Policy and Term by TenantId within a domain using an access token.
-## Requirements
-- **Access Token**: Must provide a valid access token.
-`,
+        ## Description
+        Find a Policy and Term by TenantId within a domain using an access token.
+        ## Requirements
+        - **Access Token**: Must provide a valid access token.
+        `,
     })
     @ApiParamExamples([
         {

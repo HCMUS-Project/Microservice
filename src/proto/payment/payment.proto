@@ -6,6 +6,7 @@ import "../auth/user_token.proto";
 
 service PaymentService {
     rpc CreatePaymentUrl(CreatePaymentUrlRequest) returns (CreatePaymentUrlResponse);
+    rpc CallbackVnPay(CallbackVnpayRequest) returns (CallBackVnpayResponse);
 }
 
 message CreatePaymentUrlRequest {
@@ -20,4 +21,24 @@ message CreatePaymentUrlRequest {
 
 message CreatePaymentUrlResponse {
     string payment_url = 1;
+}
+
+message CallbackVnpayRequest {
+    string vnp_Amount = 1;
+    string vnp_BankCode = 2;
+    string vnp_BankTranNo = 3;
+    string vnp_CardType = 4;
+    string vnp_OrderInfo = 5;
+    string vnp_PayDate = 6;
+    string vnp_ResponseCode = 7;
+    string vnp_TmnCode = 8;
+    string vnp_TransactionNo = 9;
+    string vnp_TransactionStatus = 10;
+    string vnp_TxnRef = 11;
+    string vnp_SecureHash = 12;
+}
+
+message CallBackVnpayResponse {
+    string message = 1;
+    string status = 2;
 }

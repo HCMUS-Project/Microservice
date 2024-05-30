@@ -1,15 +1,13 @@
 import { Observable, firstValueFrom, lastValueFrom, take, toArray } from 'rxjs';
 import { Inject, Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
-import { ForbiddenException, UserNotFoundException } from 'src/common/exceptions/exceptions';
-import { ListBankResquest } from 'src/proto_build/payment/bank/ListBankResquest';
-import { ListBankResponse } from 'src/proto_build/payment/bank/ListBankResponse';
-import { Bank } from 'src/proto_build/payment/bank/Bank';
 import { CreatePaymentUrlRequestDTO } from './paymentURL.dto';
 import { CreatePaymentUrlResponse } from 'src/proto_build/payment/payment/CreatePaymentUrlResponse';
+import { CallBackVnpayResponse } from 'src/proto_build/payment/payment/CallBackVnpayResponse';
 
-interface PaymentService {
+export interface PaymentService {
     createPaymentUrl(data: CreatePaymentUrlRequestDTO): Observable<CreatePaymentUrlResponse>;
+    callbackVnPay(data: any): Observable<CallBackVnpayResponse>; // Ensure this method is declared
 }
 
 @Injectable()
@@ -41,6 +39,28 @@ export class PaymentURLService implements OnModuleInit {
             // console.log(errorDetails);
 
             throw new NotFoundException(e, 'Not found');
+        }
+    }
+
+    async callbackVnpay(data: any): Promise<CallBackVnpayResponse> {
+        try {
+            const callbackPaymentResponse: CallBackVnpayResponse = await firstValueFrom(
+                this.iPaymentService.callbackVnPay(data),
+            );
+            return callbackPaymentResponse;
+        } catch (e) {
+            console.error('Error caught:', e);
+            if (e.details) {
+                try {
+                    const errorDetails = JSON.parse(e.details);
+                    throw new NotFoundException(errorDetails, 'Error recognized');
+                } catch (parseError) {
+                    console.error('Error parsing details:', parseError);
+                    throw new NotFoundException(String(e), 'Error not recognized');
+                }
+            } else {
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
         }
     }
 }
