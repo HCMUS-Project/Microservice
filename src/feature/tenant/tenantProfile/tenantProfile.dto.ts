@@ -13,6 +13,7 @@ import {
     isURL,
 } from 'class-validator';
 import { IsBase64DataURI } from 'src/common/validator/is-base-64-dataURI.validator';
+import {IsEitherUrlOrBase64DataURI} from 'src/common/validator/is-either-base-64-dataURI-or-URL.validator';
 import { IsSpecificUrl } from 'src/common/validator/is-specific-url.validator';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
 import { CreateTenantProfileRequest } from 'src/proto_build/tenant/tenantProfile/CreateTenantProfileRequest';
@@ -109,7 +110,7 @@ export class UpdateTenantProfile implements UpdateTenantProfileRequest {
     @ApiProperty()
     email: string;
 
-    @IsEmail()
+    @IsString()
     @IsOptional()
     @ApiProperty()
     serviceName: string;
@@ -130,7 +131,7 @@ export class UpdateTenantProfile implements UpdateTenantProfileRequest {
 
     @IsString()
     @IsOptional()
-    @IsBase64DataURI({ each: true, message: 'Each image must be a valid Base64 data URI.' })
+    @IsEitherUrlOrBase64DataURI({each: true, message: 'Each image must be either a valid Base64 data URI or an valid URL.'})IsEitherUrlOrBase64DataURI
     @ApiProperty()
     logo: string;
 
