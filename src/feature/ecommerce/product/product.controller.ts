@@ -31,15 +31,15 @@ import { Role } from 'src/common/enums/role.enum';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
 import { EcommerceProductService } from './product.service';
 import {
-    AddProductQuantity,
-    AddProductQuantityRequestDTO,
     CreateProduct,
     CreateProductRequestDTO,
     DeleteProduct,
     DeleteProductRequestDTO,
     FindAllProductsRequestDTO,
+    FindBestSellerProductRequestDTO,
     FindProduct,
     FindProductByIdRequestDTO,
+    FindRecommendedProductRequestDTO,
     IncreaseProductView,
     IncreaseProductViewDTO,
     SearchProductRequestDTO,
@@ -55,7 +55,7 @@ import {
     ApiResponseExample,
     ApiResponseReadExample,
 } from 'src/common/decorator/swagger.decorator';
-import {UpdateStatusBooking} from 'src/feature/booking/booking/booking.dto';
+import { UpdateStatusBooking } from 'src/feature/booking/booking/booking.dto';
 
 @Controller('/ecommerce/product')
 @ApiTags('ecommerce/product')
@@ -322,6 +322,60 @@ Return all Products or Product by Id within a domain.
         }
     }
 
+    @Get('find/best')
+    @ApiEndpoint({
+        summary: `Find BestSeller Products`,
+        details: `
+## Description
+Return all Products has top 5 Solding all the times within a domain.  
+
+## Requirement
+- Use only **domain** to find all Products.
+`,
+    })
+    @ApiQueryExamples([
+        {
+            name: 'domain',
+            description: 'domain of Product',
+            example: '30shine.com',
+            required: true,
+        },
+    ])
+    @ApiResponseExample('read', 'find Products by top Sold all the times', {}, '/')
+    @ApiErrorResponses('/', '/', {})
+    async findBestSeller(@Req() req: Request, @Query() data: FindBestSellerProductRequestDTO) {
+        return await this.ecommerceProductService.findBestSellerProducts({
+            ...data,
+        } as FindBestSellerProductRequestDTO);
+    }
+
+    @Get('find/recommend')
+    @ApiEndpoint({
+        summary: `Find Recommend Products`,
+        details: `
+## Description
+Return all Products has top 5 Reviews all the times within a domain.  
+
+## Requirement
+-Use only **domain** to find all Products.
+`,
+    })
+    @ApiQueryExamples([
+        {
+            name: 'domain',
+            description: 'domain of Product',
+            example: '30shine.com',
+            required: true,
+        },
+    ])
+    @ApiResponseExample('read', 'find Products by top Reviews all the times', {}, '/')
+    @ApiErrorResponses('/', '/', {})
+    async findBestRecommend(@Req() req: Request, @Query() data: FindRecommendedProductRequestDTO) {
+        return await this.ecommerceProductService.findRecommendedProducts({
+            ...data,
+        } as FindRecommendedProductRequestDTO);
+    }
+
     @Post('update')
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.TENANT)
@@ -339,17 +393,8 @@ Update status booking within a domain using an access token. This operation is r
 - 
 `,
     })
-    @ApiBodyExample(UpdateStatusBooking, {
-        
-    })
-    @ApiResponseExample(
-        'update',
-        'update Status Booking',
-        {
-
-        },
-        '/api/ecommerce/product/update',
-    )
+    @ApiBodyExample(UpdateStatusBooking, {})
+    @ApiResponseExample('update', 'update Status Booking', {}, '/api/ecommerce/product/update')
     @ApiErrorResponses('/api/ecommerce/product/update', '/api/ecommerce/product/update', {
         badRequest: {
             summary: 'Validation Error',
@@ -719,150 +764,150 @@ Increase product view by Id within a domain using an access token. This operatio
         } as IncreaseProductViewDTO);
     }
 
-    @Post('add/quantity')
-    @UseGuards(AccessTokenGuard, RolesGuard)
-    @Roles(Role.TENANT)
-    @ApiBearerAuth('JWT-access-token-tenant')
-    @ApiEndpoint({
-        summary: `Add Quantity Products List`,
-        details: `
-## Description
-Add quantity to product within a domain using an access token. This operation is restricted to tenant accounts only.
-        
-## Requirements
-- **Access Token**: Must provide a valid tenant access token.
-- **Permissions**: Requires tenant-level permissions.
-- **type** is import or export (add more Product or decrease Product)
-- **product** is list of object contains **id** and **quantity**
-`,
-    })
-    @ApiBodyExample(AddProductQuantity, {
-        type: 'import',
-        products: [
-            {
-                id: 'c886a59c-7293-4239-8052-eb611b68e890',
-                quantity: 20,
-            },
-            {
-                id: 'f9e75324-a8f4-4cbd-af6d-0210c5e9a5d9',
-                quantity: 10,
-            },
-        ],
-        description: 'test add',
-    })
-    @ApiResponseExample(
-        'update',
-        'add quantity Product',
-        {
-            products: [
-                {
-                    images: [
-                        'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.product/service/b8a8bb5f-1cbc-4a2b-a3d9-ce1e94d96f7f',
-                    ],
-                    categories: [
-                        {
-                            id: '4432abc7-7ef1-4517-9a90-a97ca51691fa',
-                            name: 'Sách vở',
-                        },
-                    ],
-                    id: 'c886a59c-7293-4239-8052-eb611b68e890',
-                    domain: '30shine.com',
-                    name: 'Sách dạy làm giàu',
-                    price: 200000,
-                    quantity: 15,
-                    tenantId: 'nguyenvukhoi150402@gmail.com',
-                    description: 'abcde',
-                    views: 0,
-                    rating: 0,
-                    numberRating: 0,
-                    sold: 9,
-                    createdAt: '2024-05-16T05:30:08.225Z',
-                    updatedAt: '2024-05-28T08:33:02.108Z',
-                },
-                {
-                    images: [
-                        'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.product/service/f7168243-d6b0-4d17-b2d2-82b5123c02c7',
-                    ],
-                    categories: [
-                        {
-                            id: 'b382de76-b34b-4321-ad43-840439bc24c4',
-                            name: 'Dưỡng da',
-                        },
-                    ],
-                    id: 'f9e75324-a8f4-4cbd-af6d-0210c5e9a5d9',
-                    domain: '30shine.com',
-                    name: 'Kem chống nắng',
-                    price: 100000,
-                    quantity: 77,
-                    tenantId: 'nguyenvukhoi150402@gmail.com',
-                    description: 'abcde',
-                    views: 0,
-                    rating: 0,
-                    numberRating: 0,
-                    sold: 15,
-                    createdAt: '2024-05-16T05:29:33.090Z',
-                    updatedAt: '2024-05-28T08:33:02.108Z',
-                },
-            ],
-        },
-        '/api/ecommerce/product/add/quantity',
-    )
-    @ApiErrorResponses(
-        '/api/ecommerce/product/add/quantity',
-        '/api/ecommerce/product/add/quantity',
-        {
-            badRequest: {
-                summary: 'Validation Error',
-                detail: 'products.0.id should not be empty, products.0.id must be a UUID, products.0.quantity should not be empty, products.0.quantity must be an integer number, Must be a valid type: import, export',
-            },
-            unauthorized: [
-                {
-                    key: 'token_not_verified',
-                    summary: 'Token not verified',
-                    detail: 'Unauthorized',
-                    error: null,
-                },
-                {
-                    key: 'token_not_found',
-                    summary: 'Token not found',
-                    detail: 'Access Token not found',
-                    error: 'Unauthorized',
-                },
-                {
-                    key: 'unauthorized_role',
-                    summary: 'Role not verified',
-                    detail: 'Unauthorized Role',
-                    error: 'Unauthorized',
-                },
-                {
-                    key: 'product_not_found',
-                    summary: 'Product not found',
-                    detail: 'Product not found',
-                    error: 'Unauthorized',
-                },
-            ],
-            forbidden: [
-                {
-                    key: 'forbidden_resource',
-                    summary: 'Forbidden resource',
-                    detail: 'Forbidden resource',
-                },
-            ],
-        },
-    )
-    async addProductQuantity(@Req() req: Request, @Body() data: AddProductQuantity) {
-        const payloadToken = req['user'];
-        // const header = req.headers;
-        const userData = {
-            email: payloadToken.email,
-            domain: payloadToken.domain,
-            role: payloadToken.role,
-            accessToken: payloadToken.accessToken,
-        } as UserDto;
-        // console.log(userData, dataCategory)
-        return await this.ecommerceProductService.addProductQuantity({
-            user: userData,
-            ...data,
-        } as AddProductQuantityRequestDTO);
-    }
+    //     @Post('add/quantity')
+    //     @UseGuards(AccessTokenGuard, RolesGuard)
+    //     @Roles(Role.TENANT)
+    //     @ApiBearerAuth('JWT-access-token-tenant')
+    //     @ApiEndpoint({
+    //         summary: `Add Quantity Products List`,
+    //         details: `
+    // ## Description
+    // Add quantity to product within a domain using an access token. This operation is restricted to tenant accounts only.
+
+    // ## Requirements
+    // - **Access Token**: Must provide a valid tenant access token.
+    // - **Permissions**: Requires tenant-level permissions.
+    // - **type** is import or export (add more Product or decrease Product)
+    // - **product** is list of object contains **id** and **quantity**
+    // `,
+    //     })
+    //     @ApiBodyExample(AddProductQuantity, {
+    //         type: 'import',
+    //         products: [
+    //             {
+    //                 id: 'c886a59c-7293-4239-8052-eb611b68e890',
+    //                 quantity: 20,
+    //             },
+    //             {
+    //                 id: 'f9e75324-a8f4-4cbd-af6d-0210c5e9a5d9',
+    //                 quantity: 10,
+    //             },
+    //         ],
+    //         description: 'test add',
+    //     })
+    //     @ApiResponseExample(
+    //         'update',
+    //         'add quantity Product',
+    //         {
+    //             products: [
+    //                 {
+    //                     images: [
+    //                         'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.product/service/b8a8bb5f-1cbc-4a2b-a3d9-ce1e94d96f7f',
+    //                     ],
+    //                     categories: [
+    //                         {
+    //                             id: '4432abc7-7ef1-4517-9a90-a97ca51691fa',
+    //                             name: 'Sách vở',
+    //                         },
+    //                     ],
+    //                     id: 'c886a59c-7293-4239-8052-eb611b68e890',
+    //                     domain: '30shine.com',
+    //                     name: 'Sách dạy làm giàu',
+    //                     price: 200000,
+    //                     quantity: 15,
+    //                     tenantId: 'nguyenvukhoi150402@gmail.com',
+    //                     description: 'abcde',
+    //                     views: 0,
+    //                     rating: 0,
+    //                     numberRating: 0,
+    //                     sold: 9,
+    //                     createdAt: '2024-05-16T05:30:08.225Z',
+    //                     updatedAt: '2024-05-28T08:33:02.108Z',
+    //                 },
+    //                 {
+    //                     images: [
+    //                         'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.product/service/f7168243-d6b0-4d17-b2d2-82b5123c02c7',
+    //                     ],
+    //                     categories: [
+    //                         {
+    //                             id: 'b382de76-b34b-4321-ad43-840439bc24c4',
+    //                             name: 'Dưỡng da',
+    //                         },
+    //                     ],
+    //                     id: 'f9e75324-a8f4-4cbd-af6d-0210c5e9a5d9',
+    //                     domain: '30shine.com',
+    //                     name: 'Kem chống nắng',
+    //                     price: 100000,
+    //                     quantity: 77,
+    //                     tenantId: 'nguyenvukhoi150402@gmail.com',
+    //                     description: 'abcde',
+    //                     views: 0,
+    //                     rating: 0,
+    //                     numberRating: 0,
+    //                     sold: 15,
+    //                     createdAt: '2024-05-16T05:29:33.090Z',
+    //                     updatedAt: '2024-05-28T08:33:02.108Z',
+    //                 },
+    //             ],
+    //         },
+    //         '/api/ecommerce/product/add/quantity',
+    //     )
+    //     @ApiErrorResponses(
+    //         '/api/ecommerce/product/add/quantity',
+    //         '/api/ecommerce/product/add/quantity',
+    //         {
+    //             badRequest: {
+    //                 summary: 'Validation Error',
+    //                 detail: 'products.0.id should not be empty, products.0.id must be a UUID, products.0.quantity should not be empty, products.0.quantity must be an integer number, Must be a valid type: import, export',
+    //             },
+    //             unauthorized: [
+    //                 {
+    //                     key: 'token_not_verified',
+    //                     summary: 'Token not verified',
+    //                     detail: 'Unauthorized',
+    //                     error: null,
+    //                 },
+    //                 {
+    //                     key: 'token_not_found',
+    //                     summary: 'Token not found',
+    //                     detail: 'Access Token not found',
+    //                     error: 'Unauthorized',
+    //                 },
+    //                 {
+    //                     key: 'unauthorized_role',
+    //                     summary: 'Role not verified',
+    //                     detail: 'Unauthorized Role',
+    //                     error: 'Unauthorized',
+    //                 },
+    //                 {
+    //                     key: 'product_not_found',
+    //                     summary: 'Product not found',
+    //                     detail: 'Product not found',
+    //                     error: 'Unauthorized',
+    //                 },
+    //             ],
+    //             forbidden: [
+    //                 {
+    //                     key: 'forbidden_resource',
+    //                     summary: 'Forbidden resource',
+    //                     detail: 'Forbidden resource',
+    //                 },
+    //             ],
+    //         },
+    //     )
+    //     async addProductQuantity(@Req() req: Request, @Body() data: AddProductQuantity) {
+    //         const payloadToken = req['user'];
+    //         // const header = req.headers;
+    //         const userData = {
+    //             email: payloadToken.email,
+    //             domain: payloadToken.domain,
+    //             role: payloadToken.role,
+    //             accessToken: payloadToken.accessToken,
+    //         } as UserDto;
+    //         // console.log(userData, dataCategory)
+    //         return await this.ecommerceProductService.addProductQuantity({
+    //             user: userData,
+    //             ...data,
+    //         } as AddProductQuantityRequestDTO);
+    //     }
 }

@@ -6,26 +6,30 @@ import { CreateCategoryRequestDTO } from '../category/category.dto';
 import { CreateProductRequest } from 'src/proto_build/e_commerce/product/CreateProductRequest';
 import { ProductResponse } from 'src/proto_build/e_commerce/product/ProductResponse';
 import {
-    AddProductQuantityRequestDTO,
     CreateProductRequestDTO,
     DeleteProductRequestDTO,
     FindAllProductsRequestDTO,
+    FindBestSellerProductRequestDTO,
     FindProductByIdRequestDTO,
+    FindRecommendedProductRequestDTO,
     IncreaseProductViewDTO,
     SearchProductRequestDTO,
     UpdateProductRequestDTO,
 } from './product.dto';
 import { FindAllProductsResponse } from 'src/proto_build/e_commerce/product/FindAllProductsResponse';
+import {FindBestSellerProductResponse} from 'src/proto_build/e_commerce/product/FindBestSellerProductResponse';
+import {FindRecommendedProductResponse, FindRecommendedProductResponse__Output} from 'src/proto_build/e_commerce/product/FindRecommendedProductResponse';
 
 interface ProductService {
     createProduct(data: CreateProductRequest): Observable<ProductResponse>;
     findAllProducts(data: FindAllProductsRequestDTO): Observable<FindAllProductsResponse>;
     findProductById(data: FindProductByIdRequestDTO): Observable<ProductResponse>;
+    findBestSellerProducts(data: FindBestSellerProductRequestDTO): Observable<FindBestSellerProductResponse>;
+    findRecommendedProducts(data: FindRecommendedProductRequestDTO): Observable<FindRecommendedProductResponse>;
     updateProduct(data: UpdateProductRequestDTO): Observable<ProductResponse>;
     deleteProduct(data: DeleteProductRequestDTO): Observable<ProductResponse>;
     searchProducts(data: SearchProductRequestDTO): Observable<FindAllProductsResponse>;
     increaseProductView(data: IncreaseProductViewDTO): Observable<ProductResponse>;
-    addProductQuantity(data: AddProductQuantityRequestDTO): Observable<ProductResponse>;
 }
 
 @Injectable()
@@ -203,6 +207,54 @@ export class EcommerceProductService implements OnModuleInit {
         }
     }
 
+    async findBestSellerProducts(data: FindBestSellerProductRequestDTO): Promise<FindBestSellerProductResponse> {
+        try {
+            // console.log(data);
+            const productResponseList: FindBestSellerProductResponse = await firstValueFrom(
+                this.iProductService.findBestSellerProducts(data),
+            );
+            return productResponseList;
+        } catch (e) {
+            // console.log(e);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
+            // console.log(errorDetails);
+            throw new NotFoundException(
+                `Unhandled error type: ${errorDetails.error}`,
+                'Error not recognized',
+            );
+        }
+    }
+
+    async findRecommendedProducts(data: FindRecommendedProductRequestDTO): Promise<FindRecommendedProductResponse> {
+        try {
+            // console.log(data);
+            const productResponseList: FindRecommendedProductResponse = await firstValueFrom(
+                this.iProductService.findRecommendedProducts(data),
+            );
+            return productResponseList;
+        } catch (e) {
+            // console.log(e);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
+            // console.log(errorDetails);
+            throw new NotFoundException(
+                `Unhandled error type: ${errorDetails.error}`,
+                'Error not recognized',
+            );
+        }
+    }
+
     async increaseProductView(data: IncreaseProductViewDTO): Promise<ProductResponse> {
         try {
             const productResponse: ProductResponse = await firstValueFrom(
@@ -230,26 +282,26 @@ export class EcommerceProductService implements OnModuleInit {
         }
     }
 
-    async addProductQuantity(data: AddProductQuantityRequestDTO): Promise<ProductResponse> {
-        try {
-            const productResponse: ProductResponse = await firstValueFrom(
-                this.iProductService.addProductQuantity(data),
-            );
-            return productResponse;
-        } catch (e) {
-            // console.log(e);
-            let errorDetails: { error?: string };
-            try {
-                errorDetails = JSON.parse(e.details);
-            } catch (parseError) {
-                console.error('Error parsing details:', parseError);
-                throw new NotFoundException(String(e), 'Error not recognized');
-            }
-            // console.log(errorDetails);
-            throw new NotFoundException(
-                `Unhandled error type: ${errorDetails.error}`,
-                'Error not recognized',
-            );
-        }
-    }
+    // async addProductQuantity(data: AddProductQuantityRequestDTO): Promise<ProductResponse> {
+    //     try {
+    //         const productResponse: ProductResponse = await firstValueFrom(
+    //             this.iProductService.addProductQuantity(data),
+    //         );
+    //         return productResponse;
+    //     } catch (e) {
+    //         // console.log(e);
+    //         let errorDetails: { error?: string };
+    //         try {
+    //             errorDetails = JSON.parse(e.details);
+    //         } catch (parseError) {
+    //             console.error('Error parsing details:', parseError);
+    //             throw new NotFoundException(String(e), 'Error not recognized');
+    //         }
+    //         // console.log(errorDetails);
+    //         throw new NotFoundException(
+    //             `Unhandled error type: ${errorDetails.error}`,
+    //             'Error not recognized',
+    //         );
+    //     }
+    // }
 }
