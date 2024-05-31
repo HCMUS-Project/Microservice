@@ -173,134 +173,146 @@ Create a Service within a domain using an access token. This operation is restri
         } as CreateServiceRequestDTO);
     }
 
-    @Get('find/:id')
-    @UseGuards(AccessTokenGuard)
-    @ApiBearerAuth('JWT-access-token-user')
-    @ApiBearerAuth('JWT-access-token-tenant')
-    @ApiEndpoint({
-        summary: `Find one Service by Id`,
-        details: `
-## Description
-Find a Service by Id within a domain using an access token.
-## Requirements
-- **Access Token**: Must provide a valid access token.
-`,
-    })
-    @ApiParamExamples([
-        {
-            name: 'id',
-            description: 'ID of Service in DB',
-            example: 'e762a42c-2a02-4ab6-a29c-75ecddb53b74',
-            required: true,
-        },
-    ])
-    @ApiResponseExample(
-        'read',
-        'find a Service by Id',
-        {
-            images: [
-                'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.serviceBooking/service/279980b0-3814-4e55-b381-4f5df3e369e7',
-                'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.serviceBooking/service/b28a1e32-a2a8-4c64-bb9f-817be039c532',
-            ],
-            id: 'e762a42c-2a02-4ab6-a29c-75ecddb53b74',
-            name: 'Cat toc',
-            description: 'cat toc vip pro so 1 the gioi',
-            price: 50000,
-            rating: 0,
-            views: 0,
-            domain: '30shine.com',
-            timeService: {
-                startTime: '10:00',
-                endTime: '18:00',
-                duration: 15,
-                breakStart: '13:00',
-                breakEnd: '14:00',
-            },
-            createdAt: {
-                low: -1610918507,
-                high: 399,
-                unsigned: false,
-            },
-        },
-        '/api/booking/services/find/879101c7-7397-4e57-b196-b494acb6a76b',
-    )
-    @ApiErrorResponses(
-        '/api/tenant/services/find/:id',
-        '/api/booking/services/find/879101c7-7397-4e57-b196-b494acb6a76b',
-        {
-            badRequest: {
-                summary: 'Validation Error',
-                detail: 'id must be a UUID',
-            },
+    //     @Get('find')
+    //     @ApiEndpoint({
+    //         summary: `Find one Service by Id`,
+    //         details: `
+    // ## Description
+    // Find a Service by Id within a domain using an access token.
+    // ## Requirements
+    // - **Access Token**: Must provide a valid access token.
+    // `,
+    //     })
+    //     @ApiParamExamples([
+    //         {
+    //             name: 'domain',
+    //             description: 'domain',
+    //             example: '30shine.com',
+    //             required: true,
+    //         },
+    //         {
+    //             name: 'id',
+    //             description: 'ID of Service in DB',
+    //             example: 'e762a42c-2a02-4ab6-a29c-75ecddb53b74',
+    //             required: false,
+    //         },
+    //     ])
+    //     @ApiResponseExample(
+    //         'read',
+    //         'find a Service by Id',
+    //         {
+    //             images: [
+    //                 'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.serviceBooking/service/279980b0-3814-4e55-b381-4f5df3e369e7',
+    //                 'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.serviceBooking/service/b28a1e32-a2a8-4c64-bb9f-817be039c532',
+    //             ],
+    //             id: 'e762a42c-2a02-4ab6-a29c-75ecddb53b74',
+    //             name: 'Cat toc',
+    //             description: 'cat toc vip pro so 1 the gioi',
+    //             price: 50000,
+    //             rating: 0,
+    //             views: 0,
+    //             domain: '30shine.com',
+    //             timeService: {
+    //                 startTime: '10:00',
+    //                 endTime: '18:00',
+    //                 duration: 15,
+    //                 breakStart: '13:00',
+    //                 breakEnd: '14:00',
+    //             },
+    //             createdAt: {
+    //                 low: -1610918507,
+    //                 high: 399,
+    //                 unsigned: false,
+    //             },
+    //         },
+    //         '/api/booking/services/find/879101c7-7397-4e57-b196-b494acb6a76b',
+    //     )
+    //     @ApiErrorResponses(
+    //         '/api/tenant/services/find/:id',
+    //         '/api/booking/services/find/879101c7-7397-4e57-b196-b494acb6a76b',
+    //         {
+    //             badRequest: {
+    //                 summary: 'Validation Error',
+    //                 detail: 'id must be a UUID',
+    //             },
 
-            unauthorized: [
-                {
-                    key: 'token_not_verified',
-                    summary: 'Token not verified',
-                    detail: 'Unauthorized',
-                    error: null,
-                },
-                {
-                    key: 'token_not_found',
-                    summary: 'Token not found',
-                    detail: 'Access Token not found',
-                    error: 'Unauthorized',
-                },
-                {
-                    key: 'unauthorized_role',
-                    summary: 'Role not verified',
-                    detail: 'Unauthorized Role',
-                    error: 'Unauthorized',
-                },
-                {
-                    key: 'not_found',
-                    summary: 'Service not found',
-                    detail: 'Service not found',
-                    error: 'Unauthorized',
-                },
-            ],
-            forbidden: [
-                {
-                    key: 'forbidden_resource',
-                    summary: 'Forbidden resource',
-                    detail: 'Forbidden resource',
-                },
-            ],
-        },
-    )
-    async findOne(@Req() req: Request, @Param() params: FindOne) {
-        const payloadToken = req['user'];
-        // const header = req.headers;
-        const userData = {
-            email: payloadToken.email,
-            domain: payloadToken.domain,
-            role: payloadToken.role,
-            accessToken: payloadToken.accessToken,
-        } as UserDto;
-        // console.log(userData, dataCategory)
-        return await this.bookingServicesService.findOne({
-            user: userData,
-            ...params,
-        } as FindOneRequestDTO);
-    }
+    //             unauthorized: [
+    //                 {
+    //                     key: 'token_not_verified',
+    //                     summary: 'Token not verified',
+    //                     detail: 'Unauthorized',
+    //                     error: null,
+    //                 },
+    //                 {
+    //                     key: 'token_not_found',
+    //                     summary: 'Token not found',
+    //                     detail: 'Access Token not found',
+    //                     error: 'Unauthorized',
+    //                 },
+    //                 {
+    //                     key: 'unauthorized_role',
+    //                     summary: 'Role not verified',
+    //                     detail: 'Unauthorized Role',
+    //                     error: 'Unauthorized',
+    //                 },
+    //                 {
+    //                     key: 'not_found',
+    //                     summary: 'Service not found',
+    //                     detail: 'Service not found',
+    //                     error: 'Unauthorized',
+    //                 },
+    //             ],
+    //             forbidden: [
+    //                 {
+    //                     key: 'forbidden_resource',
+    //                     summary: 'Forbidden resource',
+    //                     detail: 'Forbidden resource',
+    //                 },
+    //             ],
+    //         },
+    //     )
+    //     async findOne(@Req() req: Request, @Param() params: FindOne) {
+    //         // const payloadToken = req['user'];
+    //         // // const header = req.headers;
+    //         // const userData = {
+    //         //     email: payloadToken.email,
+    //         //     domain: payloadToken.domain,
+    //         //     role: payloadToken.role,
+    //         //     accessToken: payloadToken.accessToken,
+    //         // } as UserDto;
+    //         // console.log(userData, dataCategory)
+    //         console.log(params)
+    //         return await this.bookingServicesService.findOne({
+    //             // user: userData,
+    //             ...params,
+    //         } as FindOneRequestDTO);
+    // }
 
     @Get('search')
-    @UseGuards(AccessTokenGuard)
-    @ApiBearerAuth('JWT-access-token-user')
-    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiEndpoint({
         summary: `Search multiple Services base on condition`,
         details: `
 ## Description
-Find Services by condition within a domain using an access token.
-## Requirements
-- **Access Token**: Must provide a valid access token.
+Find Services by condition within a domain.
+## Requirements.
 - **Default**: return to all services available
 - By **priceLower** or **priceHigher** or **name** 
 - **priceLower** must greater than **priceHigher**
 `,
     })
     @ApiQueryExamples([
+        {
+            name: 'domain',
+            description: 'domain',
+            example: '30shine.com',
+            required: true,
+        },
+        {
+            name: 'id',
+            description: 'id of service in DB',
+            example: '',
+            required: false,
+        },
         {
             name: 'priceLower',
             description: 'Service which is lesser than priceLower will be showed',
@@ -397,20 +409,27 @@ Find Services by condition within a domain using an access token.
             ],
         },
     )
-    async findServices(@Req() req: Request, @Query() query: FindServices) {
-        const payloadToken = req['user'];
-        // const header = req.headers;
-        const userData = {
-            email: payloadToken.email,
-            domain: payloadToken.domain,
-            role: payloadToken.role,
-            accessToken: payloadToken.accessToken,
-        } as UserDto;
+    async findServices(@Req() req: Request, @Query() data: FindServices) {
+        // const payloadToken = req['user'];
+        // // const header = req.headers;
+        // const userData = {
+        //     email: payloadToken.email,
+        //     domain: payloadToken.domain,
+        //     role: payloadToken.role,
+        //     accessToken: payloadToken.accessToken,
+        // } as UserDto;
         // console.log(userData, dataCategory)
-        return await this.bookingServicesService.findServices({
-            user: userData,
-            ...query,
-        } as FindServicesRequestDTO);
+        if (data.id === undefined) {
+            return await this.bookingServicesService.findServices({
+                // user: userData,
+                ...data,
+            } as FindServicesRequestDTO);
+        } else {
+            return await this.bookingServicesService.findOne({
+                domain: data.domain,
+                id: data.id,
+            } as FindOneRequestDTO);
+        }
     }
 
     @Delete('delete/:id')

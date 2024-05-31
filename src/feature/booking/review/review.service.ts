@@ -5,28 +5,20 @@ import {
     NotFoundException,
     OnModuleInit,
 } from '@nestjs/common';
+
+import { Observable, firstValueFrom } from 'rxjs';
 import { ClientGrpc } from '@nestjs/microservices';
 import { UserNotFoundException } from 'src/common/exceptions/exceptions';
-import { Observable, firstValueFrom } from 'rxjs';
-import {
-    CreateReviewRequestDTO,
-    DeleteReviewRequestDTO,
-    EditReviewRequestDTO,
-    FindAllReviewsRequestDTO,
-    FindOneReviewRequestDTO,
-} from './review.dto';
-import { CreateReviewResponse } from 'src/proto_build/booking/review/CreateReviewResponse';
-import { EditReviewResponse } from 'src/proto_build/booking/review/EditReviewResponse';
-import { DeleteReviewResponse } from 'src/proto_build/booking/review/DeleteReviewResponse';
-import { FindAllReviewsResponse } from 'src/proto_build/booking/review/FindAllReviewsResponse';
-import { FindOneReviewResponse } from 'src/proto_build/booking/review/FindOneReviewResponse';
+import {CreateReviewRequestDTO, DeleteReviewRequestDTO, FindAllReviewsRequestDTO, UpdateReviewRequestDTO} from './review.dto';
+import {ReviewResponse} from 'src/proto_build/booking/review/ReviewResponse';
+import {FindAllReviewsResponse} from 'src/proto_build/booking/review/FindAllReviewsResponse';
+import {DeleteReviewResponse} from 'src/proto_build/booking/review/DeleteReviewResponse';
 
 interface ReviewService {
-    createReview(data: CreateReviewRequestDTO): Observable<CreateReviewResponse>;
-    editReview(data: EditReviewRequestDTO): Observable<EditReviewResponse>;
-    deleteReview(data: DeleteReviewRequestDTO): Observable<DeleteReviewResponse>;
+    createReview(data: CreateReviewRequestDTO): Observable<ReviewResponse>;
     findAllReviews(data: FindAllReviewsRequestDTO): Observable<FindAllReviewsResponse>;
-    findOneReview(data: FindOneReviewRequestDTO): Observable<FindOneReviewResponse>;
+    updateReview(data: UpdateReviewRequestDTO): Observable<ReviewResponse>;
+    deleteReview(data: DeleteReviewRequestDTO): Observable<DeleteReviewResponse>;
 }
 
 @Injectable()
@@ -37,16 +29,16 @@ export class BookingReviewService implements OnModuleInit {
 
     onModuleInit() {
         this.iReviewService = this.client.getService<ReviewService>('ReviewService');
-        // console.log(this.iProductService)
+        // console.log(this.iReviewService)
     }
 
-    async createReview(data: CreateReviewRequestDTO): Promise<CreateReviewResponse> {
+    async createReview(data: CreateReviewRequestDTO): Promise<ReviewResponse> {
         try {
-            // console.log(this.iProductService.createProduct(data));
-            const createReviewResponse: CreateReviewResponse = await firstValueFrom(
+            // console.log(data);
+            const reviewResponse: ReviewResponse = await firstValueFrom(
                 this.iReviewService.createReview(data),
             );
-            return createReviewResponse;
+            return reviewResponse;
         } catch (e) {
             // console.log(e)
             let errorDetails: { error?: string };
@@ -59,8 +51,8 @@ export class BookingReviewService implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'USER_HAS_NOT_PURCHASED_SERVICE') {
+                throw new ForbiddenException('User has not purchased Service');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -70,13 +62,37 @@ export class BookingReviewService implements OnModuleInit {
         }
     }
 
-    async editReview(data: EditReviewRequestDTO): Promise<EditReviewResponse> {
+    async findAllReviews(data: FindAllReviewsRequestDTO): Promise<FindAllReviewsResponse> {
         try {
             // console.log(this.iProductService.createProduct(data));
-            const editReviewResponse: EditReviewResponse = await firstValueFrom(
-                this.iReviewService.editReview(data),
+            const findAllReviewsResponse: FindAllReviewsResponse = await firstValueFrom(
+                this.iReviewService.findAllReviews(data),
             );
-            return editReviewResponse;
+            return findAllReviewsResponse;
+        } catch (e) {
+            // console.log(e)
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
+            // console.log(errorDetails);
+            throw new NotFoundException(
+                `Unhandled error type: ${errorDetails.error}`,
+                'Error not recognized',
+            );
+        }
+    }
+
+    async updateReview(data: UpdateReviewRequestDTO): Promise<ReviewResponse> {
+        try {
+            // console.log(data);
+            const reviewResponse: ReviewResponse = await firstValueFrom(
+                this.iReviewService.updateReview(data),
+            );
+            return reviewResponse;
         } catch (e) {
             // console.log(e)
             let errorDetails: { error?: string };
@@ -89,8 +105,8 @@ export class BookingReviewService implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'REVIEW_NOT_FOUND') {
+                throw new ForbiddenException('Review not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -119,68 +135,8 @@ export class BookingReviewService implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
-            } else {
-                throw new NotFoundException(
-                    `Unhandled error type: ${errorDetails.error}`,
-                    'Error not recognized',
-                );
-            }
-        }
-    }
-
-    async findAllReviews(data: FindAllReviewsRequestDTO): Promise<FindAllReviewsResponse> {
-        try {
-            // console.log(this.iProductService.createProduct(data));
-            const findAllReviewsResponse: FindAllReviewsResponse = await firstValueFrom(
-                this.iReviewService.findAllReviews(data),
-            );
-            return findAllReviewsResponse;
-        } catch (e) {
-            // console.log(e)
-            let errorDetails: { error?: string };
-            try {
-                errorDetails = JSON.parse(e.details);
-            } catch (parseError) {
-                console.error('Error parsing details:', parseError);
-                throw new NotFoundException(String(e), 'Error not recognized');
-            }
-            // console.log(errorDetails);
-            if (errorDetails.error == 'PERMISSION_DENIED') {
-                throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
-            } else {
-                throw new NotFoundException(
-                    `Unhandled error type: ${errorDetails.error}`,
-                    'Error not recognized',
-                );
-            }
-        }
-    }
-
-    async findOneReview(data: FindOneReviewRequestDTO): Promise<FindOneReviewResponse> {
-        try {
-            // console.log(this.iProductService.createProduct(data));
-            const findOneReviewResponse: FindOneReviewResponse = await firstValueFrom(
-                this.iReviewService.findOneReview(data),
-            );
-            return findOneReviewResponse;
-        } catch (e) {
-            // console.log(e)
-            let errorDetails: { error?: string };
-            try {
-                errorDetails = JSON.parse(e.details);
-            } catch (parseError) {
-                console.error('Error parsing details:', parseError);
-                throw new NotFoundException(String(e), 'Error not recognized');
-            }
-            // console.log(errorDetails);
-            if (errorDetails.error == 'PERMISSION_DENIED') {
-                throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'PRODUCT_ALREADY_EXISTS') {
-                throw new ForbiddenException('Product already exists', 'Forbidden');
+            } else if (errorDetails.error == 'REVIEW_NOT_FOUND') {
+                throw new ForbiddenException('Review not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,

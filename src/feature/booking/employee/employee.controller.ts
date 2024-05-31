@@ -167,16 +167,12 @@ Create an Employee within a domain using an access token. This operation is rest
     }
 
     @Get('find/:id')
-    @UseGuards(AccessTokenGuard)
-    @ApiBearerAuth('JWT-access-token-user')
-    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiEndpoint({
         summary: `Find one employee by Id`,
         details: `
 ## Description
-Find an employee within a domain using an access token.
+Find an employee within a domain.
 ## Requirements
-- **Access Token**: Must provide a valid access token.
 `,
     })
     @ApiParamExamples([
@@ -251,32 +247,18 @@ Find an employee within a domain using an access token.
         },
     )
     async findOneEmployee(@Req() req: Request, @Param() params: FindOne) {
-        const payloadToken = req['user'];
-        // const header = req.headers;
-        const userData = {
-            email: payloadToken.email,
-            domain: payloadToken.domain,
-            role: payloadToken.role,
-            accessToken: payloadToken.accessToken,
-        } as UserDto;
-        // console.log(userData, dataCategory)
         return await this.bookingEmployeeService.findOneEmployee({
-            user: userData,
             ...params,
         } as FindOneEmployeeRequestDTO);
     }
 
     @Get('search')
-    @UseGuards(AccessTokenGuard)
-    @ApiBearerAuth('JWT-access-token-user')
-    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiEndpoint({
         summary: `Find Employees by condition`,
         details: `
 ## Description
-Find Employess within a domain using an access token.
-## Requirements
-- **Access Token**: Must provide a valid access token.
+Find Employess within a domain.
+## Requirements 
 - Must has **services** in query to find all **employee** can do service.
 - API will return the result with **match all data in field of employee**.
 - Example: employee A has shift **[MORNING, EVENING]**. Query **workShift=MORNING** will return A
@@ -284,6 +266,12 @@ Find Employess within a domain using an access token.
 `,
     })
     @ApiQueryExamples([
+        {
+            name: 'domain',
+            description: 'domain',
+            required: true,
+            example: '30shine.com',
+        },
         {
             name: 'firstName',
             description: 'First name of employee',
@@ -324,7 +312,7 @@ Find Employess within a domain using an access token.
             name: 'services',
             description:
                 'Array of services. Repeat the parameter for each value with square brackets).',
-            required: true,
+            required: false,
             isArray: true,
             example: 'services=85351665-9e0a-41b4-9792-9001210f85f4',
         },
@@ -391,17 +379,17 @@ Find Employess within a domain using an access token.
         },
     )
     async findEmployee(@Req() req: Request, @Query() query: FindEmployee) {
-        const payloadToken = req['user'];
+        // const payloadToken = req['user'];
         // const header = req.headers;
-        const userData = {
-            email: payloadToken.email,
-            domain: payloadToken.domain,
-            role: payloadToken.role,
-            accessToken: payloadToken.accessToken,
-        } as UserDto;
-        console.log(query);
+        // const userData = {
+        //     email: payloadToken.email,
+        //     domain: payloadToken.domain,
+        //     role: payloadToken.role,
+        //     accessToken: payloadToken.accessToken,
+        // } as UserDto;
+        // console.log(query);
         return await this.bookingEmployeeService.findEmployee({
-            user: userData,
+            // user: userData,
             ...query,
         } as FindEmployeeRequestDTO);
     }

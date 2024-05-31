@@ -32,10 +32,14 @@ import { BookingBookingsService } from './booking.service';
 import {
     CreateBooking,
     CreateBookingRequestDTO,
+    DeleteBooking,
+    DeleteBookingRequestDTO,
     FindOne,
     FindOneRequestDTO,
     FindSlotBookings,
     FindSlotBookingsRequestDTO,
+    UpdateStatusBooking,
+    UpdateStatusBookingRequestDTO,
 } from './booking.dto';
 import {
     ApiBodyExample,
@@ -74,6 +78,7 @@ Create a Booking within a domain using an access token. This operation is restri
         note: 'đặt chỗ lam cho anh vip vip nha',
         service: 'c2a4917c-b3ab-4ebf-aac3-563ab102e671',
         startTime: '2024-05-26T11:30:00.000Z',
+        employee: 'acfcd78d-54a8-408c-b720-a0f63941f64b',
     })
     @ApiResponseExample(
         'create',
@@ -510,5 +515,191 @@ Find available Slots Booking within a domain using an access token.
             user: userData,
             ...query,
         } as FindSlotBookingsRequestDTO);
+    }
+
+    @Post('update')
+    @UseGuards(AccessTokenGuard)
+    @ApiBearerAuth('JWT-access-token-user')
+    @ApiBearerAuth('JWT-access-token-tenant')
+    @ApiEndpoint({
+        summary: `Update Status Booking`,
+        details: `
+## Description
+Update Status Booking within a domain using an access token. This operation is restricted to user and tenant accounts only.
+        
+## Requirements
+- **Access Token**: Must provide a valid user and tenant access token.
+- **Permissions**: Requires user-level and tenant-level permissions.
+`,
+    })
+    @ApiBodyExample(UpdateStatusBooking, {
+        id: '343505f9-6783-422f-ac47-7854e2e79603',
+        status: 'SUCCESS',
+    })
+    @ApiResponseExample(
+        'update',
+        'update Status Booking',
+        {
+            id: '343505f9-6783-422f-ac47-7854e2e79603',
+            startTime: '2024-05-31T11:30:00.000Z',
+            endTime: '2024-05-31T12:00:00.000Z',
+            note: 'đặt chỗ lam cho anh vip vip nha',
+            date: '2024-05-31T11:30:00.000Z',
+            status: 'SUCCESS',
+            user: 'volehoai070902@gmail.com',
+            employee: {
+                id: 'acfcd78d-54a8-408c-b720-a0f63941f64b',
+                firstName: 'Nguyen',
+                lastName: 'Quan',
+                email: 'nguyenquan123@gmail.com',
+            },
+            service: {
+                id: 'c2a4917c-b3ab-4ebf-aac3-563ab102e671',
+                name: 'Cat toc 123',
+            },
+        },
+        '/api/booking/bookings/update',
+    )
+    @ApiErrorResponses('/api/booking/bookings/update', '/api/booking/bookings/update', {
+        badRequest: {
+            summary: 'Validation Error',
+            detail: 'id should not be empty, id must be a UUID, status should not be empty, Must be a valid status: PENDING, SUCCESSS, CANCEL',
+        },
+        unauthorized: [
+            {
+                key: 'token_not_verified',
+                summary: 'Token not verified',
+                detail: 'Unauthorized',
+                error: null,
+            },
+            {
+                key: 'token_not_found',
+                summary: 'Token not found',
+                detail: 'Access Token not found',
+                error: 'Unauthorized',
+            },
+            {
+                key: 'unauthorized_role',
+                summary: 'Role not verified',
+                detail: 'Unauthorized Role',
+                error: 'Unauthorized',
+            },
+        ],
+        forbidden: [
+            {
+                key: 'forbidden_resource',
+                summary: 'Forbidden resource',
+                detail: 'Forbidden resource',
+            },
+            {
+                key: 'not_found',
+                summary: 'Booking not found',
+                detail: 'Booking not found',
+            },
+            {
+                key: 'cant_update',
+                summary: 'Booking cant update status',
+                detail: 'Booking cant update status',
+            },
+        ],
+    })
+    async updateStatusBooking(@Req() req: Request, @Body() data: UpdateStatusBooking) {
+        const payloadToken = req['user'];
+        // const header = req.headers;
+        const userData = {
+            email: payloadToken.email,
+            domain: payloadToken.domain,
+            role: payloadToken.role,
+            accessToken: payloadToken.accessToken,
+        } as UserDto;
+        // console.log(userData, data)
+        return await this.bookingBookingsService.updateStatusBooking({
+            user: userData,
+            ...data,
+        } as UpdateStatusBookingRequestDTO);
+    }
+
+    @Delete('delete')
+    @UseGuards(AccessTokenGuard)
+    @ApiBearerAuth('JWT-access-token-user')
+    @ApiBearerAuth('JWT-access-token-tenant')
+    @ApiEndpoint({
+        summary: `Delete Booking`,
+        details: `
+## Description
+Delete Booking within a domain using an access token. This operation is restricted to user and tenant accounts only.
+        
+## Requirements
+- **Access Token**: Must provide a valid user and tenant access token.
+- **Permissions**: Requires user-level and tenant-level permissions.
+`,
+    })
+    @ApiBodyExample(DeleteBooking, {
+        id: '343505f9-6783-422f-ac47-7854e2e79603',
+        note: 'xoá đi vì lười',
+    })
+    @ApiResponseExample(
+        'delete',
+        'delete Booking',
+        { result: 'success' },
+        '/api/booking/bookings/delete',
+    )
+    @ApiErrorResponses('/api/booking/bookings/delete', '/api/booking/bookings/delete', {
+        badRequest: {
+            summary: 'Validation Error',
+            detail: 'id should not be empty, id must be a UUID, note should not be empty',
+        },
+        unauthorized: [
+            {
+                key: 'token_not_verified',
+                summary: 'Token not verified',
+                detail: 'Unauthorized',
+                error: null,
+            },
+            {
+                key: 'token_not_found',
+                summary: 'Token not found',
+                detail: 'Access Token not found',
+                error: 'Unauthorized',
+            },
+            {
+                key: 'unauthorized_role',
+                summary: 'Role not verified',
+                detail: 'Unauthorized Role',
+                error: 'Unauthorized',
+            },
+        ],
+        forbidden: [
+            {
+                key: 'forbidden_resource',
+                summary: 'Forbidden resource',
+                detail: 'Forbidden resource',
+            },
+            {
+                key: 'not_found',
+                summary: 'Booking not found',
+                detail: 'Booking not found',
+            },
+            {
+                key: 'cant_delete',
+                summary: 'Booking cant delete becasue not PENDING',
+                detail: 'Booking cant delete becasue not PENDING',
+            },
+        ],
+    })
+    async deleteBooking(@Req() req: Request, @Body() data: DeleteBooking) {
+        const payloadToken = req['user'];
+        // const header = req.headers;
+        const userData = {
+            email: payloadToken.email,
+            domain: payloadToken.domain,
+            role: payloadToken.role,
+            accessToken: payloadToken.accessToken,
+        } as UserDto;
+        // console.log(userData, data)
+        return await this.bookingBookingsService.deleteBooking({
+            user: userData,
+            ...data,
+        } as DeleteBookingRequestDTO);
     }
 }

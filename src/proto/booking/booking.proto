@@ -2,15 +2,15 @@ syntax = "proto3";
 
 import "../auth/user_token.proto";
 
-package booking;
+package booking; 
 
 service BookingService {
     rpc CreateBooking(CreateBookingRequest) returns (CreateBookingResponse);
     // rpc GetBooking(GetBookingRequest) returns (GetBookingResponse);
     rpc FindOne(FindOneRequest) returns (FindOneResponse);
     rpc FindSlotBookings(FindSlotBookingsRequest) returns (FindSlotBookingsResponse);
-    // rpc UpdateBooking(UpdateBookingRequest) returns (UpdateBookingResponse);
-    // rpc DeleteBooking(DeleteBookingRequest) returns (DeleteBookingResponse);
+    rpc UpdateStatusBooking(UpdateStatusBookingRequest) returns (FindOneResponse);
+    rpc DeleteBooking(DeleteBookingRequest) returns (DeleteBookingResponse);
 }
 
 message Emp{
@@ -71,8 +71,24 @@ message FindOneResponse{
     string note = 4;
     string date = 5;
     string status = 6;
-    bool is_paid = 7;
+    string note_cancel = 7;
     string user = 8;
     Emp employee = 9;
     Service service = 10;
+}
+
+message DeleteBookingRequest{
+    string id = 1;
+    string note = 2;
+    userToken.User user = 3;
+}
+
+message DeleteBookingResponse{
+    string result = 1;
+}
+
+message UpdateStatusBookingRequest{
+    string id = 1;
+    string status = 2;
+    userToken.User user = 4;
 }

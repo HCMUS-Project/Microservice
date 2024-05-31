@@ -4,6 +4,7 @@ import {
     IsArray,
     IsBase64,
     IsDateString,
+    IsEnum,
     IsInt,
     IsNotEmpty,
     IsNumber,
@@ -19,11 +20,14 @@ import {
     ValidateNested,
     isArray,
 } from 'class-validator';
+import {StatusBooking} from 'src/common/enums/statusBooking.enum';
 import { IsBase64DataURI } from 'src/common/validator/is-base-64-dataURI.validator';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
 import { CreateBookingRequest } from 'src/proto_build/booking/booking/CreateBookingRequest';
+import {DeleteBookingRequest} from 'src/proto_build/booking/booking/DeleteBookingRequest';
 import { FindOneRequest } from 'src/proto_build/booking/booking/FindOneRequest';
 import { FindSlotBookingsRequest } from 'src/proto_build/booking/booking/FindSlotBookingsRequest';
+import {UpdateStatusBookingRequest} from 'src/proto_build/booking/booking/UpdateStatusBookingRequest';
 
 export class CreateBooking implements CreateBookingRequest {
     @IsDateString()
@@ -36,10 +40,10 @@ export class CreateBooking implements CreateBookingRequest {
     @ApiProperty()
     service: string;
 
-    // @IsUUID('all')
-    // @IsOptional()
-    // @ApiProperty()
-    // employee: string;
+    @IsUUID('all')
+    @IsOptional()
+    @ApiProperty()
+    employee: string;
 
     @IsDateString()
     @IsNotEmpty()
@@ -104,6 +108,45 @@ export class FindSlotBookings implements FindSlotBookingsRequest {
 }
 
 export class FindSlotBookingsRequestDTO extends FindSlotBookings {
+    @IsObject()
+    @IsNotEmpty()
+    @ApiProperty()
+    user: UserDto;
+}
+
+export class UpdateStatusBooking implements UpdateStatusBookingRequest {
+    @IsUUID()
+    @IsNotEmpty()
+    @ApiProperty()
+    id: string;
+
+    @IsString()
+    @IsEnum(StatusBooking, { message: 'Must be a valid status: PENDING, SUCCESSS, CANCEL' })
+    @IsNotEmpty()
+    @ApiProperty()
+    status: string;
+}
+
+export class UpdateStatusBookingRequestDTO extends UpdateStatusBooking {
+    @IsObject()
+    @IsNotEmpty()
+    @ApiProperty()
+    user: UserDto;
+}
+
+export class DeleteBooking implements DeleteBookingRequest {
+    @IsUUID()
+    @IsNotEmpty()
+    @ApiProperty()
+    id: string;
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty()
+    note: string;
+}
+
+export class DeleteBookingRequestDTO extends DeleteBooking {
     @IsObject()
     @IsNotEmpty()
     @ApiProperty()

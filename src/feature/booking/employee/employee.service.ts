@@ -136,6 +136,7 @@ export class BookingEmployeeService implements OnModuleInit {
     async updateEmployee(data: UpdateEmployeeRequestDTO): Promise<UpdateEmployeeResponse> {
         try {
             // console.log(this.iProductService.createProduct(data));
+            // console.log(data)
             const updateEmployeeResponse: UpdateEmployeeResponse = await firstValueFrom(
                 this.iEmployeeService.updateEmployee(data),
             );

@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
     IsDateString,
+    IsInt,
     IsNotEmpty,
     IsNumber,
     IsObject,
@@ -9,6 +11,7 @@ import {
     IsString,
     IsUUID,
     IsUppercase,
+    IsUrl,
     Matches,
     Max,
     Min,
@@ -16,10 +19,8 @@ import {
 import { UserDto } from 'src/feature/commonDTO/user.dto';
 import { CreateReviewRequest } from 'src/proto_build/booking/review/CreateReviewRequest';
 import { DeleteReviewRequest } from 'src/proto_build/booking/review/DeleteReviewRequest';
-import { EditReviewRequest } from 'src/proto_build/booking/review/EditReviewRequest';
 import { FindAllReviewsRequest } from 'src/proto_build/booking/review/FindAllReviewsRequest';
-import { FindOneReviewRequest } from 'src/proto_build/booking/review/FindOneReviewRequest';
-
+import { UpdateReviewRequest } from 'src/proto_build/booking/review/UpdateReviewRequest';
 export class CreateReview implements CreateReviewRequest {
     @IsUUID()
     @IsNotEmpty()
@@ -29,17 +30,12 @@ export class CreateReview implements CreateReviewRequest {
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
-    description: string;
+    review: string;
 
     @IsNumber()
     @IsNotEmpty()
     @ApiProperty()
     rating: number;
-
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
-    userId: string;
 }
 
 export class CreateReviewRequestDTO extends CreateReview {
@@ -49,24 +45,24 @@ export class CreateReviewRequestDTO extends CreateReview {
     user: UserDto;
 }
 
-export class EditReview implements EditReviewRequest {
+export class UpdateReview implements UpdateReviewRequest {
     @IsUUID()
     @IsNotEmpty()
     @ApiProperty()
     id: string;
 
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
-    description: string;
+    review: string;
 
     @IsNumber()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     rating: number;
 }
 
-export class EditReviewRequestDTO extends EditReview {
+export class UpdateReviewRequestDTO extends UpdateReview {
     @IsObject()
     @IsNotEmpty()
     @ApiProperty()
@@ -74,7 +70,7 @@ export class EditReviewRequestDTO extends EditReview {
 }
 
 export class DeleteReview implements DeleteReviewRequest {
-    @IsString()
+    @IsUUID()
     @IsNotEmpty()
     @ApiProperty()
     id: string;
@@ -88,22 +84,27 @@ export class DeleteReviewRequestDTO extends DeleteReview {
 }
 
 export class FindAllReviewsRequestDTO implements FindAllReviewsRequest {
-    @IsObject()
-    @IsNotEmpty()
+    @IsUUID()
+    @IsOptional()
     @ApiProperty()
-    user: UserDto;
-}
+    serviceId: string;
 
-export class FindOneReview implements FindOneReviewRequest {
-    @IsString()
-    @IsNotEmpty()
+    @Type(() => Number) // This decorator will automatically transform the input into a number
+    @IsInt()
+    @Min(1)
+    @IsOptional()
     @ApiProperty()
-    id: string;
-}
+    pageSize: number;
 
-export class FindOneReviewRequestDTO extends FindOneReview {
-    @IsObject()
+    @Type(() => Number) // This decorator will automatically transform the input into a number
+    @IsInt()
+    @Min(1)
+    @IsOptional()
+    @ApiProperty()
+    page: number;
+
+    @IsUrl()
     @IsNotEmpty()
     @ApiProperty()
-    user: UserDto;
+    domain: string;
 }

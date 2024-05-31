@@ -22,13 +22,29 @@ import {
     ApiTags,
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { Roles } from 'src/common/decorator/role.decorator';
 import { AccessTokenGuard } from 'src/common/guards/token/accessToken.guard';
 import { RolesGuard } from 'src/common/guards/role/role.guard';
-import { Roles } from 'src/common/decorator/role.decorator';
 import { Role } from 'src/proto_build/auth/userToken/Role';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
+import {
+    CreateReview,
+    CreateReviewRequestDTO,
+    DeleteReview,
+    DeleteReviewRequestDTO,
+    FindAllReviewsRequestDTO,
+    UpdateReview,
+    UpdateReviewRequestDTO,
+} from './review.dto';
+import {
+    ApiBodyExample,
+    ApiEndpoint,
+    ApiErrorResponses,
+    ApiParamExamples,
+    ApiQueryExamples,
+    ApiResponseExample,
+} from 'src/common/decorator/swagger.decorator';
 import { BookingReviewService } from './review.service';
-import { CreateReview, CreateReviewRequestDTO } from './review.dto';
 
 @Controller('/booking/review')
 @ApiTags('booking/review')
@@ -42,94 +58,76 @@ export class ReviewController {
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.USER)
     @ApiBearerAuth('JWT-access-token-user')
-    @ApiOperation({
-        summary: 'Create review of domain',
-        description: `
-## Use access token
-## Must use tenant account`,
+    @ApiEndpoint({
+        summary: `Create Review`,
+        details: `
+## Description
+Create within a domain using an access token. This operation is restricted to user accounts only.
+        
+## Requirements
+- **Access Token**: Must provide a valid user access token.
+- **Permissions**: Requires user-level permissions.
+`,
     })
-    @ApiBody({
-        type: CreateReview,
-        examples: {
-            category_1: {
-                value: {} as CreateReview,
+    @ApiBodyExample(CreateReview, {
+        serviceId: 'c2a4917c-b3ab-4ebf-aac3-563ab102e671',
+        review: 'cắt đẹp',
+        rating: 4,
+    })
+    @ApiResponseExample(
+        'create',
+        'create Review',
+        {
+            review: {
+                id: 'f51af79d-b9a8-4f0d-ae9a-b97f0e4e16a2',
+                type: 'booking',
+                serviceId: 'c2a4917c-b3ab-4ebf-aac3-563ab102e671',
+                user: 'volehoai070902@gmail.com',
+                rating: 4,
+                review: 'cắt đẹp',
+                createdAt: '2024-05-31T11:21:29.813Z',
+                updatedAt: '2024-05-31T11:21:29.813Z',
             },
         },
-    })
-    @ApiCreatedResponse({
-        description: 'Create review successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after Create review successfully',
-                        value: {},
-                    },
-                },
-            },
+        '/api/booking/review/create',
+    )
+    @ApiErrorResponses('/api/booking/review/create', '/api/booking/review/create', {
+        badRequest: {
+            summary: 'Validation Error',
+            detail: 'serviceId should not be empty, serviceId must be a UUID, review should not be empty, review must be a string, rating should not be empty, rating must be a number conforming to the specified constraints',
         },
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    token_not_verified: {
-                        summary: 'Token not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T12:31:30.700Z',
-                            path: '/api/booking/voucher/create',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
-                        },
-                    },
-                    unauthorized_role: {
-                        summary: 'Role not verified',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-27T12:31:30.700Z',
-                            path: '/api/booking/voucher/create',
-                            message: 'Unauthorized Role',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                    token_not_found: {
-                        summary: 'Token not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-05-02T10:55:28.511Z',
-                            path: '/api/booking/voucher/create',
-                            message: 'Access Token not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                },
+        unauthorized: [
+            {
+                key: 'token_not_verified',
+                summary: 'Token not verified',
+                detail: 'Unauthorized',
+                error: null,
             },
-        },
-    })
-    @ApiForbiddenResponse({
-        description: 'Forbidden',
-        content: {
-            'application/json': {
-                examples: {
-                    user_not_verified: {
-                        summary: 'Category already exists',
-                        value: {
-                            statusCode: 403,
-                            timestamp: '2024-05-02T11:24:03.152Z',
-                            path: '/api/booking/voucher/create',
-                            message: 'Category already exists',
-                            error: 'Forbidden',
-                            data: null,
-                        },
-                    },
-                },
+            {
+                key: 'token_not_found',
+                summary: 'Token not found',
+                detail: 'Access Token not found',
+                error: 'Unauthorized',
             },
-        },
+            {
+                key: 'unauthorized_role',
+                summary: 'Role not verified',
+                detail: 'Unauthorized Role',
+                error: 'Unauthorized',
+            },
+        ],
+        forbidden: [
+            {
+                key: 'forbidden_resource',
+                summary: 'Forbidden resource',
+                detail: 'Forbidden resource',
+            },
+            {
+                key: 'not_purchased_product',
+                summary: 'User has not purchased Product',
+                detail: 'User has not purchased Product',
+            },
+        ],
     })
     async createReview(@Req() req: Request, @Body() data: CreateReview) {
         const payloadToken = req['user'];
@@ -147,372 +145,267 @@ export class ReviewController {
         } as CreateReviewRequestDTO);
     }
 
-    //     @Get('find/all')
-    //     @UseGuards(AccessTokenGuard)
-    //     @ApiBearerAuth('JWT-access-token-user')
-    //     @ApiBearerAuth('JWT-access-token-tenant')
-    //     @ApiOperation({
-    //         summary: 'Find all vouchers',
-    //         description: `
-    // ## Use access token`,
-    //     })
-    //     @ApiCreatedResponse({
-    //         description: 'Get all vouchers successfully!!',
-    //         content: {
-    //             'application/json': {
-    //                 examples: {
-    //                     signin: {
-    //                         summary: 'Response after get all vouchers successfully',
-    //                         value: {
-    //                             statusCode: 200,
-    //                             timestamp: '2024-05-09T09:15:14.420Z',
-    //                             path: '/api/booking/voucher/find/all',
-    //                             message: null,
-    //                             error: null,
-    //                             data: {
-    //                                 vouchers: [
-    //                                     {
-    //                                         id: 'b91cef5c-b0c7-4af9-a0cf-02c58adc87fb',
-    //                                         serviceId: 'dfb82e86-2ecc-4eb3-8123-174b2299ad68',
-    //                                         voucherName: 'Giam gia 50%',
-    //                                         voucherCode: 'GIAM50',
-    //                                         maxDiscountValue: 50000,
-    //                                         minAppValue: 500000,
-    //                                         discountPercent: 50,
-    //                                         expiredTime:
-    //                                             'Sun May 12 2024 12:51:38 GMT+0700 (Indochina Time)',
-    //                                         createdAt:
-    //                                             'Thu May 09 2024 16:08:59 GMT+0700 (Indochina Time)',
-    //                                     },
-    //                                     {
-    //                                         id: 'fb6e2999-cc79-42cf-826a-a1e346ceccc6',
-    //                                         serviceId: 'dfb82e86-2ecc-4eb3-8123-174b2299ad68',
-    //                                         voucherName: 'Giam gia 30%',
-    //                                         voucherCode: 'GIAM30',
-    //                                         maxDiscountValue: 30000,
-    //                                         minAppValue: 200000,
-    //                                         discountPercent: 30,
-    //                                         expiredTime:
-    //                                             'Sun May 12 2024 12:51:38 GMT+0700 (Indochina Time)',
-    //                                         createdAt:
-    //                                             'Thu May 09 2024 16:14:11 GMT+0700 (Indochina Time)',
-    //                                     },
-    //                                 ],
-    //                             },
-    //                         },
-    //                     },
-    //                 },
-    //             },
-    //         },
-    //     })
-    //     @ApiUnauthorizedResponse({
-    //         description: 'Authorization failed',
-    //         content: {
-    //             'application/json': {
-    //                 examples: {
-    //                     token_not_verified: {
-    //                         summary: 'Token not verified',
-    //                         value: {
-    //                             statusCode: 401,
-    //                             timestamp: '2024-05-02T11:30:43.976Z',
-    //                             path: '/api/booking/voucher/find/all',
-    //                             message: 'Unauthorized',
-    //                             error: null,
-    //                             data: null,
-    //                         },
-    //                     },
-    //                 },
-    //             },
-    //         },
-    //     })
-    //     async findAllVouchers(@Req() req: Request) {
-    //         const payloadToken = req['user'];
-    //         // const header = req.headers;
-    //         const userData = {
-    //             email: payloadToken.email,
-    //             domain: payloadToken.domain,
-    //             role: payloadToken.role,
-    //             accessToken: payloadToken.accessToken,
-    //         } as UserDto;
-    //         // console.log(userData, dataCategory)
-    //         return await this.bookingVoucherService.findAllVouchers({
-    //             user: userData,
-    //         } as FindAllVouchersRequestDTO);
-    //     }
+    @Get('find')
+    @ApiEndpoint({
+        summary: `Find Reviews`,
+        details: `
+## Description
+Return all Reviews within a domain.  
+        
+## Requirements 
+- **domain** must be in query, default to query all reviews
+- **pageSize** and **page** to limit result
+- **Default** is 10 for **pageSize** and 1 for **page** without pass
+`,
+    })
+    @ApiQueryExamples([
+        {
+            name: 'domain',
+            description: 'domain want to get review',
+            example: '30shine.com',
+            required: true,
+        },
+        {
+            name: 'serviceId',
+            description: 'Id of Service want to get review',
+            example: 'c2a4917c-b3ab-4ebf-aac3-563ab102e671',
+            required: false,
+        },
+        {
+            name: 'pageSize',
+            description: 'Number of review per page',
+            example: 10,
+            required: false,
+        },
+        {
+            name: 'page',
+            description: 'the order of page',
+            example: 1,
+            required: false,
+        },
+    ])
+    @ApiResponseExample(
+        'read',
+        'find all Reviews',
+        {
+            reviews: [
+                {
+                    id: 'f51af79d-b9a8-4f0d-ae9a-b97f0e4e16a2',
+                    type: 'booking',
+                    serviceId: 'c2a4917c-b3ab-4ebf-aac3-563ab102e671',
+                    user: 'volehoai070902@gmail.com',
+                    rating: 4,
+                    review: 'cắt đẹp',
+                    createdAt: '2024-05-31T11:21:29.813Z',
+                    updatedAt: '2024-05-31T11:22:24.315Z',
+                },
+            ],
+            totalPages: 1,
+            page: 1,
+            pageSize: 10,
+        },
+        '/api/booking/review/find?serviceId=c2a4917c-b3ab-4ebf-aac3-563ab102e671&domain=30shine.com',
+    )
+    @ApiErrorResponses(
+        '/api/booking/review/find?serviceId=c2a4917c-b3ab-4ebf-aac3-563ab102e671&domain=30shine.com',
+        '/api/booking/review/find?serviceId=c2a4917c-b3ab-4ebf-aac3-563ab102e671&domain=30shine.com',
+        {
+            badRequest: {
+                summary: 'Validation Error',
+                detail: 'property serviceId should not exist, pageSize must not be less than 1, page must not be less than 1, domain should not be empty, domain must be a URL address',
+            },
+        },
+    )
+    async findAllReviews(
+        @Req() req: Request,
+        @Query()
+        query: FindAllReviewsRequestDTO,
+    ) {
+        // const payloadToken = req['user'];
+        // // const header = req.headers;
+        // const userData = {
+        //     email: payloadToken.email,
+        //     domain: payloadToken.domain,
+        //     role: payloadToken.role,
+        //     accessToken: payloadToken.accessToken,
+        // } as UserDto;
+        // console.log(userData, dataCategory)
+        return await this.bookingReviewService.findAllReviews({
+            ...query,
+        } as FindAllReviewsRequestDTO);
+    }
 
-    //     @Get('find/:id')
-    //     @UseGuards(AccessTokenGuard)
-    //     @ApiBearerAuth('JWT-access-token-user')
-    //     @ApiBearerAuth('JWT-access-token-tenant')
-    //     @ApiOperation({
-    //         summary: 'Find one voucher by ID',
-    //         description: `
-    // ## Use access token
-    // ## Use id to path`,
-    //     })
-    //     @ApiParam({
-    //         name: 'id',
-    //         description: 'ID of the voucher',
-    //         example: 'fb6e2999-cc79-42cf-826a-a1e346ceccc6',
-    //         required: true,
-    //     })
-    //     @ApiCreatedResponse({
-    //         description: 'Get one voucher successfully!!',
-    //         content: {
-    //             'application/json': {
-    //                 examples: {
-    //                     signin: {
-    //                         summary: 'Response after get one voucher successfully',
-    //                         value: {
-    //                             statusCode: 200,
-    //                             timestamp: '2024-05-09T09:17:46.940Z',
-    //                             path: '/api/booking/voucher/find/fb6e2999-cc79-42cf-826a-a1e346ceccc6',
-    //                             message: null,
-    //                             error: null,
-    //                             data: {
-    //                                 voucher: {
-    //                                     id: 'fb6e2999-cc79-42cf-826a-a1e346ceccc6',
-    //                                     serviceId: 'dfb82e86-2ecc-4eb3-8123-174b2299ad68',
-    //                                     voucherName: 'Giam gia 30%',
-    //                                     voucherCode: 'GIAM30',
-    //                                     maxDiscountValue: 30000,
-    //                                     minAppValue: 200000,
-    //                                     discountPercent: 30,
-    //                                     expiredTime:
-    //                                         'Sun May 12 2024 12:51:38 GMT+0700 (Indochina Time)',
-    //                                     createdAt: 'Thu May 09 2024 16:14:11 GMT+0700 (Indochina Time)',
-    //                                 },
-    //                             },
-    //                         },
-    //                     },
-    //                 },
-    //             },
-    //         },
-    //     })
-    //     @ApiUnauthorizedResponse({
-    //         description: 'Authorization failed',
-    //         content: {
-    //             'application/json': {
-    //                 examples: {
-    //                     token_not_verified: {
-    //                         summary: 'Token not verified',
-    //                         value: {
-    //                             statusCode: 401,
-    //                             timestamp: '2024-04-27T17:42:40.039Z',
-    //                             path: '/api/booking/voucher/find/fb6e2999-cc79-42cf-826a-a1e346ceccc6',
-    //                             message: 'Unauthorized',
-    //                             error: null,
-    //                             data: null,
-    //                         },
-    //                     },
-    //                     category_not_found: {
-    //                         summary: 'Category not found',
-    //                         value: {
-    //                             statusCode: 401,
-    //                             timestamp: '2024-05-02T11:43:05.882Z',
-    //                             path: '/api/booking/voucher/find/fb6e2999-cc79-42cf-826a-a1e346ceccc6',
-    //                             message: 'Category not found',
-    //                             error: 'Unauthorized',
-    //                             data: null,
-    //                         },
-    //                     },
-    //                 },
-    //             },
-    //         },
-    //     })
-    //     async findVoucherById(@Req() req: Request, @Param() params: FindOneVoucher) {
-    //         const payloadToken = req['user'];
-    //         // const header = req.headers;
-    //         const userData = {
-    //             email: payloadToken.email,
-    //             domain: payloadToken.domain,
-    //             role: payloadToken.role,
-    //             accessToken: payloadToken.accessToken,
-    //         } as UserDto;
-    //         // console.log(userData, dataCategory)
-    //         return await this.bookingVoucherService.findOneVoucher({
-    //             user: userData,
-    //             ...params,
-    //         } as FindOneVoucherRequestDTO);
-    //     }
+    @Post('update')
+    @UseGuards(AccessTokenGuard, RolesGuard)
+    @Roles(Role.USER)
+    @ApiBearerAuth('JWT-access-token-user')
+    @ApiEndpoint({
+        summary: `Update a Review by Id of Review`,
+        details: `
+## Description
+Update a Review by Id of Review within a domain using an access token. This operation is restricted to user accounts only.
+        
+## Requirements
+- **Access Token**: Must provide a valid user access token.
+- **Permissions**: Requires user-level permissions.
+`,
+    })
+    @ApiBodyExample(UpdateReview, { id: 'f51af79d-b9a8-4f0d-ae9a-b97f0e4e16a2', rating: 3 })
+    @ApiResponseExample(
+        'update',
+        'update a Review',
+        {
+            review: {
+                id: 'f51af79d-b9a8-4f0d-ae9a-b97f0e4e16a2',
+                type: 'booking',
+                serviceId: 'c2a4917c-b3ab-4ebf-aac3-563ab102e671',
+                user: 'volehoai070902@gmail.com',
+                rating: 3,
+                review: 'cắt đẹp',
+                createdAt: '2024-05-31T11:21:29.813Z',
+                updatedAt: '2024-05-31T12:05:32.442Z',
+            },
+        },
+        '/api/booking/review/update',
+    )
+    @ApiErrorResponses('/api/booking/review/update', '/api/booking/review/update', {
+        badRequest: {
+            summary: 'Validation Error',
+            detail: 'id should not be empty, id must be a UUID',
+        },
+        unauthorized: [
+            {
+                key: 'token_not_verified',
+                summary: 'Token not verified',
+                detail: 'Unauthorized',
+                error: null,
+            },
+            {
+                key: 'token_not_found',
+                summary: 'Token not found',
+                detail: 'Access Token not found',
+                error: 'Unauthorized',
+            },
+            {
+                key: 'unauthorized_role',
+                summary: 'Role not verified',
+                detail: 'Unauthorized Role',
+                error: 'Unauthorized',
+            },
+        ],
+        forbidden: [
+            {
+                key: 'forbidden_resource',
+                summary: 'Forbidden resource',
+                detail: 'Forbidden resource',
+            },
+            {
+                key: 'review_not_found',
+                summary: 'Review not found',
+                detail: 'Review not found',
+            },
+        ],
+    })
+    async updateReview(@Req() req: Request, @Body() updateReview: UpdateReview) {
+        const payloadToken = req['user'];
+        // const header = req.headers;
+        const userData = {
+            email: payloadToken.email,
+            domain: payloadToken.domain,
+            role: payloadToken.role,
+            accessToken: payloadToken.accessToken,
+        } as UserDto;
+        // console.log(userData, dataCategory)
+        return await this.bookingReviewService.updateReview({
+            user: userData,
+            ...updateReview,
+        } as UpdateReviewRequestDTO);
+    }
 
-    //     @Post('update')
-    //     @UseGuards(AccessTokenGuard, RolesGuard)
-    //     @Roles(Role.TENANT)
-    //     @ApiBearerAuth('JWT-access-token-tenant')
-    //     @ApiOperation({
-    //         summary: 'Update one voucher',
-    //         description: `
-    // ## Use access token
-    // ## Must be TENANT`,
-    //     })
-    //     @ApiBody({
-    //         type: EditVoucher,
-    //         examples: {
-    //             category_1: {
-    //                 value: {
-    //                     id: 'b91cef5c-b0c7-4af9-a0cf-02c58adc87fb',
-    //                     voucherName: 'Giam gia 55%',
-    //                     voucherCode: 'GIAM55',
-    //                     maxDiscountValue: 50000,
-    //                     minAppValue: 500000,
-    //                     discountPercent: 50,
-    //                     expiredTime: '2024-05-12T05:51:38.792Z',
-    //                 } as EditVoucher,
-    //             },
-    //         },
-    //     })
-    //     @ApiCreatedResponse({
-    //         description: 'Update one voucher successfully!!',
-    //         content: {
-    //             'application/json': {
-    //                 examples: {
-    //                     signin: {
-    //                         summary: 'Response after update voucher successfully',
-    //                         value: {
-    //                             statusCode: 201,
-    //                             timestamp: '2024-05-09T09:24:00.450Z',
-    //                             path: '/api/booking/voucher/update',
-    //                             message: null,
-    //                             error: null,
-    //                             data: {
-    //                                 result: 'success edit voucher',
-    //                             },
-    //                         },
-    //                     },
-    //                 },
-    //             },
-    //         },
-    //     })
-    //     @ApiUnauthorizedResponse({
-    //         description: 'Authorization failed',
-    //         content: {
-    //             'application/json': {
-    //                 examples: {
-    //                     token_not_verified: {
-    //                         summary: 'Token not verified',
-    //                         value: {
-    //                             statusCode: 401,
-    //                             timestamp: '2024-04-27T17:42:40.039Z',
-    //                             path: '/api/booking/voucher/update',
-    //                             message: 'Unauthorized',
-    //                             error: null,
-    //                             data: null,
-    //                         },
-    //                     },
-    //                     category_not_found: {
-    //                         summary: 'Category not found',
-    //                         value: {
-    //                             statusCode: 401,
-    //                             timestamp: '2024-05-02T11:43:05.882Z',
-    //                             path: '/api/booking/voucher/update',
-    //                             message: 'Category not found',
-    //                             error: 'Unauthorized',
-    //                             data: null,
-    //                         },
-    //                     },
-    //                 },
-    //             },
-    //         },
-    //     })
-    //     async updateVoucher(@Req() req: Request, @Body() editVoucher: EditVoucher) {
-    //         const payloadToken = req['user'];
-    //         // const header = req.headers;
-    //         const userData = {
-    //             email: payloadToken.email,
-    //             domain: payloadToken.domain,
-    //             role: payloadToken.role,
-    //             accessToken: payloadToken.accessToken,
-    //         } as UserDto;
-    //         // console.log(userData, dataCategory)
-    //         return await this.bookingVoucherService.editVoucher({
-    //             user: userData,
-    //             ...editVoucher,
-    //         } as EditVoucherRequestDTO);
-    //     }
-
-    //     @Delete('delete/:id')
-    //     @UseGuards(AccessTokenGuard, RolesGuard)
-    //     @Roles(Role.TENANT)
-    //     @ApiBearerAuth('JWT-access-token-tenant')
-    //     @ApiOperation({
-    //         summary: 'Delete one voucher',
-    //         description: `
-    // ## Use access token
-    // ## Must be TENANT`,
-    //     })
-    //     @ApiParam({
-    //         name: 'id',
-    //         description: 'ID of the voucher',
-    //         example: 'b91cef5c-b0c7-4af9-a0cf-02c58adc87fb',
-    //         required: true,
-    //     })
-    //     @ApiCreatedResponse({
-    //         description: 'Delete one voucher successfully!!',
-    //         content: {
-    //             'application/json': {
-    //                 examples: {
-    //                     signin: {
-    //                         summary: 'Response after delete voucher successfully',
-    //                         value: {
-    //                             statusCode: 200,
-    //                             timestamp: '2024-05-09T09:26:26.854Z',
-    //                             path: '/api/booking/voucher/delete/b91cef5c-b0c7-4af9-a0cf-02c58adc87fb',
-    //                             message: null,
-    //                             error: null,
-    //                             data: {
-    //                                 result: 'success',
-    //                             },
-    //                         },
-    //                     },
-    //                 },
-    //             },
-    //         },
-    //     })
-    //     @ApiUnauthorizedResponse({
-    //         description: 'Authorization failed',
-    //         content: {
-    //             'application/json': {
-    //                 examples: {
-    //                     token_not_verified: {
-    //                         summary: 'Token not verified',
-    //                         value: {
-    //                             statusCode: 401,
-    //                             timestamp: '2024-04-27T17:42:40.039Z',
-    //                             path: '/api/ecommerce/category/update',
-    //                             message: 'Unauthorized',
-    //                             error: null,
-    //                             data: null,
-    //                         },
-    //                     },
-    //                     category_not_found: {
-    //                         summary: 'Category not found',
-    //                         value: {
-    //                             statusCode: 401,
-    //                             timestamp: '2024-05-02T11:43:05.882Z',
-    //                             path: '/api/ecommerce/category/update',
-    //                             message: 'Category not found',
-    //                             error: 'Unauthorized',
-    //                             data: null,
-    //                         },
-    //                     },
-    //                 },
-    //             },
-    //         },
-    //     })
-    //     async deleteVoucher(@Req() req: Request, @Param() params: DeleteVoucher) {
-    //         const payloadToken = req['user'];
-    //         // const header = req.headers;
-    //         const userData = {
-    //             email: payloadToken.email,
-    //             domain: payloadToken.domain,
-    //             role: payloadToken.role,
-    //             accessToken: payloadToken.accessToken,
-    //         } as UserDto;
-    //         // console.log(userData, dataCategory)
-    //         return await this.bookingVoucherService.deleteVoucher({
-    //             user: userData,
-    //             ...params,
-    //         } as DeleteVoucherRequestDTO);
-    //     }
+    @Delete('delete/:id')
+    @UseGuards(AccessTokenGuard, RolesGuard)
+    @Roles(Role.USER)
+    @ApiBearerAuth('JWT-access-token-user')
+    @ApiEndpoint({
+        summary: `Delete a Review by Id`,
+        details: `
+## Description
+Delete a Review by Id within a domain using an access token. This operation is restricted to user accounts only.
+        
+## Requirements
+- **Access Token**: Must provide a valid user access token.
+- **Permissions**: Requires user-level permissions.
+`,
+    })
+    @ApiParamExamples([
+        {
+            name: 'id',
+            description: 'id of Review',
+            example: 'f51af79d-b9a8-4f0d-ae9a-b97f0e4e16a2',
+            required: true,
+        },
+    ])
+    @ApiResponseExample(
+        'delete',
+        'delete a Review by Id',
+        { result: 'success' },
+        '/api/booking/review/delete/f51af79d-b9a8-4f0d-ae9a-b97f0e4e16a2',
+    )
+    @ApiErrorResponses(
+        '/api/booking/review/delete/:id',
+        '/api/booking/review/delete/d4112320-a998-4ff5-ba84-b31514f43bc6',
+        {
+            badRequest: {
+                summary: 'Validation Error',
+                detail: 'id must be a UUID',
+            },
+            unauthorized: [
+                {
+                    key: 'token_not_verified',
+                    summary: 'Token not verified',
+                    detail: 'Unauthorized',
+                    error: null,
+                },
+                {
+                    key: 'token_not_found',
+                    summary: 'Token not found',
+                    detail: 'Access Token not found',
+                    error: 'Unauthorized',
+                },
+                {
+                    key: 'unauthorized_role',
+                    summary: 'Role not verified',
+                    detail: 'Unauthorized Role',
+                    error: 'Unauthorized',
+                },
+            ],
+            forbidden: [
+                {
+                    key: 'forbidden_resource',
+                    summary: 'Forbidden resource',
+                    detail: 'Forbidden resource',
+                },
+                {
+                    key: 'review_not_found',
+                    summary: 'Review not found',
+                    detail: 'Review not found',
+                },
+            ],
+        },
+    )
+    async deleteReview(@Req() req: Request, @Param() data: DeleteReview) {
+        const payloadToken = req['user'];
+        // const header = req.headers;
+        const userData = {
+            email: payloadToken.email,
+            domain: payloadToken.domain,
+            role: payloadToken.role,
+            accessToken: payloadToken.accessToken,
+        } as UserDto;
+        // console.log(userData, dataCategory)
+        return await this.bookingReviewService.deleteReview({
+            user: userData,
+            ...data,
+        } as DeleteReviewRequestDTO);
+    }
 }

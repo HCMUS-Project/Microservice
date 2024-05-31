@@ -8,6 +8,7 @@ import {
     IsEmail,
     IsEnum,
     IsInt,
+    IsMobilePhone,
     IsNotEmpty,
     IsNumber,
     IsObject,
@@ -16,6 +17,7 @@ import {
     IsString,
     IsUUID,
     IsUppercase,
+    IsUrl,
     Matches,
     Max,
     Min,
@@ -26,6 +28,7 @@ import {
 import { WorkDays } from 'src/common/enums/workDays.enum';
 import { WorkShift } from 'src/common/enums/workShift.enum';
 import { IsBase64DataURI } from 'src/common/validator/is-base-64-dataURI.validator';
+import {IsEitherUrlOrBase64DataURI} from 'src/common/validator/is-either-base-64-dataURI-or-URL.validator';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
 import { CreateEmployeeRequest } from 'src/proto_build/booking/employee/CreateEmployeeRequest';
 import { DeleteEmployeeRequest } from 'src/proto_build/booking/employee/DeleteEmployeeRequest';
@@ -48,6 +51,22 @@ export class CreateEmployee implements CreateEmployeeRequest {
     @IsNotEmpty()
     @ApiProperty()
     email: string;
+
+    @IsString()
+    @IsMobilePhone(
+        'vi-VN',
+        { strictMode: false },
+        { message: 'Must be VietNam Phone Number (+84912345678)' },
+    )
+    @IsNotEmpty()
+    @ApiProperty()
+    phone: string;
+
+    @IsString()
+    @IsNotEmpty()
+    @IsBase64DataURI({ each: true, message: 'image must be a valid Base64 data URI.' })
+    @ApiProperty()
+    image: string;
 
     @IsArray()
     @IsNotEmpty()
@@ -86,10 +105,7 @@ export class FindOneEmployee implements FindOneEmployeeRequest {
 }
 
 export class FindOneEmployeeRequestDTO extends FindOneEmployee {
-    @IsObject()
-    @IsNotEmpty()
-    @ApiProperty()
-    user: UserDto;
+
 }
 
 export class FindEmployee implements FindEmployeeRequest {
@@ -125,12 +141,17 @@ export class FindEmployee implements FindEmployeeRequest {
     workShift: WorkShift[];
 
     @IsArray()
-    @IsNotEmpty()
+    @IsOptional()
     @ArrayMinSize(1)
     @IsUUID('all', { each: true })
     @Transform(({ value }) => (Array.isArray(value) ? value : Array(value)))
     @ApiProperty()
     services: string[];
+
+    @IsUrl()
+    @IsNotEmpty()
+    @ApiProperty()
+    domain: string;
 }
 
 export class FindEmployeeRequestDTO extends FindEmployee {
@@ -142,36 +163,60 @@ export class FindEmployeeRequestDTO extends FindEmployee {
 
 export class UpdateEmployee implements UpdateEmployeeRequest {
     @IsString()
-    @IsNotEmpty()
+    // @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     firstName: string;
 
     @IsString()
-    @IsNotEmpty()
+    // @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     lastName: string;
 
     @IsEmail()
-    @IsNotEmpty()
+    // @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     email: string;
 
+    @IsString()
+    @IsMobilePhone(
+        'vi-VN',
+        { strictMode: false },
+        { message: 'Must be VietNam Phone Number (+84912345678)' },
+    )
+    // @IsNotEmpty()
+    @IsOptional()
+    @ApiProperty()
+    phone: string;
+
+    @IsString()
+    @IsOptional()
+    // @IsBase64DataURI({ each: true, message: 'image must be a valid Base64 data URI.' })
+    @IsEitherUrlOrBase64DataURI({each: true, message: 'image must be either a valid Base64 data URI or an valid URL.'})
+    @ApiProperty()
+    image: string;
+
     @IsArray()
-    @IsNotEmpty()
+    // @IsNotEmpty()
+    @IsOptional()
     @ArrayMinSize(1)
     @IsEnum(WorkDays, { each: true })
     @ApiProperty()
     workDays: WorkDays[];
 
     @IsArray()
-    @IsNotEmpty()
+    // @IsNotEmpty()
+    @IsOptional()
     @ArrayMinSize(1)
     @IsEnum(WorkShift, { each: true })
     @ApiProperty()
     workShift: WorkShift[];
 
     @IsArray()
-    @IsNotEmpty()
+    // @IsNotEmpty()
+    @IsOptional()
     @ArrayMinSize(1)
     @IsUUID('all', { each: true })
     @ApiProperty()

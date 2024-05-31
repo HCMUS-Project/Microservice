@@ -13,6 +13,7 @@ import {
     IsString,
     IsUUID,
     IsUppercase,
+    IsUrl,
     Matches,
     Max,
     Min,
@@ -103,19 +104,29 @@ export class CreateServiceRequestDTO extends CreateService {
 
 export class FindOne implements FindOneRequest {
     @IsUUID()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     id: string;
-}
 
-export class FindOneRequestDTO extends FindOne {
-    @IsObject()
+    @IsUrl()
     @IsNotEmpty()
     @ApiProperty()
-    user: UserDto;
+    domain: string;
 }
 
+export class FindOneRequestDTO extends FindOne {}
+
 export class FindServices implements FindServicesRequest {
+    @IsUrl()
+    @IsNotEmpty()
+    @ApiProperty()
+    domain: string;
+
+    @IsUUID()
+    @IsOptional()
+    @ApiProperty()
+    id: string;
+
     @IsPositive()
     @Type(() => Number)
     @IsOptional()
@@ -134,12 +145,31 @@ export class FindServices implements FindServicesRequest {
     name: string;
 }
 
-export class FindServicesRequestDTO extends FindServices {
-    @IsObject()
+export class FindServicesRequestNotId implements FindServicesRequest {
+    @IsUrl()
     @IsNotEmpty()
     @ApiProperty()
-    user: UserDto;
+    domain: string; 
+
+    @IsPositive()
+    @Type(() => Number)
+    @IsOptional()
+    @ApiProperty()
+    priceLower: number;
+
+    @IsPositive()
+    @Type(() => Number)
+    @IsOptional()
+    @ApiProperty()
+    priceHigher: number;
+
+    @IsString()
+    @IsOptional()
+    @ApiProperty()
+    name: string;
 }
+
+export class FindServicesRequestDTO extends FindServicesRequestNotId {}
 
 export class DeleteService implements DeleteServiceRequest {
     @IsUUID()
