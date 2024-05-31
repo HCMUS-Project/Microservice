@@ -131,7 +131,7 @@ export class UpdateTenantProfile implements UpdateTenantProfileRequest {
 
     @IsString()
     @IsOptional()
-    @IsEitherUrlOrBase64DataURI({each: true, message: 'Each image must be either a valid Base64 data URI or an valid URL.'})IsEitherUrlOrBase64DataURI
+    @IsEitherUrlOrBase64DataURI({each: true, message: 'Each image must be either a valid Base64 data URI or an valid URL.'})
     @ApiProperty()
     logo: string;
 
