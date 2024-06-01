@@ -1,12 +1,17 @@
-import { Body, Controller, Get, HttpStatus, Inject, Post, Query, Req, Res } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { AccessTokenGuard } from 'src/common/guards/token/accessToken.guard';
-import { RolesGuard } from 'src/common/guards/role/role.guard';
-import { Roles } from 'src/common/decorator/role.decorator';
-import { Role } from 'src/common/enums/role.enum';
+import {
+    Body,
+    Controller,
+    Get,
+    HttpStatus,
+    Inject,
+    LoggerService,
+    Post,
+    Query,
+    Req,
+    Res,
+} from '@nestjs/common';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
 import {
-    ApiBodyExample,
     ApiEndpoint,
     ApiErrorResponses,
     ApiParamExamples,
@@ -15,6 +20,8 @@ import {
 import { PaymentURLService } from './paymentURL.service';
 import { CreatePaymentUrl, CreatePaymentUrlRequestDTO } from './paymentURL.dto';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import Logger, { LoggerKey } from 'src/core/logger/interfaces/logger.interface';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('payment/url')
 @ApiTags('payment/url')
@@ -22,6 +29,7 @@ export class PaymentURLController {
     constructor(
         @Inject('GRPC_PAYMENT_SERVICE_PAYMENT_URL')
         private readonly paymentURLService: PaymentURLService,
+        @Inject(LoggerKey) private logger: Logger,
     ) {}
 
     @Post('create')
@@ -119,9 +127,20 @@ Find a Policy and Term by TenantId within a domain using an access token.
 
     @Get('return')
     async getPaymentUrl(@Query() data: any, @Res() reply: FastifyReply) {
-        console.log(data);
-        await this.paymentURLService.callbackVnpay(data);
-        reply.status(HttpStatus.FOUND).redirect('https://google.com');
-        return 'success';
+        this.logger.info(
+            'Data callback from VnPay',
+            {
+                props: data,
+            },
+            '',
+        );
+
+        const resultCallback = await this.paymentURLService.callbackVnpay(data);
+
+        reply.status(HttpStatus.FOUND).redirect(resultCallback.urlRedirect);
+        return {
+            message: resultCallback.message,
+            status: resultCallback.status,
+        };
     }
 }
