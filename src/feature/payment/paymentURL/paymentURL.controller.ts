@@ -127,17 +127,17 @@ Find a Policy and Term by TenantId within a domain using an access token.
 
     @Get('return')
     async getPaymentUrl(@Query() data: any, @Res() reply: FastifyReply) {
-        this.logger.info(
-            'Data callback from VnPay',
-            {
-                props: data,
-            },
-            '',
-        );
-
         const resultCallback = await this.paymentURLService.callbackVnpay(data);
 
-        reply.status(HttpStatus.FOUND).redirect(resultCallback.urlRedirect);
+        reply
+            .status(HttpStatus.FOUND)
+            .redirect(
+                resultCallback.urlRedirect +
+                    '/result?message=' +
+                    resultCallback.message +
+                    '&status=' +
+                    resultCallback.status,
+            );
         return {
             message: resultCallback.message,
             status: resultCallback.status,
