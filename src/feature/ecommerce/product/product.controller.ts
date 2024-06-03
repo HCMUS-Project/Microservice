@@ -380,7 +380,7 @@ Return all Products has top 5 Reviews all the times within a domain.
     @UseGuards(AccessTokenGuard, RolesGuard)
     @Roles(Role.TENANT)
     @ApiBearerAuth('JWT-access-token-tenant')
-    @ApiBearerAuth('JWT-access-token-user')
+    // @ApiBearerAuth('JWT-access-token-user')
     @ApiEndpoint({
         summary: `Update status booking`,
         details: `
