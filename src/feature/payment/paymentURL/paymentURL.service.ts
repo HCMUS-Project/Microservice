@@ -4,6 +4,7 @@ import { ClientGrpc } from '@nestjs/microservices';
 import { CreatePaymentUrlRequestDTO } from './paymentURL.dto';
 import { CreatePaymentUrlResponse } from 'src/proto_build/payment/payment/CreatePaymentUrlResponse';
 import { CallBackVnpayResponse } from 'src/proto_build/payment/payment/CallBackVnpayResponse';
+import { CallbackVnpayRequest } from 'src/proto_build/payment/payment/CallbackVnpayRequest';
 
 export interface PaymentService {
     createPaymentUrl(data: CreatePaymentUrlRequestDTO): Observable<CreatePaymentUrlResponse>;
@@ -44,8 +45,22 @@ export class PaymentURLService implements OnModuleInit {
 
     async callbackVnpay(data: any): Promise<CallBackVnpayResponse> {
         try {
+            const dataRequest: CallbackVnpayRequest = {
+                vnpTxnRef: data.vnp_TxnRef,
+                vnpResponseCode: data.vnp_ResponseCode,
+                vnpAmount: data.vnp_Amount,
+                vnpTransactionNo: data.vnp_TransactionNo,
+                vnpBankCode: data.vnp_BankCode,
+                vnpBankTranNo: data.vnp_BankTranNo,
+                vnpCardType: data.vnp_CardType,
+                vnpPayDate: data.vnp_PayDate,
+                vnpOrderInfo: data.vnp_OrderInfo,
+                vnpTransactionStatus: data.vnp_TransactionStatus,
+                vnpSecureHash: data.vnp_SecureHash,
+                vnpTmnCode: data.vnp_TmnCode,
+            };
             const callbackPaymentResponse: CallBackVnpayResponse = await firstValueFrom(
-                this.iPaymentService.callbackVnPay(data),
+                this.iPaymentService.callbackVnPay(dataRequest),
             );
             return callbackPaymentResponse;
         } catch (e) {
