@@ -12,6 +12,7 @@ import { UserNotFoundException } from 'src/common/exceptions/exceptions';
 import {
     CancelOrderRequestDTO,
     CreateOrderRequestDTO,
+    GetAllOrderValueRequestDTO,
     GetOrderRequestDTO,
     ListOrdersForTenantRequestDTO,
     ListOrdersRequestDTO,
@@ -22,6 +23,7 @@ import { GetOrderResponse } from 'src/proto_build/e_commerce/order/GetOrderRespo
 import { ListOrdersResponse } from 'src/proto_build/e_commerce/order/ListOrdersResponse';
 import { UpdateStageOrderResponse } from 'src/proto_build/e_commerce/order/UpdateStageOrderResponse';
 import { CancelOrderResponse } from 'src/proto_build/e_commerce/order/CancelOrderResponse';
+import {GetAllOrderValueResponse} from 'src/proto_build/e_commerce/order/GetAllOrderValueResponse';
 
 interface OrderService {
     createOrder(data: CreateOrderRequestDTO): Observable<CreateOrderResponse>;
@@ -30,6 +32,7 @@ interface OrderService {
     listOrdersForTenant(data: ListOrdersForTenantRequestDTO): Observable<ListOrdersResponse>;
     updateStageOrder(data: UpdateStageOrderRequestDTO): Observable<UpdateStageOrderResponse>;
     cancelOrder(data: CancelOrderRequestDTO): Observable<CancelOrderResponse>;
+    getAllOrderValue(data: GetAllOrderValueRequestDTO): Observable<GetAllOrderValueResponse>
 }
 
 @Injectable()
@@ -150,6 +153,31 @@ export class EcommerceOrderService implements OnModuleInit {
                 this.iOrderService.listOrdersForTenant(data),
             );
             return listOrdersResponse;
+        } catch (e) {
+            // console.log(e)
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
+            // console.log(errorDetails);
+
+            throw new NotFoundException(
+                `Unhandled error type: ${errorDetails.error}`,
+                'Error not recognized',
+            );
+        }
+    }
+
+    async getAllOrderValue(data: GetAllOrderValueRequestDTO): Promise<GetAllOrderValueResponse> {
+        try {
+            // console.log(data);
+            const getAllOrderValueResponse: GetAllOrderValueResponse = await firstValueFrom(
+                this.iOrderService.getAllOrderValue(data),
+            );
+            return getAllOrderValueResponse;
         } catch (e) {
             // console.log(e)
             let errorDetails: { error?: string };

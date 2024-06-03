@@ -16,9 +16,11 @@ import {
     ValidateNested,
 } from 'class-validator';
 import { StageOrder } from 'src/common/enums/stageOrder.enum';
+import {OrderTypeValue} from 'src/common/enums/typeOrderValue.enum';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
 import { CancelOrderRequest } from 'src/proto_build/e_commerce/order/CancelOrderRequest';
 import { CreateOrderRequest } from 'src/proto_build/e_commerce/order/CreateOrderRequest';
+import { GetAllOrderValueRequest } from 'src/proto_build/e_commerce/order/GetAllOrderValueRequest';
 import { GetOrderRequest } from 'src/proto_build/e_commerce/order/GetOrderRequest';
 import { GetOrderResponse } from 'src/proto_build/e_commerce/order/GetOrderResponse';
 import { ListOrdersForTenantRequest } from 'src/proto_build/e_commerce/order/ListOrdersForTenantRequest';
@@ -143,6 +145,23 @@ export class CancelOrder implements CancelOrderRequest {
     id: string;
 }
 export class CancelOrderRequestDTO extends CancelOrder {
+    @IsObject()
+    @IsNotEmpty()
+    @ApiProperty()
+    user: UserDto;
+}
+
+export class GetAllOrderValue implements GetAllOrderValueRequest {
+    @IsString()
+    @IsEnum(OrderTypeValue, {
+        message: 'Must be a valid Order Type: WEEK, YEAR',
+    })
+    @IsNotEmpty()
+    @ApiProperty({ enum: OrderTypeValue, enumName: 'Type of Order Value', example: OrderTypeValue.WEEK })
+    type: OrderTypeValue;
+}
+
+export class GetAllOrderValueRequestDTO extends GetAllOrderValue {
     @IsObject()
     @IsNotEmpty()
     @ApiProperty()

@@ -14,6 +14,8 @@ import { EcommerceOrderService } from './order/order.service';
 import { ReviewController } from './review/review.controller';
 import { EcommerceReviewService } from './review/review.service';
 import { VoucherController } from './voucher/voucher.controller';
+import { InventoryController } from './inventory/inventory.controller';
+import { EcommerceInventoryService } from './inventory/inventory.service';
 
 @Module({
     imports: [ClientsModule],
@@ -24,6 +26,7 @@ import { VoucherController } from './voucher/voucher.controller';
         CartController,
         OrderController,
         ReviewController,
+        InventoryController,
     ],
     providers: [
         {
@@ -51,6 +54,10 @@ import { VoucherController } from './voucher/voucher.controller';
             useClass: EcommerceReviewService,
         },
         {
+            provide: 'GRPC_ECOMMERCE_SERVICE_INVENTORY',
+            useClass: EcommerceInventoryService,
+        },
+        {
             provide: 'GRPC_ECOMMERCE_SERVICE',
             useFactory: (configService: ConfigService) => {
                 return ClientProxyFactory.create({
@@ -65,6 +72,7 @@ import { VoucherController } from './voucher/voucher.controller';
                             'review',
                             'voucher',
                             'order',
+                            'inventory',
                         ],
                         protoPath: join(__dirname, '../../../src/proto/e_commerce/ecommerce.proto'),
                         url: configService.get<string>('ECOMMERCE_SERVICE_URL'),

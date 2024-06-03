@@ -33,6 +33,8 @@ import {
     CancelOrderRequestDTO,
     CreateOrder,
     CreateOrderRequestDTO,
+    GetAllOrderValue,
+    GetAllOrderValueRequestDTO,
     GetOrder,
     GetOrderRequestDTO,
     ListOrders,
@@ -475,6 +477,103 @@ Find all Orders by Query within a domain using an access token. This operation i
             user: userData,
             ...query,
         } as ListOrdersForTenantRequestDTO);
+    }
+
+    @Get('tenant/report')
+    @UseGuards(AccessTokenGuard, RolesGuard)
+    @Roles(Role.TENANT)
+    @ApiBearerAuth('JWT-access-token-tenant')
+    @ApiEndpoint({
+        summary: `Get Report of User in Tenant`,
+        details: `
+## Description
+Find all Orders of User for Tenant to visualize by Query within a domain using an access token. This operation is restricted to user accounts only.
+        
+## Requirements
+- **Access Token**: Must provide a valid tenant access token.
+- **Permissions**: Requires tenant-level permissions.
+- **type**: Must is a valid type 
+`,
+    })
+    @ApiQueryExamples([
+        {
+            name: 'type',
+            description: 'Get Report of User in Tenant by type',
+            example: 'YEAR',
+            required: true,
+        },
+    ])
+    @ApiResponseExample(
+        'read',
+        'find all Orders of User in Domain by type date',
+        {
+            report: [
+                {
+                    type: 'June',
+                    totalOrder: 1,
+                    totalValue: 400000,
+                },
+            ],
+            value: 400000,
+            total: 1,
+        },
+        '/api/ecommerce/order/tenant/report/?type=YEAR',
+    )
+    @ApiErrorResponses(
+        '/api/ecommerce/order/tenant/report/',
+        '/api/ecommerce/order/tenant/report/?type=YEAR',
+        {
+            badRequest: {
+                summary: 'Validation Error',
+                detail: 'type should not be empty, Must be a valid Order Type: WEEK, YEAR, type must be a string',
+            },
+            unauthorized: [
+                {
+                    key: 'token_not_verified',
+                    summary: 'Token not verified',
+                    detail: 'Unauthorized',
+                    error: null,
+                },
+                {
+                    key: 'token_not_found',
+                    summary: 'Token not found',
+                    detail: 'Access Token not found',
+                    error: 'Unauthorized',
+                },
+                {
+                    key: 'unauthorized_role',
+                    summary: 'Role not verified',
+                    detail: 'Unauthorized Role',
+                    error: 'Unauthorized',
+                },
+            ],
+            forbidden: [
+                {
+                    key: 'forbidden_resource',
+                    summary: 'Forbidden resource',
+                    detail: 'Forbidden resource',
+                },
+            ],
+        },
+    )
+    async getAllOrderValue(
+        @Req() req: Request,
+        @Query()
+        query: GetAllOrderValue,
+    ) {
+        const payloadToken = req['user'];
+        // const header = req.headers;
+        const userData = {
+            email: payloadToken.email,
+            domain: payloadToken.domain,
+            role: payloadToken.role,
+            accessToken: payloadToken.accessToken,
+        } as UserDto;
+        // console.log(userData, dataCategory)
+        return await this.ecommerceOrderService.getAllOrderValue({
+            user: userData,
+            ...query,
+        } as GetAllOrderValueRequestDTO);
     }
 
     @Post('update/stage')
