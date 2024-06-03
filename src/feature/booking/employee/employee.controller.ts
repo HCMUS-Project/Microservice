@@ -166,7 +166,7 @@ Create an Employee within a domain using an access token. This operation is rest
         } as CreateEmployeeRequestDTO);
     }
 
-    @Get('find/:id')
+    @Get('find')
     @ApiEndpoint({
         summary: `Find one employee by Id`,
         details: `
