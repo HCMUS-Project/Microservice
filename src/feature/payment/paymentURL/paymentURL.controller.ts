@@ -40,17 +40,17 @@ export class PaymentURLController {
 
     @Post('create')
     @UseGuards(AccessTokenGuard, RolesGuard)
-    @Roles(Role.TENANT)
-    @ApiBearerAuth('JWT-access-token-tenant')
+    @Roles(Role.USER)
+    @ApiBearerAuth('JWT-access-token-user')
     @ApiEndpoint({
         summary: `Create Payment Url for purchase`,
         details: `
 ## Description
-Create Payment Url within a domain using an access token. This operation is restricted to tenant accounts only.
+Create Payment Url within a domain using an access token. This operation is restricted to user accounts only.
         
 ## Requirements
-- **Access Token**: Must provide a valid tenant access token.
-- **Permissions**: Requires tenant-level permissions.
+- **Access Token**: Must provide a valid user access token.
+- **Permissions**: Requires user-level permissions.
 `,
     })
     @ApiBodyExample(CreatePaymentUrl, {
