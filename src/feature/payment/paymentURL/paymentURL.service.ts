@@ -1,10 +1,11 @@
 import { Observable, firstValueFrom, lastValueFrom, take, toArray } from 'rxjs';
-import { Inject, Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { CreatePaymentUrlRequestDTO } from './paymentURL.dto';
 import { CreatePaymentUrlResponse } from 'src/proto_build/payment/payment/CreatePaymentUrlResponse';
 import { CallBackVnpayResponse } from 'src/proto_build/payment/payment/CallBackVnpayResponse';
 import { CallbackVnpayRequest } from 'src/proto_build/payment/payment/CallbackVnpayRequest';
+import {UserNotFoundException} from 'src/common/exceptions/exceptions';
 
 export interface PaymentService {
     createPaymentUrl(data: CreatePaymentUrlRequestDTO): Observable<CreatePaymentUrlResponse>;
@@ -39,7 +40,18 @@ export class PaymentURLService implements OnModuleInit {
             }
             // console.log(errorDetails);
 
-            throw new NotFoundException(e, 'Not found');
+            if (errorDetails.error == 'PERMISSION_DENIED') {
+                throw new UserNotFoundException('Unauthorized Role');
+            }if (errorDetails.error == 'ORDER_EMPTY') {
+                throw new ForbiddenException('Order empty');
+            }if (errorDetails.error == 'PAYMENT_METHOD_NOT_FOUND') {
+                throw new ForbiddenException('Payment method not found');
+            } else {
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
+            }
         }
     }
 

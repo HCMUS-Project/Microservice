@@ -61,12 +61,22 @@ Create a Payment Method within a domain using an access token. This operation is
 - **status** is optional
 `,
     })
-    @ApiBodyExample(CreatePaymentMethod, {})
-    @ApiResponseExample('create', 'create Policy and Term', {}, '/api/tenant/policy/create')
-    @ApiErrorResponses('/api/tenant/policy/create', '/api/tenant/policy/create', {
+    @ApiBodyExample(CreatePaymentMethod, { type: 'vnpay', status: false })
+    @ApiResponseExample(
+        'create',
+        'create Payment Method',
+        {
+            id: 'cbb2345d-90b9-43a0-93c7-a85b63706273',
+            type: 'vnpay',
+            status: false,
+            domain: '30shine.com',
+        },
+        '/api/payment/method/create',
+    )
+    @ApiErrorResponses('/api/payment/method/create', '/api/payment/method/create', {
         badRequest: {
             summary: 'Validation Error',
-            detail: 'tenantId should not be empty, tenantId must be a UUID, policy should not be empty, policy must be a string, term should not be empty, term must be a string',
+            detail: 'type should not be empty, type must be a string',
         },
         unauthorized: [
             {
@@ -88,23 +98,6 @@ Create a Payment Method within a domain using an access token. This operation is
                 error: 'Unauthorized',
             },
         ],
-        forbidden: [
-            {
-                key: 'forbidden_resource',
-                summary: 'Forbidden resource',
-                detail: 'Forbidden resource',
-            },
-            {
-                key: 'already_exists',
-                summary: 'Policy and term already exists',
-                detail: 'Policy and term already exists',
-            },
-            {
-                key: 'invalid_tenantId',
-                summary: 'Invalid tenant id',
-                detail: 'Invalid tenant id',
-            },
-        ],
     })
     async createPaymentMethod(@Req() req: Request, @Body() data: CreatePaymentMethod) {
         const payloadToken = req['user'];
@@ -123,86 +116,38 @@ Create a Payment Method within a domain using an access token. This operation is
     }
 
     @Get('find/all')
-    @UseGuards(AccessTokenGuard)
-    @ApiBearerAuth('JWT-access-token-user')
+    @UseGuards(AccessTokenGuard, RolesGuard)
+    @Roles(Role.TENANT)
     @ApiBearerAuth('JWT-access-token-tenant')
     @ApiEndpoint({
-        summary: `Find one Policy and Term by TenantID`,
+        summary: `Find all payment method by Domain within tenant access`,
         details: `
 ## Description
-Find a Policy and Term by TenantId within a domain using an access token.
-## Requirements
-- **Access Token**: Must provide a valid access token.
+Find all Payment Method within a domain using an access token. 
 `,
     })
-    @ApiParamExamples([
-        {
-            name: 'tenantId',
-            description: 'ID of Tenant in DB',
-            example: 'd4d98d4c-d2f4-4d91-a6e7-2555715ce144',
-            required: true,
-        },
-    ])
     @ApiResponseExample(
         'read',
-        'find a Policy and Term by tenantId',
+        'list all Payment Method',
         {
-            policyAndTerm: {
-                id: '4ce1d0b3-7904-4ead-bcd9-97ceb351116a',
-                tenantId: 'd4d98d4c-d2f4-4d91-a6e7-2555715ce144',
-                policy: 'policy gi do ',
-                term: 'term gi do',
-                createdAt: '2024-05-21T18:33:07.638Z',
-                updatedAt: '2024-05-21T18:33:07.638Z',
-            },
-        },
-        '/api/tenant/policy/find/d4d98d4c-d2f4-4d91-a6e7-2555715ce144',
-    )
-    @ApiErrorResponses(
-        '/api/tenant/policy/find/:tenantId',
-        '/api/tenant/policy/find/d4d98d4c-d2f4-4d91-a6e7-2555715ce144',
-        {
-            badRequest: {
-                summary: 'Validation Error',
-                detail: 'tenantId must be a UUID',
-            },
-
-            unauthorized: [
+            paymentMethods: [
                 {
-                    key: 'token_not_verified',
-                    summary: 'Token not verified',
-                    detail: 'Unauthorized',
-                    error: null,
+                    id: 'ccc48411-812b-43f9-8742-8a9df827462a',
+                    type: 'vnpay',
+                    status: true,
+                    domain: '30shine.com',
                 },
                 {
-                    key: 'token_not_found',
-                    summary: 'Token not found',
-                    detail: 'Access Token not found',
-                    error: 'Unauthorized',
-                },
-                {
-                    key: 'unauthorized_role',
-                    summary: 'Role not verified',
-                    detail: 'Unauthorized Role',
-                    error: 'Unauthorized',
-                },
-                {
-                    key: 'not_found',
-                    summary: 'Policy and term not found',
-                    detail: 'Policy and term not found',
-                    error: 'Unauthorized',
-                },
-            ],
-            forbidden: [
-                {
-                    key: 'forbidden_resource',
-                    summary: 'Forbidden resource',
-                    detail: 'Forbidden resource',
+                    id: '1240400b-7674-4cfd-a2b7-2d8a8ed2af61',
+                    type: 'zalopay',
+                    status: false,
+                    domain: '30shine.com',
                 },
             ],
         },
+        '/api/payment/method/find/all',
     )
-    async findAllPaymentMethod(@Req() req: Request, @Query() data: GetPaymentMethod) {
+    async findAllPaymentMethod(@Req() req: Request) {
         // console.log(data);
         const payloadToken = req['user'];
         // const header = req.headers;
@@ -220,48 +165,44 @@ Find a Policy and Term by TenantId within a domain using an access token.
     }
 
     @Get('find/:id')
-    @UseGuards(AccessTokenGuard)
-    @ApiBearerAuth('JWT-access-token-user')
+    @UseGuards(AccessTokenGuard, RolesGuard)
+    @Roles(Role.TENANT)
     @ApiBearerAuth('JWT-access-token-tenant')
     @ApiEndpoint({
-        summary: `Find one Policy and Term by TenantID`,
+        summary: `Find one Payment Method by ID`,
         details: `
-        ## Description
-        Find a Policy and Term by TenantId within a domain using an access token.
-        ## Requirements
-        - **Access Token**: Must provide a valid access token.
+## Description
+Find a Payment Method by Id within a domain using an access token.
+## Requirements
+- **Access Token**: Must provide a valid access token.
         `,
     })
     @ApiParamExamples([
         {
-            name: 'tenantId',
+            name: 'id',
             description: 'ID of Tenant in DB',
-            example: 'd4d98d4c-d2f4-4d91-a6e7-2555715ce144',
+            example: 'ccc48411-812b-43f9-8742-8a9df827462a',
             required: true,
         },
     ])
     @ApiResponseExample(
         'read',
-        'find a Policy and Term by tenantId',
+        'find a Payment Method by id',
         {
-            policyAndTerm: {
-                id: '4ce1d0b3-7904-4ead-bcd9-97ceb351116a',
-                tenantId: 'd4d98d4c-d2f4-4d91-a6e7-2555715ce144',
-                policy: 'policy gi do ',
-                term: 'term gi do',
-                createdAt: '2024-05-21T18:33:07.638Z',
-                updatedAt: '2024-05-21T18:33:07.638Z',
-            },
+            id: 'ccc48411-812b-43f9-8742-8a9df827462a',
+            type: 'vnpay',
+            status: true,
+            domain: '30shine.com',
         },
-        '/api/tenant/policy/find/d4d98d4c-d2f4-4d91-a6e7-2555715ce144',
+        '/api/payment/method/find/ccc48411-812b-43f9-8742-8a9df827462a',
     )
     @ApiErrorResponses(
-        '/api/tenant/policy/find/:tenantId',
-        '/api/tenant/policy/find/d4d98d4c-d2f4-4d91-a6e7-2555715ce144',
+        '/api/payment/method/find/ccc48411-812b-43f9-8742-8a9df827462a',
+        '/api/payment/method/find/ccc48411-812b-43f9-8742-8a9df827462a',
         {
             badRequest: {
                 summary: 'Validation Error',
-                detail: 'tenantId must be a UUID',
+                detail: 'id should not be empty, id must be a UUID',
             },
 
             unauthorized: [
@@ -283,12 +224,6 @@ Find a Policy and Term by TenantId within a domain using an access token.
                     detail: 'Unauthorized Role',
                     error: 'Unauthorized',
                 },
-                {
-                    key: 'not_found',
-                    summary: 'Policy and term not found',
-                    detail: 'Policy and term not found',
-                    error: 'Unauthorized',
-                },
             ],
             forbidden: [
                 {
@@ -296,10 +231,15 @@ Find a Policy and Term by TenantId within a domain using an access token.
                     summary: 'Forbidden resource',
                     detail: 'Forbidden resource',
                 },
+                {
+                    key: 'not_found',
+                    summary: 'Payment method not found',
+                    detail: 'Payment method not found',
+                },
             ],
         },
     )
-    async findOnePaymentMethod(@Req() req: Request, @Query() data: GetPaymentMethod) {
+    async findOnePaymentMethod(@Req() req: Request, @Param() data: GetPaymentMethod) {
         // console.log(data);
         const payloadToken = req['user'];
         // const header = req.headers;
@@ -321,36 +261,35 @@ Find a Policy and Term by TenantId within a domain using an access token.
     @Roles(Role.TENANT)
     @ApiBearerAuth('JWT-access-token-tenant')
     @ApiEndpoint({
-        summary: `Update a Policy and Term`,
+        summary: `Update a Payment Method`,
         details: `
     ## Description
-Update a Policy and Term within a domain using an access token. This operation is restricted to tenant accounts only.
+Update a Payment Method within a domain using an access token. This operation is restricted to tenant accounts only.
 
 ## Requirements
 - **Access Token**: Must provide a valid tenant access token.
 - **Permissions**: Requires tenant-level permissions.
         `,
     })
-    @ApiBodyExample(UpdatePaymentMethod, {})
+    @ApiBodyExample(UpdatePaymentMethod, {
+        id: 'ccc48411-812b-43f9-8742-8a9df827462a',
+        status: false,
+    })
     @ApiResponseExample(
         'update',
-        'update Policy and Term',
+        'update a Payment Method',
         {
-            policyAndTerm: {
-                id: '4ce1d0b3-7904-4ead-bcd9-97ceb351116a',
-                tenantId: 'd4d98d4c-d2f4-4d91-a6e7-2555715ce144',
-                policy: 'change policy to test',
-                term: 'term gi do',
-                createdAt: '2024-05-21T18:33:07.638Z',
-                updatedAt: '2024-05-22T03:20:25.064Z',
-            },
+            id: 'ccc48411-812b-43f9-8742-8a9df827462a',
+            type: 'vnpay',
+            status: false,
+            domain: '30shine.com',
         },
-        '/api/tenant/policy/update',
+        '/api/payment/method/update',
     )
-    @ApiErrorResponses('/api/tenant/policy/update', '/api/tenant/policy/update', {
+    @ApiErrorResponses('/api/payment/method/update', '/api/payment/method/update', {
         badRequest: {
             summary: 'Validation Error',
-            detail: 'id should not be empty, id must be a UUID, tenantId should not be empty, tenantId must be a UUID',
+            detail: 'id should not be empty, id must be a UUID, status must be a boolean value',
         },
         unauthorized: [
             {
@@ -371,18 +310,17 @@ Update a Policy and Term within a domain using an access token. This operation i
                 detail: 'Unauthorized Role',
                 error: 'Unauthorized',
             },
-            {
-                key: 'not_found',
-                summary: 'Policy and term not found',
-                detail: 'Policy and term not found',
-                error: 'Unauthorized',
-            },
         ],
         forbidden: [
             {
                 key: 'forbidden_resource',
                 summary: 'Forbidden resource',
                 detail: 'Forbidden resource',
+            },
+            {
+                key: 'not_found',
+                summary: 'Payment method not found',
+                detail: 'Payment method not found',
             },
         ],
     })
@@ -407,10 +345,10 @@ Update a Policy and Term within a domain using an access token. This operation i
     @Roles(Role.TENANT)
     @ApiBearerAuth('JWT-access-token-tenant')
     @ApiEndpoint({
-        summary: `Delete one Policy and Term by Id`,
+        summary: `Delete a Payment Method`,
         details: `
 ## Description
-Delete a Policy and Term by Id within a domain using an access token. This operation is restricted to tenant accounts only.
+Delete a Payment Method by Id within a domain using an access token. This operation is restricted to tenant accounts only.
 
 ## Requirements
 - **Access Token**: Must provide a valid tenant access token.
@@ -420,29 +358,20 @@ Delete a Policy and Term by Id within a domain using an access token. This opera
     @ApiParamExamples([
         {
             name: 'id',
-            description: 'ID of Policy and Term',
-            example: '4ce1d0b3-7904-4ead-bcd9-97ceb351116a',
+            description: 'ID of a Payment Method',
+            example: 'ccc48411-812b-43f9-8742-8a9df827462a',
             required: true,
         },
     ])
     @ApiResponseExample(
         'delete',
-        'delete a Policy and Term by Id',
-        {
-            policyAndTerm: {
-                id: '4ce1d0b3-7904-4ead-bcd9-97ceb351116a',
-                tenantId: 'd4d98d4c-d2f4-4d91-a6e7-2555715ce144',
-                policy: 'change policy to test',
-                term: 'term gi do',
-                createdAt: '2024-05-21T18:33:07.638Z',
-                updatedAt: '2024-05-22T03:20:25.064Z',
-            },
-        },
-        '/api/tenant/policy/delete/8fbdf728-dd73-4003-8a6a-4434186c6391',
+        'delete a a Payment Method by Id',
+        { result: 'success' },
+        '/api/payment/method/delete/ccc48411-812b-43f9-8742-8a9df827462a',
     )
     @ApiErrorResponses(
-        '/api/tenant/policy/delete/:id',
-        '/api/tenant/policy/delete/8fbdf728-dd73-4003-8a6a-4434186c6391',
+        '/api/payment/method/delete/:id',
+        '/api/payment/method/delete/ccc48411-812b-43f9-8742-8a9df827462a',
         {
             badRequest: {
                 summary: 'Validation Error',
@@ -468,18 +397,17 @@ Delete a Policy and Term by Id within a domain using an access token. This opera
                     detail: 'Unauthorized Role',
                     error: 'Unauthorized',
                 },
-                {
-                    key: 'not_found',
-                    summary: 'Policy and term not found',
-                    detail: 'Policy and term not found',
-                    error: 'Unauthorized',
-                },
             ],
             forbidden: [
                 {
                     key: 'forbidden_resource',
                     summary: 'Forbidden resource',
                     detail: 'Forbidden resource',
+                },
+                {
+                    key: 'not_found',
+                    summary: 'Payment method not found',
+                    detail: 'Payment method not found',
                 },
             ],
         },

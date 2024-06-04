@@ -40,7 +40,7 @@ export class CreatePaymentUrl implements CreatePaymentUrlRequest {
     @ApiProperty()
     orderProductsId: string[];
 
-    @IsAlpha()
+    @IsArray()
     @IsNotEmpty()
     @ApiProperty()
     orderBookingId: string[];

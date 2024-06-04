@@ -9,9 +9,11 @@ import {
     Query,
     Req,
     Res,
+    UseGuards,
 } from '@nestjs/common';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
 import {
+    ApiBodyExample,
     ApiEndpoint,
     ApiErrorResponses,
     ApiParamExamples,
@@ -21,7 +23,11 @@ import { PaymentURLService } from './paymentURL.service';
 import { CreatePaymentUrl, CreatePaymentUrlRequestDTO } from './paymentURL.dto';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import Logger, { LoggerKey } from 'src/core/logger/interfaces/logger.interface';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { AccessTokenGuard } from 'src/common/guards/token/accessToken.guard';
+import { RolesGuard } from 'src/common/guards/role/role.guard';
+import { Roles } from 'src/common/decorator/role.decorator';
+import { Role } from 'src/common/enums/role.enum';
 
 @Controller('payment/url')
 @ApiTags('payment/url')
@@ -33,82 +39,81 @@ export class PaymentURLController {
     ) {}
 
     @Post('create')
+    @UseGuards(AccessTokenGuard, RolesGuard)
+    @Roles(Role.TENANT)
+    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiEndpoint({
-        summary: `Find one Policy and Term by TenantID`,
+        summary: `Create Payment Url for purchase`,
         details: `
 ## Description
-Find a Policy and Term by TenantId within a domain using an access token.
+Create Payment Url within a domain using an access token. This operation is restricted to tenant accounts only.
+        
 ## Requirements
-- **Access Token**: Must provide a valid access token.
+- **Access Token**: Must provide a valid tenant access token.
+- **Permissions**: Requires tenant-level permissions.
 `,
     })
-    @ApiParamExamples([
-        {
-            name: 'tenantId',
-            description: 'ID of Tenant in DB',
-            example: 'd4d98d4c-d2f4-4d91-a6e7-2555715ce144',
-            required: true,
-        },
-    ])
+    @ApiBodyExample(CreatePaymentUrl, {
+        amount: 100000,
+        description: 'ipsum et',
+        orderProductsId: ['123456789'],
+        orderBookingId: [],
+        paymentMethodId: 'ccc48411-812b-43f9-8742-8a9df827462a',
+        vnpReturnUrl: 'http://localhost:3000/api/payment/url/return',
+    })
     @ApiResponseExample(
-        'read',
-        'find a Policy and Term by tenantId',
+        'create',
+        'create Payment Url',
         {
-            policyAndTerm: {
-                id: '4ce1d0b3-7904-4ead-bcd9-97ceb351116a',
-                tenantId: 'd4d98d4c-d2f4-4d91-a6e7-2555715ce144',
-                policy: 'policy gi do ',
-                term: 'term gi do',
-                createdAt: '2024-05-21T18:33:07.638Z',
-                updatedAt: '2024-05-21T18:33:07.638Z',
-            },
+            paymentUrl:
+                'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=10000000&vnp_Command=pay&vnp_CreateDate=20240604150009&vnp_CurrCode=VND&vnp_IpAddr=1.1.1.1&vnp_Locale=vn&vnp_OrderInfo=ipsum+et&vnp_OrderType=210000&vnp_ReturnUrl=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fpayment%2Furl%2Freturn&vnp_TmnCode=H0OFYK66&vnp_TxnRef=898442-1717488009453&vnp_Version=2.1.0&vnp_SecureHash=a88b639bd0f397032126861940777d26de24c8caf0f279d271ca37c993ac6349137eb4e6a3d20b15b1068b52720e1c4431f33587e43633b75a90f89ec002f18f',
         },
-        '/api/tenant/policy/find/d4d98d4c-d2f4-4d91-a6e7-2555715ce144',
+        '/api/payment/url/create',
     )
-    @ApiErrorResponses(
-        '/api/tenant/policy/find/:tenantId',
-        '/api/tenant/policy/find/d4d98d4c-d2f4-4d91-a6e7-2555715ce144',
-        {
-            badRequest: {
-                summary: 'Validation Error',
-                detail: 'tenantId must be a UUID',
-            },
+    @ApiErrorResponses('/api/payment/url/create', '/api/payment/url/create', {
+        badRequest: {
+            summary: 'Validation Error',
+            detail: 'paymentMethodId should not be empty, paymentMethodId must be a string, amount should not be empty, amount must be a number conforming to the specified constraints, orderProductsId should not be empty, orderProductsId must be an array, orderBookingId should not be empty, orderBookingId must be an array, description should not be empty, description must be a string, vnpReturnUrl should not be empty, vnpReturnUrl must be a string',
+        },
 
-            unauthorized: [
-                {
-                    key: 'token_not_verified',
-                    summary: 'Token not verified',
-                    detail: 'Unauthorized',
-                    error: null,
-                },
-                {
-                    key: 'token_not_found',
-                    summary: 'Token not found',
-                    detail: 'Access Token not found',
-                    error: 'Unauthorized',
-                },
-                {
-                    key: 'unauthorized_role',
-                    summary: 'Role not verified',
-                    detail: 'Unauthorized Role',
-                    error: 'Unauthorized',
-                },
-                {
-                    key: 'not_found',
-                    summary: 'Policy and term not found',
-                    detail: 'Policy and term not found',
-                    error: 'Unauthorized',
-                },
-            ],
-            forbidden: [
-                {
-                    key: 'forbidden_resource',
-                    summary: 'Forbidden resource',
-                    detail: 'Forbidden resource',
-                },
-            ],
-        },
-    )
+        unauthorized: [
+            {
+                key: 'token_not_verified',
+                summary: 'Token not verified',
+                detail: 'Unauthorized',
+                error: null,
+            },
+            {
+                key: 'token_not_found',
+                summary: 'Token not found',
+                detail: 'Access Token not found',
+                error: 'Unauthorized',
+            },
+            {
+                key: 'unauthorized_role',
+                summary: 'Role not verified',
+                detail: 'Unauthorized Role',
+                error: 'Unauthorized',
+            },
+        ],
+        forbidden: [
+            {
+                key: 'forbidden_resource',
+                summary: 'Forbidden resource',
+                detail: 'Forbidden resource',
+            },
+            {
+                key: 'order_empty',
+                summary: 'Order empty',
+                detail: 'Order empty',
+            },
+            {
+                key: 'payment_not_found',
+                summary: 'Payment method not found',
+                detail: 'Payment method not found',
+            },
+        ],
+    })
     async createPaymentUrlRequest(@Req() req: Request, @Body() data: CreatePaymentUrl) {
         const payloadToken = req['user'];
         // const header = req.headers;
