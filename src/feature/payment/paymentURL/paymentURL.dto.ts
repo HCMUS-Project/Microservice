@@ -22,8 +22,8 @@ import {
 import { IsBase64DataURI } from 'src/common/validator/is-base-64-dataURI.validator';
 import { IsSpecificUrl } from 'src/common/validator/is-specific-url.validator';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
-import {CreatePaymentUrlRequest} from 'src/proto_build/payment/payment/CreatePaymentUrlRequest';
- 
+import { CreatePaymentUrlRequest } from 'src/proto_build/payment/payment/CreatePaymentUrlRequest';
+
 export class CreatePaymentUrl implements CreatePaymentUrlRequest {
     @IsString()
     @IsNotEmpty()
