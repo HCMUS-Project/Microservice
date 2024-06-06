@@ -15,6 +15,7 @@ import {
     isURL,
 } from 'class-validator';
 import { IsBase64DataURI } from 'src/common/validator/is-base-64-dataURI.validator';
+import {DomainOrTenantId} from 'src/common/validator/is-either-domain-tenantId.validator';
 import { IsSpecificUrl } from 'src/common/validator/is-specific-url.validator';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
 import { CreateThemeConfigRequest } from 'src/proto_build/tenant/themeConfig/CreateThemeConfigRequest';
@@ -87,17 +88,24 @@ export class CreateThemeConfigRequestDTO extends CreateThemeConfig {
 }
 
 export class FindThemeConfigByTenantId implements FindThemeConfigByTenantIdRequest {
+    @IsUrl()
+    @IsOptional()
+    @ApiProperty()
+    domain: string;
+
     @IsUUID()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     tenantId: string;
+
+    @DomainOrTenantId({
+        message: 'Either domain or tenantId must be provided',
+    })
+    validateDomainOrTenantId: any; // This is needed to trigger the custom validator
 }
 
 export class FindThemeConfigByTenantIdRequestDTO extends FindThemeConfigByTenantId {
-    @IsObject()
-    @IsNotEmpty()
-    @ApiProperty()
-    user: UserDto;
+ 
 }
 
 export class UpdateThemeConfig implements UpdateThemeConfigRequest {

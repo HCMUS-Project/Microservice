@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/common/guards/token/accessToken.guard';
 import { RolesGuard } from 'src/common/guards/role/role.guard';
@@ -143,7 +143,7 @@ Create a them config within a domain using an access token. This operation is re
         } as CreateThemeConfigRequestDTO);
     }
 
-    @Get('find/:tenantId')
+    @Get('find')
     @ApiEndpoint({
         summary: `Find one Theme Config by TenantID`,
         details: `
@@ -152,12 +152,18 @@ Find a Theme Config by TenantId within a domain.
 ## Requirements
 `,
     })
-    @ApiParamExamples([
+    @ApiQueryExamples([
         {
             name: 'tenantId',
             description: 'ID of Tenant in DB',
             example: 'd4d98d4c-d2f4-4d91-a6e7-2555715ce144',
-            required: true,
+            required: false,
+        },
+        {
+            name: 'domain',
+            description: 'domain',
+            example: '30shine.com',
+            required: false,
         },
     ])
     @ApiResponseExample(
@@ -227,7 +233,7 @@ Find a Theme Config by TenantId within a domain.
             ],
         },
     )
-    async findThemeConfigByTenantId(@Req() req: Request, @Param() data: FindThemeConfigByTenantId) {
+    async findThemeConfigByTenantId(@Req() req: Request, @Query() data: FindThemeConfigByTenantId) {
         return await this.tenantThemeConfigService.findThemeConfigByTenantId({
             ...data,
         } as FindThemeConfigByTenantIdRequestDTO);

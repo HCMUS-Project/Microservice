@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/common/guards/token/accessToken.guard';
 import { RolesGuard } from 'src/common/guards/role/role.guard';
@@ -10,6 +10,7 @@ import {
     ApiEndpoint,
     ApiErrorResponses,
     ApiParamExamples,
+    ApiQueryExamples,
     ApiResponseExample,
 } from 'src/common/decorator/swagger.decorator';
 import { TenantPolictyAndTermService } from './policyAndTerm.service';
@@ -126,7 +127,7 @@ Create a policy and term within a domain using an access token. This operation i
         } as CreatePolicyAndTermRequestDTO);
     }
 
-    @Get('find/:tenantId')
+    @Get('find')
     @ApiEndpoint({
         summary: `Find one Policy and Term by TenantID`,
         details: `
@@ -135,12 +136,18 @@ Find a Policy and Term by TenantId within a domain.
 ## Requirements 
 `,
     })
-    @ApiParamExamples([
+    @ApiQueryExamples([
         {
             name: 'tenantId',
             description: 'ID of Tenant in DB',
             example: 'd4d98d4c-d2f4-4d91-a6e7-2555715ce144',
-            required: true,
+            required: false,
+        },
+        {
+            name: 'domain',
+            description: 'domain',
+            example: '30shine.com',
+            required: false,
         },
     ])
     @ApiResponseExample(
@@ -186,7 +193,7 @@ Find a Policy and Term by TenantId within a domain.
     )
     async findPolicyAndTermByTenantId(
         @Req() req: Request,
-        @Param() data: FindPolicyAndTermByTenantId,
+        @Query() data: FindPolicyAndTermByTenantId,
     ) {
         return await this.tenantPolictyAndTermService.findPolicyAndTermByTenantId({
             ...data,

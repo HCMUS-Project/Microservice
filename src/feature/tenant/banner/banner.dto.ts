@@ -17,6 +17,7 @@ import {
 } from 'class-validator';
 import { IsBase64DataURI } from 'src/common/validator/is-base-64-dataURI.validator';
 import {IsEitherUrlOrBase64DataURI} from 'src/common/validator/is-either-base-64-dataURI-or-URL.validator';
+import {DomainOrTenantId} from 'src/common/validator/is-either-domain-tenantId.validator';
 import { IsSpecificUrl } from 'src/common/validator/is-specific-url.validator';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
 import { CreateBannerRequest } from 'src/proto_build/tenant/banner/CreateBannerRequest';
@@ -60,17 +61,24 @@ export class CreateBannerRequestDTO extends CreateBanner {
 }
 
 export class FindBannerByTenantId implements FindBannerByTenantIdRequest {
+    @IsUrl()
+    @IsOptional()
+    @ApiProperty()
+    domain: string;
+
     @IsUUID()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     tenantId: string;
+
+    @DomainOrTenantId({
+        message: 'Either domain or tenantId must be provided',
+    })
+    validateDomainOrTenantId: any; // This is needed to trigger the custom validator
 }
 
 export class FindBannerByTenantIdRequestDTO extends FindBannerByTenantId {
-    @IsObject()
-    @IsNotEmpty()
-    @ApiProperty()
-    user: UserDto;
+
 }
 
 export class UpdateBanner implements UpdateBannerRequest {

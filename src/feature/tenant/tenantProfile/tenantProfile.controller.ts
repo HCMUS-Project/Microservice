@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/common/guards/token/accessToken.guard';
 import { RolesGuard } from 'src/common/guards/role/role.guard';
@@ -139,10 +139,7 @@ Create a profile tenant within a domain using an access token. This operation is
         } as CreateTenantProfileRequestDTO);
     }
 
-    @Get('find/:tenantId')
-    @UseGuards(AccessTokenGuard)
-    @ApiBearerAuth('JWT-access-token-user')
-    @ApiBearerAuth('JWT-access-token-tenant')
+    @Get('find') 
     @ApiEndpoint({
         summary: `Find one Tenant Profile by ID`,
         details: `
@@ -152,12 +149,18 @@ Find a Tenant Profile by Id within a domain using an access token.
 - **Access Token**: Must provide a valid access token.
 `,
     })
-    @ApiParamExamples([
+    @ApiQueryExamples([
         {
             name: 'tenantId',
             description: 'ID of Tenant in DB',
             example: 'd4d98d4c-d2f4-4d91-a6e7-2555715ce144',
-            required: true,
+            required: false,
+        },
+        {
+            name: 'domain',
+            description: 'domain',
+            example: '30shine.com',
+            required: false,
         },
     ])
     @ApiResponseExample(
@@ -227,20 +230,20 @@ Find a Tenant Profile by Id within a domain using an access token.
     )
     async findTenantProfileByTenantId(
         @Req() req: Request,
-        @Param() data: FindTenantProfileByTenantId,
+        @Query() data: FindTenantProfileByTenantId,
     ) {
         // console.log(data);
-        const payloadToken = req['user'];
-        // const header = req.headers;
-        const userData = {
-            email: payloadToken.email,
-            domain: payloadToken.domain,
-            role: payloadToken.role,
-            accessToken: payloadToken.accessToken,
-        } as UserDto;
+        // const payloadToken = req['user'];
+        // // const header = req.headers;
+        // const userData = {
+        //     email: payloadToken.email,
+        //     domain: payloadToken.domain,
+        //     role: payloadToken.role,
+        //     accessToken: payloadToken.accessToken,
+        // } as UserDto;
         // console.log(userData, dataCategory)
         return await this.tenantTenantProfileService.findTenantProfileByTenantId({
-            user: userData,
+            // user: userData,
             ...data,
         } as FindTenantProfileByTenantIdRequestDTO);
     }

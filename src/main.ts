@@ -93,6 +93,7 @@ async function bootstrap() {
             transform: true, // Automatically transform payloads to be objects typed according to their DTO classes
             whitelist: true, // Automatically remove non-whitelisted properties (those without any decorators in DTO)
             forbidNonWhitelisted: true, // Throw errors if non-whitelisted values are provided
+            errorHttpStatusCode: 400, // Ensure HTTP 400 for validation errors
         }),
     );
 

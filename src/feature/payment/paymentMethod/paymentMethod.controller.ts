@@ -118,7 +118,9 @@ Create a Payment Method within a domain using an access token. This operation is
     @Get('find/all')
     @UseGuards(AccessTokenGuard)
     // @Roles(Role.TENANT)
-    // @ApiBearerAuth('JWT-access-token-tenant')
+    @ApiBearerAuth('JWT-access-token-tenant')
+    @ApiBearerAuth('JWT-access-token-user')
+
     @ApiEndpoint({
         summary: `Find all payment method by Domain within tenant access`,
         details: `
@@ -166,6 +168,8 @@ Find all Payment Method within a domain using an access token.
 
     @Get('find/:id')
     @UseGuards(AccessTokenGuard)
+    @ApiBearerAuth('JWT-access-token-tenant')
+    @ApiBearerAuth('JWT-access-token-user')
     // @Roles(Role.TENANT)
     // @ApiBearerAuth('JWT-access-token-tenant')
     @ApiEndpoint({

@@ -16,6 +16,7 @@ import {
     isURL,
 } from 'class-validator';
 import { IsBase64DataURI } from 'src/common/validator/is-base-64-dataURI.validator';
+import {DomainOrTenantId} from 'src/common/validator/is-either-domain-tenantId.validator';
 import { IsSpecificUrl } from 'src/common/validator/is-specific-url.validator';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
 import { CreatePolicyAndTermRequest } from 'src/proto_build/tenant/policyAndTerm/CreatePolicyAndTermRequest';
@@ -48,17 +49,24 @@ export class CreatePolicyAndTermRequestDTO extends CreatePolicyAndTerm {
 }
 
 export class FindPolicyAndTermByTenantId implements FindPolicyAndTermByTenantIdRequest {
+    @IsUrl()
+    @IsOptional()
+    @ApiProperty()
+    domain: string;
+
     @IsUUID()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     tenantId: string;
+
+    @DomainOrTenantId({
+        message: 'Either domain or tenantId must be provided',
+    })
+    validateDomainOrTenantId: any; // This is needed to trigger the custom validator
 }
 
 export class FindPolicyAndTermByTenantIdRequestDTO extends FindPolicyAndTermByTenantId {
-    @IsObject()
-    @IsNotEmpty()
-    @ApiProperty()
-    user: UserDto;
+ 
 }
 
 export class UpdatePolicyAndTerm implements UpdatePolicyAndTermRequest {
