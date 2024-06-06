@@ -86,6 +86,7 @@ Create an Order within a domain using an access token. This operation is restric
         phone: '+84912345678',
         address: '123 abc, def, gh',
         voucherId: '384589ac-108a-4972-bbed-49771df4c7cb',
+        paymentMethod: '384589ac-108a-4972-bbed-49771df4c7cb',
     })
     @ApiResponseExample(
         'create',

@@ -61,6 +61,13 @@ export class CreateOrder implements CreateOrderRequest {
     @IsOptional()
     @ApiProperty()
     voucherId: string;
+
+    @IsUUID()
+    @IsNotEmpty()
+    @ApiProperty({
+        description: "Id of the payment method, 'COD' 'VNPAY' is supported",
+    })
+    paymentMethod: string;
 }
 
 export class CreateOrderRequestDTO extends CreateOrder {
