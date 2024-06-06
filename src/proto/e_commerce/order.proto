@@ -32,6 +32,7 @@ message CreateOrderRequest{
 
 message CreateOrderResponse{
     string order_id = 1;
+    string payment_url = 2;
 }
 
 message GetOrderRequest{
