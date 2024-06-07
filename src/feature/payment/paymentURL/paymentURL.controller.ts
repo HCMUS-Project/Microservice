@@ -53,6 +53,7 @@ Create Payment Url within a domain using an access token. This operation is rest
 - **Permissions**: Requires user-level permissions.
 `,
     })
+    // console
     @ApiBodyExample(CreatePaymentUrl, {
         amount: 100000,
         description: 'ipsum et',
