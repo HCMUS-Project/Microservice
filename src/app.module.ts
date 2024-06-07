@@ -21,10 +21,19 @@ import { AuthModule } from './feature/auth/auth.module';
 import { EcommerceModule } from './feature/ecommerce/ecommerce.module';
 import { BookingModule } from './feature/booking/booking.module';
 import { TenantModule } from './feature/tenant/tenant.module';
-import {PaymentModule} from './feature/payment/payment.module';
+import { PaymentModule } from './feature/payment/payment.module';
+import { AdminModule } from './feature/admin/admin.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+import { WellKnownController } from './wellknown.controller';
 
 @Module({
     imports: [
+        ServeStaticModule.forRoot({
+            rootPath: join(__dirname,'..', 'public'),
+            // serveRoot: '/well-known',
+            // exclude: ['/'],
+        }),
         CacheModule,
         ConfigsModule,
         ContextModule,
@@ -35,7 +44,9 @@ import {PaymentModule} from './feature/payment/payment.module';
         EcommerceModule,
         BookingModule,
         TenantModule,
-        PaymentModule
+        PaymentModule,
+        AdminModule,
+
         // CacheModule.registerAsync(RedisOptions)
     ],
     controllers: [AppController],

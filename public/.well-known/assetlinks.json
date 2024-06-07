@@ -1,0 +1,12 @@
+[
+    {
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.example.mobilefinalhcmus",
+        "sha256_cert_fingerprints": [
+          "7B:33:86:6E:92:9C:02:48:0F:FD:70:F5:E1:B5:05:74:81:47:B7:EA:88:C4:84:8A:1B:6F:EE:BF:85:70:79:FA"
+        ]
+      }
+    }
+  ]
