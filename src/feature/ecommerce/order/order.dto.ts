@@ -68,6 +68,11 @@ export class CreateOrder implements CreateOrderRequest {
         description: "Id of the payment method, 'COD' 'VNPAY' is supported",
     })
     paymentMethod: string;
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty()
+    paymentCallbackUrl: string;
 }
 
 export class CreateOrderRequestDTO extends CreateOrder {

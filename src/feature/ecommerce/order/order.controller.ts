@@ -78,20 +78,21 @@ Create an Order within a domain using an access token. This operation is restric
 `,
     })
     @ApiBodyExample(CreateOrder, {
-        productsId: [
-            'c886a59c-7293-4239-8052-eb611b68e890',
-            'f9e75324-a8f4-4cbd-af6d-0210c5e9a5d9',
-        ],
-        quantities: [3, 5],
+        productsId: ['7f64c25f-8d65-4a85-85e9-2bc1fdcfbf9b'],
+        quantities: [2],
         phone: '+84912345678',
         address: '123 abc, def, gh',
-        voucherId: '384589ac-108a-4972-bbed-49771df4c7cb',
-        paymentMethod: '384589ac-108a-4972-bbed-49771df4c7cb',
+        paymentMethod: '1240400b-7674-4cfd-a2b7-2d8a8ed2af61',
+        paymentCallbackUrl: 'http://localhost:3000/api/payment/url/return?domain=example.com',
     })
     @ApiResponseExample(
         'create',
         'create an Order',
-        { orderId: '65506ee4-5dc5-40d3-a1a7-9481b48c1cbc' },
+        {
+            orderId: '3c542562-62a7-46a7-a0af-1cf9c19e306f',
+            paymentUrl:
+                'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=20000000&vnp_Command=pay&vnp_CreateDate=20240607210833&vnp_CurrCode=VND&vnp_IpAddr=1.1.1.1&vnp_Locale=vn&vnp_OrderInfo=Payment+for+order&vnp_OrderType=210000&vnp_ReturnUrl=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fpayment%2Furl%2Freturn&vnp_TmnCode=H0OFYK66&vnp_TxnRef=361911-1717769313997&vnp_Version=2.1.0&vnp_SecureHash=9db82de90132a0a6c44fe1170e265ea116da75efd18d91d72b6d5c77ec010476049ff4f2511d4cd62d9b3707e03254a441fefc054042bac7389e7b6edfd70625',
+        },
         '/api/ecommerce/order/create',
     )
     @ApiErrorResponses('/api/ecommerce/order/create', '/api/ecommerce/order/create', {

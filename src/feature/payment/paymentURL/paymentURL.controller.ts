@@ -58,8 +58,8 @@ Create Payment Url within a domain using an access token. This operation is rest
         description: 'ipsum et',
         orderProductsId: ['123456789'],
         orderBookingId: [],
-        paymentMethodId: 'ccc48411-812b-43f9-8742-8a9df827462a',
-        vnpReturnUrl: 'http://localhost:3000/api/payment/url/return',
+        paymentMethodId: '1240400b-7674-4cfd-a2b7-2d8a8ed2af61',
+        vnpReturnUrl: 'http://localhost:3000/api/payment/url/return?domain=example.com',
     })
     @ApiResponseExample(
         'create',
