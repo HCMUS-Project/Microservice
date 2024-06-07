@@ -132,12 +132,16 @@ Create Payment Url within a domain using an access token. This operation is rest
 
     @Get('return')
     async getPaymentUrl(@Query() data: any, @Res() reply: FastifyReply) {
+        // console.log(data);
         const resultCallback = await this.paymentURLService.callbackVnpay(data);
-
+        let addHttpDomain = resultCallback.urlRedirect;
+        if (!addHttpDomain.startsWith('http')) {
+            addHttpDomain = 'http://' + addHttpDomain;
+        }
         reply
             .status(HttpStatus.FOUND)
             .redirect(
-                resultCallback.urlRedirect +
+                addHttpDomain +
                     '/result?message=' +
                     resultCallback.message +
                     '&status=' +
