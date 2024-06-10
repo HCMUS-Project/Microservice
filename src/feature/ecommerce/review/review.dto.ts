@@ -79,7 +79,7 @@ export class UpdateReview implements UpdateReviewRequest {
     @ApiProperty()
     userId: string;
 
-    @IsInt()
+    @IsNumber()
     @Min(0)
     @IsNotEmpty()
     @ApiProperty()
