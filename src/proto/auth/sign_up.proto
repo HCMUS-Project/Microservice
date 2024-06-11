@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "user_token.proto";
+
 package signUp;
 
 service SignUpService {
@@ -13,11 +15,11 @@ message SignUpRequest {
   string domain = 4;
   string device = 5;
   string phone = 6;
-  
-  // string gender = 6;
-  // string address = 7;
-  // int32 age = 8;
-  // string name = 9;
+  optional userToken.Role role = 7;
+  // string gender = 8;
+  // string address = 9;
+  // int32 age = 10;
+  // string name = 11;
 }
 
 message SignUpResponse {

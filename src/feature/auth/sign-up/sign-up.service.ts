@@ -41,6 +41,10 @@ export class AuthServiceSignUp implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'USER_ALREADY_REGISTER') {
                 throw new ForbiddenException('User already registered', 'Forbidden');
+            } else if (errorDetails.error == 'TENANT_ALREADY_REGISTER') {
+                throw new ForbiddenException('Tenant already registered', 'Forbidden');
+            } else if (errorDetails.error == 'EMAIL_ALREADY_REGISTER') {
+                throw new ForbiddenException('Email already registered', 'Forbidden');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,

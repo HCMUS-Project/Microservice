@@ -11,6 +11,12 @@ import {
     ApiTags,
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import {
+    ApiBodyExample,
+    ApiEndpoint,
+    ApiErrorResponses,
+    ApiResponseExample,
+} from 'src/common/decorator/swagger.decorator';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -21,99 +27,48 @@ export class SignUpController {
     ) {}
 
     @Post('sign-up')
-    @ApiOperation({
-        summary: 'Sign up into user site',
-        description: `
-## Must have domain in body,
-## Must have device in body`,
+    @ApiEndpoint({
+        summary: `Sign Up`,
+        details: `
+## Description
+Sign Up within a domain. 
+        
+## Optional
+- **role**: Must provide a valid role if want to sign up by tenant.
+`,
     })
-    @ApiBody({
-        type: SignUpRequestDto,
-        examples: {
-            user_1: {
-                value: {
-                    email: 'nguyenvukhoi150402@gmail.com',
-                    username: 'vukhoi5a',
-                    phone: '84931056895',
-                    password: 'A@a123456',
-                    domain: '30shine.com',
-                    device: 'web',
-                } as SignUpRequestDto,
-            },
-            user_2: {
-                value: {
-                    email: 'volehoai070902@gmail.com',
-                    username: 'vukhoi123',
-                    phone: '84944236565',
-                    password: '1232@asdS',
-                    domain: '24shine.com',
-                    device: 'mobile',
-                } as SignUpRequestDto,
-            },
-        },
+    @ApiBodyExample(SignUpRequestDto, {
+        email: 'nguyenvukhoi150402@gmail.com',
+        username: 'nguyenvukhoi150402',
+        phone: '84931056895',
+        password: 'A@a123456',
+        domain: '30shine.com',
+        device: 'web',
+        role: 2,
     })
-    @ApiCreatedResponse({
-        description: 'User created successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    created_user: {
-                        summary: 'Response after sign up successfully',
-                        value: {
-                            statusCode: 201,
-                            timestamp: '2024-04-24T06:51:55.536Z',
-                            path: '/api/auth/sign-up',
-                            message: null,
-                            error: null,
-                            data: {
-                                result: 'success',
-                            },
-                        },
-                    },
-                },
-            },
+    @ApiResponseExample('create', 'Sign Up', { result: 'success' }, '/api/auth/sign-up')
+    @ApiErrorResponses('/api/auth/sign-up', '/api/auth/sign-up', {
+        badRequest: {
+            summary: 'Validation Error',
+            detail: 'email should not be empty, email must be an email, username should not be empty, username must be a string, phone should not be empty, Must be VietNam Phone Number (84..), phone must be a string, Password must have non-empty password., domain should not be empty, domain must be a valid domain name, device should not be empty, device must be a string',
         },
-    })
-    @ApiBadRequestResponse({
-        description: 'Validation failed',
-        content: {
-            'application/json': {
-                examples: {
-                    all_field_missing: {
-                        summary: 'Response if all field missing and not valid with request',
-                        value: {
-                            statusCode: 400,
-                            timestamp: '2024-04-26T06:55:35.138Z',
-                            path: '/api/auth/sign-up',
-                            message:
-                                'email should not be empty, email must be an email, username should not be empty, phone should not be empty, Must be VietNam Phone Number (84..), Password must have at least 8 characters, 1 lowercase letters, 1 uppercase letters, 1 numbers, 1 symbols., domain should not be empty, domain must be a valid domain name, device should not be empty',
-                            error: 'Bad Request',
-                            data: null,
-                        },
-                    },
-                },
+        forbidden: [
+            {
+                key: 'user_already_registered',
+                summary: 'User already registered',
+                detail: 'User already registered',
             },
-        },
-    })
-    @ApiForbiddenResponse({
-        description: 'Forbidden Request',
-        content: {
-            'application/json': {
-                examples: {
-                    all_field_missing: {
-                        summary: 'Response if user already existed',
-                        value: {
-                            statusCode: 403,
-                            timestamp: '2024-04-24T07:14:49.936Z',
-                            path: '/api/auth/sign-up',
-                            message: 'User already registered',
-                            error: 'Forbidden',
-                            data: null,
-                        },
-                    },
-                },
+            {
+                key: 'tenant_already_registered',
+                summary: 'Tenant already registered',
+                detail: 'Tenant already registered',
             },
-        },
+            {
+                key: 'email_already_registered',
+                summary: 'Email already registered',
+                detail: 'Email already registered',
+            },
+        ],
     })
     async signUp(@Body() data: SignUpRequestDto) {
         return await this.authServiceSignUp.signUp(data);

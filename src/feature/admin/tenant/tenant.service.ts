@@ -77,6 +77,9 @@ export class AdminServiceTenant implements OnModuleInit {
             } else if (errorDetails.error == 'TENANT_NOT_VERIFIED') {
                 throw new ForbiddenException('Tenant not verified');
             }
+            else if (errorDetails.error == 'TENANT_ALREADY_VERIFIED') {
+                throw new ForbiddenException('Tenant already verified');
+            }
             {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,

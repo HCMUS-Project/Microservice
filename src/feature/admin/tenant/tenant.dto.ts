@@ -1,4 +1,5 @@
 import {
+    IsBoolean,
     IsEmail,
     IsEnum,
     IsInt,
@@ -18,12 +19,16 @@ import { ApiProperty } from '@nestjs/swagger';
 import {GetTenantRequest} from 'src/proto_build/admin/tenant/GetTenantRequest';
 import {VerifyRequest} from 'src/proto_build/admin/tenant/VerifyRequest';
 import {SetTenantStageRequest} from 'src/proto_build/admin/tenant/SetTenantStageRequest';
+import {Type} from 'class-transformer';
+import {ToBoolean} from 'src/common/decorator/toBoolean.decorator';
 
 export class GetTenant implements GetTenantRequest {
-    @IsString()
+    @IsBoolean()
     @IsOptional()
+    // @Type(() => Boolean)
+    @ToBoolean()
     @ApiProperty()
-    type: string;
+    type: boolean;
 }
 
 export class GetTenantRequestDTO extends GetTenant {
@@ -44,10 +49,11 @@ export class Verify implements VerifyRequest {
     @ApiProperty()
     email: string;
 
-    @IsString()
+    // @IsString()
+    @IsBoolean()
     @IsNotEmpty()
     @ApiProperty()
-    isVerify: string;
+    isVerify: boolean;
 }
 
 export class VerifyRequestDTO extends Verify {

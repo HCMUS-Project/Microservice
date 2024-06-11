@@ -11,6 +11,11 @@ import { AccessTokenGuard } from 'src/common/guards/token/accessToken.guard';
 import { UserDto } from '../../commonDTO/user.dto';
 import { AuthServiceRefreshToken } from './refresh-token.service';
 import { RefreshTokenGuard } from 'src/common/guards/token/refreshToken.guard';
+import {
+    ApiEndpoint,
+    ApiErrorResponses,
+    ApiResponseExample,
+} from 'src/common/decorator/swagger.decorator';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -20,70 +25,63 @@ export class RefreshTokenController {
         private readonly authServiceRefreshToken: AuthServiceRefreshToken,
     ) {}
 
-    @UseGuards(RefreshTokenGuard)
     @Post('refresh-token')
-    @ApiOperation({
-        summary: 'Refresh token',
-        description: `
-## Mustn't have body,
-## Using refresh token (to test add in the right corner)`,
-    })
+    @UseGuards(RefreshTokenGuard)
     @ApiBearerAuth('JWT-refresh-token')
-    @ApiCreatedResponse({
-        description: 'Refresh Token successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after get refresh token successfully',
-                        value: {
-                            statusCode: 201,
-                            timestamp: '2024-04-24T08:33:21.235Z',
-                            path: '/api/auth/refresh-token',
-                            message: null,
-                            error: null,
-                            data: {
-                                accessToken:
-                                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkb21haW4iOiIzMHNoaW5lLmNvbSIsImVtYWlsIjoibmd1eWVudnVraG9pMTUwNDAyQGdtYWlsLmNvbSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzEzOTQ3NjAxLCJleHAiOjE3MTM5NDg1MDF9._yiv05zWcAppiTCkOmj88p8Y_0Ln7rQ8KjbrueIk4gU',
-                                refreshToken:
-                                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkb21haW4iOiIzMHNoaW5lLmNvbSIsImVtYWlsIjoibmd1eWVudnVraG9pMTUwNDAyQGdtYWlsLmNvbSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzEzOTQ3NjAxLCJleHAiOjE3MTQwMzQwMDF9.KacM6EceSfFV3ULk_tnktN096y2EmOUGcppdJY0utNs',
-                            },
-                        },
-                    },
-                },
-            },
-        },
+    @ApiEndpoint({
+        summary: `Refresh Token`,
+        details: `
+## Description
+Get new couple token (refresh and access). 
+        
+## Requirements
+- **Refresh Token**: Must provide a valid refresh token.
+`,
     })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    user_not_verified: {
-                        summary: 'No auth header',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-24T08:44:46.091Z',
-                            path: '/api/auth/refresh-token',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
-                        },
-                    },
-                    access_token_not_found: {
-                        summary: 'Refresh token not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-24T08:45:10.751Z',
-                            path: '/api/auth/refresh-token',
-                            message: 'Refresh Token not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                },
-            },
+    @ApiResponseExample(
+        'update',
+        'Refresh Token',
+        {
+            accessToken:
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkb21haW4iOiIzMHNoaW5lLmNvbSIsImVtYWlsIjoibmd1eWVudnVraG9pMTUwNDAyQGdtYWlsLmNvbSIsInJvbGUiOjIsImlhdCI6MTcxODA4NTMwMCwiZXhwIjoxNzE4MDg4OTAwfQ.JTIWjcjT41e8qrdD__EU6su81_k_jUYUbMFktzqjd18',
+            refreshToken:
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkb21haW4iOiIzMHNoaW5lLmNvbSIsImVtYWlsIjoibmd1eWVudnVraG9pMTUwNDAyQGdtYWlsLmNvbSIsInJvbGUiOjIsImlhdCI6MTcxODA4NTMwMCwiZXhwIjoxNzE4MTcxNzAwfQ.nas_WI6tgfTVW7Rwy0yiBo3N1J28tBkMEVJzWB905OI',
         },
+        '/api/auth/refresh-token',
+    )
+    @ApiErrorResponses('/api/auth/refresh-token', '/api/auth/refresh-token', {
+        unauthorized: [
+            {
+                key: 'token_not_verified',
+                summary: 'Token not verified',
+                detail: 'Unauthorized',
+                error: null,
+            },
+            {
+                key: 'token_not_found',
+                summary: 'Token not found',
+                detail: 'Access Token not found',
+                error: 'Unauthorized',
+            },
+            {
+                key: 'unauthorized_role',
+                summary: 'Role not verified',
+                detail: 'Unauthorized Role',
+                error: 'Unauthorized',
+            },
+        ],
+        forbidden: [
+            {
+                key: 'invalid_access_token',
+                summary: 'Invalid access token',
+                detail: 'Invalid access token',
+            },
+            {
+                key: 'token_expired',
+                summary: 'Refresh token expired',
+                detail: 'Refresh token expired',
+            },
+        ],
     })
     async refreshToken(@Req() req: Request) {
         const payloadToken = req['user'];

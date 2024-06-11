@@ -19,17 +19,25 @@ import {
     ApiBodyExample,
     ApiEndpoint,
     ApiErrorResponses,
+    ApiQueryExamples,
     ApiResponseExample,
 } from 'src/common/decorator/swagger.decorator';
 
 import { UserDto } from 'src/feature/commonDTO/user.dto';
-import { GetTenant, GetTenantRequestDTO, Verify, VerifyRequestDTO } from './tenant.dto';
+import {
+    GetTenant,
+    GetTenantRequestDTO,
+    SetTenantStage,
+    SetTenantStageRequestDTO,
+    Verify,
+    VerifyRequestDTO,
+} from './tenant.dto';
 
 @Controller('admin/tenant')
 @ApiTags('admin/tenant')
 export class TenantController {
     constructor(
-        @Inject('GRPC_AUTH_SERVICE_TENANT')
+        @Inject('GRPC_ADMIN_SERVICE_TENANT')
         private readonly adminServiceTenant: AdminServiceTenant,
     ) {}
 
@@ -49,8 +57,33 @@ Get a Tenant information within a domain using an access token. This operation i
 - **type**: type is example
 `,
     })
-    @ApiResponseExample('read', 'read Tenant from Admin site', {}, '/')
-    @ApiErrorResponses('/', '/api/', {
+    @ApiQueryExamples([
+        {
+            name: 'type',
+            description: 'type of Tenant active: true or false',
+            example: true,
+            required: false,
+        },
+    ])
+    @ApiResponseExample(
+        'read',
+        'read Tenant from Admin site',
+        {
+            tenant: [
+                {
+                    email: 'nguyenvukhoi150402@gmail.com',
+                    username: 'nguyenvukhoi150402',
+                    role: '2',
+                    domain: '30shine.com',
+                    isActive: false,
+                    isVerified: true,
+                    isRejected: false,
+                },
+            ],
+        },
+        '/api/admin/tenant/get',
+    )
+    @ApiErrorResponses('/api/admin/tenant/get', '/api/admin/tenant/get', {
         badRequest: {
             summary: 'Validation Error',
             detail: '',
@@ -80,7 +113,7 @@ Get a Tenant information within a domain using an access token. This operation i
                 key: 'forbidden_resource',
                 summary: 'Forbidden resource',
                 detail: 'Forbidden resource',
-            }, 
+            },
         ],
     })
     async getTenant(@Req() req: Request, @Query() data: GetTenant) {
@@ -92,7 +125,7 @@ Get a Tenant information within a domain using an access token. This operation i
             role: payloadToken.role,
             accessToken: payloadToken.accessToken,
         } as UserDto;
-        // console.log(payloadToken, header);
+        console.log(data, userData);
         return await this.adminServiceTenant.getTenant({
             ...data,
             user: userData,
@@ -113,15 +146,34 @@ Verify a Tenant within a domain using an access token. This operation is restric
 - **Access Token**: Must provide a valid admin access token.
 - **Permissions**: Requires admin-level permissions.
 `,
-    })  
-    @ApiBodyExample(Verify, {
-
     })
-    @ApiResponseExample('read', 'read Tenant from Admin site', {}, '/')
-    @ApiErrorResponses('/', '/api/', {
+    @ApiBodyExample(Verify, {
+        domain: '30shine.com',
+        email: 'nguyenvukhoi150402@gmail.com',
+        isVerify: true,
+    })
+    @ApiResponseExample(
+        'update',
+        'Verify Tenant from Admin Site',
+        {
+            tenant: {
+                email: 'nguyenvukhoi150402@gmail.com',
+                username: 'nguyenvukhoi150402',
+                role: '2',
+                domain: '30shine.com',
+                isDeleted: false,
+                isActive: true,
+                isVerified: true,
+                isRejected: false,
+                createdAt: 'undefined',
+            },
+        },
+        '/api/admin/tenant/verify',
+    )
+    @ApiErrorResponses('/api/admin/tenant/verify', '/api/admin/tenant/verify', {
         badRequest: {
             summary: 'Validation Error',
-            detail: '',
+            detail: 'domain should not be empty, domain must be a URL address, email should not be empty, email must be an email, isVerify should not be empty, isVerify must be a boolean value',
         },
         unauthorized: [
             {
@@ -164,7 +216,11 @@ Verify a Tenant within a domain using an access token. This operation is restric
                 summary: 'Tenant not verified',
                 detail: 'Tenant not verified',
             },
-
+            {
+                key: 'already_verified',
+                summary: 'Tenant already verified',
+                detail: 'Tenant already verified',
+            },
         ],
     })
     async verify(@Req() req: Request, @Body() data: Verify) {
@@ -199,15 +255,32 @@ Set Tenant stage within a domain using an access token. This operation is restri
 - **Access Token**: Must provide a valid admin access token.
 - **Permissions**: Requires admin-level permissions.
 `,
-    })  
-    @ApiBodyExample(Verify, {
-
     })
-    @ApiResponseExample('read', 'read Tenant from Admin site', {}, '/')
-    @ApiErrorResponses('/', '/api/', {
+    @ApiBodyExample(SetTenantStage, {
+        tenantprofile: {
+            username: 'nguyenvukhoi150402',
+            email: 'nguyenvukhoi150402@gmail.com',
+            phone: '84931056895',
+            gender: 'unknown',
+            address: 'anh yeu em',
+            age: 18,
+            avatar: 'none',
+            name: 'Nguyen Van A',
+            stage: 'good',
+            createdAt: 'undefined',
+            isVerify: true,
+        },
+    })
+    @ApiResponseExample(
+        'update',
+        'set Tenant Stage from Admin site',
+        { domain: '30shine.com', email: 'nguyenvukhoi150402@gmail.com', stage: 'good' },
+        '/api/admin/tenant/stage/set',
+    )
+    @ApiErrorResponses('/api/admin/tenant/stage/set', '/api/admin/tenant/stage/set', {
         badRequest: {
             summary: 'Validation Error',
-            detail: '',
+            detail: 'domain should not be empty, domain must be a URL address, email should not be empty, email must be an email, stage should not be empty, stage must be a string',
         },
         unauthorized: [
             {
@@ -241,19 +314,13 @@ Set Tenant stage within a domain using an access token. This operation is restri
                 detail: 'Tenant not found',
             },
             {
-                key: 'not_activated',
-                summary: 'Tenant not activated',
-                detail: 'Tenant not activated',
+                key: 'not_updated',
+                summary: 'Tenant not updated',
+                detail: 'Tenant not updated',
             },
-            {
-                key: 'not_verified',
-                summary: 'Tenant not verified',
-                detail: 'Tenant not verified',
-            },
-
         ],
     })
-    async setTenantStage(@Req() req: Request, @Body() data: Verify) {
+    async setTenantStage(@Req() req: Request, @Body() data: SetTenantStage) {
         // console.log(req['user'], req.headers, req.body)
         // return 'success'
         const payloadToken = req['user'];
@@ -265,9 +332,9 @@ Set Tenant stage within a domain using an access token. This operation is restri
             accessToken: payloadToken.accessToken,
         } as UserDto;
 
-        return await this.adminServiceTenant.verify({
+        return await this.adminServiceTenant.setTenantStage({
             ...data,
             user: userData,
-        } as VerifyRequestDTO);
+        } as SetTenantStageRequestDTO);
     }
 }

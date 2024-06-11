@@ -10,6 +10,13 @@ import {
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { SendMailRequestDto, VerifyAccountRequestDto } from './verify-account.dto';
+import {
+    ApiBodyExample,
+    ApiEndpoint,
+    ApiErrorResponses,
+    ApiResponseExample,
+} from 'src/common/decorator/swagger.decorator';
+import { Verify } from 'src/feature/admin/tenant/tenant.dto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -20,243 +27,127 @@ export class VerifyAccountController {
     ) {}
 
     @Post('verify-account')
-    @ApiOperation({
-        summary: 'Verify OTP of new account',
-        description: `
-## Must have domain in body,
-## Must have otp in body`,
+    @ApiEndpoint({
+        summary: `Verify an account by OTP`,
+        details: `
+## Description
+Verify an account of User or Tenant.
+        
+## Requirements
+- **role**: must add if want to verify Tenant account
+`,
     })
-    @ApiBody({
-        type: VerifyAccountRequestDto,
-        examples: {
-            user_1: {
-                value: {
-                    domain: '30shine.com',
-                    email: 'nguyenvukhoi150402@gmail.com',
-                    otp: '873735',
-                } as VerifyAccountRequestDto,
-            },
-            user_2: {
-                value: {
-                    domain: '24shine.com',
-                    email: 'nguyenvukhoi150402@gmail.com',
-                    otp: '812332',
-                } as VerifyAccountRequestDto,
-            },
-        },
+    @ApiBodyExample(VerifyAccountRequestDto, {
+        domain: '30shine.com',
+        email: 'nguyenvukhoi150402@gmail.com',
+        otp: '812276',
+        role: 2,
     })
-    @ApiCreatedResponse({
-        description: 'Verify OTP successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after verify OTP successfully',
-                        value: {
-                            statusCode: 201,
-                            timestamp: '2024-04-24T07:56:03.452Z',
-                            path: '/api/auth/verify-account',
-                            message: null,
-                            error: null,
-                            data: {
-                                result: 'success',
-                            },
-                        },
-                    },
-                },
-            },
+    @ApiResponseExample(
+        'update',
+        'verify account',
+        { result: 'success' },
+        '/api/auth/verify-account',
+    )
+    @ApiErrorResponses('/api/auth/verify-account', '/api/auth/verify-account', {
+        badRequest: {
+            summary: 'Validation Error',
+            detail: 'email should not be empty, email must be an email, domain should not be empty, domain must be a valid domain name, otp should not be empty, otp must be a number string, Must be a valid type: 0, 1, 2, role must be a number conforming to the specified constraints',
         },
-    })
-    @ApiBadRequestResponse({
-        description: 'Validation failed',
-        content: {
-            'application/json': {
-                examples: {
-                    fields_missing: {
-                        value: {
-                            statusCode: 400,
-                            timestamp: '2024-04-24T07:50:48.659Z',
-                            path: '/api/auth/verify-account',
-                            message:
-                                'email should not be empty, email must be an email, domain should not be empty, domain must be a valid domain name, otp should not be empty, otp must be a number string',
-                            error: 'Bad Request',
-                            data: null,
-                        },
-                    },
-                },
+        unauthorized: [
+            {
+                key: 'user_not_found',
+                summary: 'User not found',
+                detail: 'User not found',
+                error: 'Unauthorized',
             },
-        },
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    user_not_found: {
-                        summary: 'User not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-24T07:51:27.101Z',
-                            path: '/api/auth/verify-account',
-                            message: 'User not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                },
+            {
+                key: 'tenant_not_found',
+                summary: 'Tenant not found',
+                detail: 'Tenant not found',
+                error: 'Unauthorized',
             },
-        },
-    })
-    @ApiForbiddenResponse({
-        description: 'Forbidden response',
-        content: {
-            'application/json': {
-                examples: {
-                    user_already_verified: {
-                        summary: 'User already verified',
-                        value: {
-                            statusCode: 403,
-                            timestamp: '2024-04-24T07:42:57.623Z',
-                            path: '/api/auth/verify-account',
-                            message: 'User already verified',
-                            error: 'Forbidden',
-                            data: null,
-                        },
-                    },
-                    otp_already_expired: {
-                        summary: 'Otp already expired',
-                        value: {
-                            statusCode: 403,
-                            timestamp: '2024-04-24T07:52:35.656Z',
-                            path: '/api/auth/verify-account',
-                            message: 'Otp already expired',
-                            error: 'Forbidden',
-                            data: null,
-                        },
-                    },
-                    otp_already_invalid: {
-                        summary: 'Otp already invalid',
-                        value: {
-                            statusCode: 403,
-                            timestamp: '2024-04-24T07:52:35.656Z',
-                            path: '/api/auth/verify-account',
-                            message: 'Otp already invalid',
-                            error: 'Forbidden',
-                            data: null,
-                        },
-                    },
-                },
+        ],
+        forbidden: [
+            {
+                key: 'user_already_verified',
+                summary: 'User already verified',
+                detail: 'User already verified',
             },
-        },
+            {
+                key: 'tenant_already_verified',
+                summary: 'Tenant already verified',
+                detail: 'Tenant already verified',
+            },
+            {
+                key: 'otp_expired',
+                summary: 'Otp already expired',
+                detail: 'Otp already expired',
+            },
+            {
+                key: 'otp_invalid',
+                summary: 'Otp invalid',
+                detail: 'Otp invalid',
+            },
+        ],
     })
     async verifyAccount(@Body() data: VerifyAccountRequestDto) {
         return await this.authServiceVerifyAccount.verifyAccount(data);
     }
 
     @Post('send-mail-otp')
-    @ApiOperation({
-        summary: 'Send otp to gmail which is used to sign up',
-        description: `
-## Must have domain in body`,
+    @ApiEndpoint({
+        summary: `Send mail OTP`,
+        details: `
+## Description
+Send OTP to email of User or Tenant.
+        
+## Requirements
+- **role**: must add if want to send mail to Tenant account
+`,
     })
-    @ApiBody({
-        type: SendMailRequestDto,
-        examples: {
-            user_1: {
-                value: {
-                    domain: '30shine.com',
-                    email: 'nguyenvukhoi150402@gmail.com',
-                } as SendMailRequestDto,
-            },
-            user_2: {
-                value: {
-                    domain: '24shine.com',
-                    email: 'nguyenvukhoi150402@gmail.com',
-                } as SendMailRequestDto,
-            },
-        },
+    @ApiBodyExample(SendMailRequestDto, {
+        domain: '30shine.com',
+        email: 'nguyenvukhoi150402@gmail.com',
+        role: 2,
     })
-    @ApiCreatedResponse({
-        description: 'Send OTP successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after send otp to gmail successfully',
-                        value: {
-                            statusCode: 201,
-                            timestamp: '2024-04-24T07:44:47.453Z',
-                            path: '/api/auth/send-mail-otp',
-                            message: null,
-                            error: null,
-                            data: {
-                                result: 'success',
-                            },
-                        },
-                    },
-                },
-            },
+    @ApiResponseExample(
+        'update',
+        'send otp to mail',
+        { result: 'success' },
+        '/api/auth/send-mail-otp',
+    )
+    @ApiErrorResponses('/api/auth/send-mail-otp', '/api/auth/send-mail-otp', {
+        badRequest: {
+            summary: 'Validation Error',
+            detail: 'email should not be empty, email must be an email, domain should not be empty, domain must be a valid domain name, Must be a valid type: 0, 1, 2',
         },
-    })
-    @ApiBadRequestResponse({
-        description: 'Validation failed',
-        content: {
-            'application/json': {
-                examples: {
-                    fields_missing: {
-                        value: {
-                            statusCode: 400,
-                            timestamp: '2024-04-24T07:39:35.815Z',
-                            path: '/api/auth/send-mail-otp',
-                            message:
-                                'email should not be empty, email must be an email, domain should not be empty, domain must be a valid domain name',
-                            error: 'Bad Request',
-                            data: null,
-                        },
-                    },
-                },
+        unauthorized: [
+            {
+                key: 'user_not_found',
+                summary: 'User not found',
+                detail: 'User not found',
+                error: 'Unauthorized',
             },
-        },
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    user_not_found: {
-                        summary: 'User not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-24T07:40:59.411Z',
-                            path: '/api/auth/send-mail-otp',
-                            message: 'User not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                },
+            {
+                key: 'tenant_not_found',
+                summary: 'Tenant not found',
+                detail: 'Tenant not found',
+                error: 'Unauthorized',
             },
-        },
-    })
-    @ApiForbiddenResponse({
-        description: 'Forbidden response',
-        content: {
-            'application/json': {
-                examples: {
-                    user_already_verified: {
-                        summary: 'User already verified',
-                        value: {
-                            statusCode: 403,
-                            timestamp: '2024-04-24T07:42:57.623Z',
-                            path: '/api/auth/send-mail-otp',
-                            message: 'User already verified',
-                            error: 'Forbidden',
-                            data: null,
-                        },
-                    },
-                },
+        ],
+        forbidden: [
+            {
+                key: 'user_already_verified',
+                summary: 'User already verified',
+                detail: 'User already verified',
             },
-        },
+            {
+                key: 'tenant_already_verified',
+                summary: 'Tenant already verified',
+                detail: 'Tenant already verified',
+            },
+        ],
     })
     async sendMailOtp(@Body() data: SendMailRequestDto) {
         return await this.authServiceVerifyAccount.sendMailOtp(data);

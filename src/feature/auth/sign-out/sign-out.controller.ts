@@ -11,6 +11,7 @@ import { SignOutRequestDTO } from './sign-out.dto';
 import { AuthServiceSignOut } from './sign-out.service';
 import { AccessTokenGuard } from 'src/common/guards/token/accessToken.guard';
 import { UserDto } from '../../commonDTO/user.dto';
+import { ApiEndpoint, ApiErrorResponses, ApiResponseExample } from 'src/common/decorator/swagger.decorator';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -22,66 +23,52 @@ export class SignOutController {
 
     @UseGuards(AccessTokenGuard)
     @Get('sign-out')
-    @ApiOperation({
-        summary: 'Sign out at user site',
-        description: `
-## Mustn't have body,
-## Using access token (to test add in the right corner)`,
-    })
     @ApiBearerAuth('JWT-access-token-user')
     @ApiBearerAuth('JWT-access-token-tenant')
-    @ApiCreatedResponse({
-        description: 'User SignOut successfully!!',
-        content: {
-            'application/json': {
-                examples: {
-                    signin: {
-                        summary: 'Response after sign out successfully',
-                        value: {
-                            statusCode: 200,
-                            timestamp: '2024-04-24T08:15:55.644Z',
-                            path: '/api/auth/sign-out',
-                            message: null,
-                            error: null,
-                            data: {
-                                result: 'success',
-                            },
-                        },
-                    },
-                },
-            },
-        },
+    @ApiEndpoint({
+        summary: `Sign Out`,
+        details: `
+## Description
+Sign Out for any role (delete token). 
+        
+## Requirements
+- **Access Token**: Must provide a valid access token.
+`,
     })
-    @ApiUnauthorizedResponse({
-        description: 'Authorization failed',
-        content: {
-            'application/json': {
-                examples: {
-                    user_not_verified: {
-                        summary: 'No auth header',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-24T08:20:52.559Z',
-                            path: '/api/auth/sign-out',
-                            message: 'Unauthorized',
-                            error: null,
-                            data: null,
-                        },
-                    },
-                    access_token_not_found: {
-                        summary: 'Access token not found',
-                        value: {
-                            statusCode: 401,
-                            timestamp: '2024-04-24T08:21:42.967Z',
-                            path: '/api/auth/sign-out',
-                            message: 'Access Token not found',
-                            error: 'Unauthorized',
-                            data: null,
-                        },
-                    },
-                },
+    @ApiResponseExample('read', 'Sign Out', { result: 'success' }, '/api/auth/sign-out')
+    @ApiErrorResponses('/api/auth/sign-out', '/api/auth/sign-out', {
+        unauthorized: [
+            {
+                key: 'token_not_verified',
+                summary: 'Token not verified',
+                detail: 'Unauthorized',
+                error: null,
             },
-        },
+            {
+                key: 'token_not_found',
+                summary: 'Token not found',
+                detail: 'Access Token not found',
+                error: 'Unauthorized',
+            },
+            {
+                key: 'unauthorized_role',
+                summary: 'Role not verified',
+                detail: 'Unauthorized Role',
+                error: 'Unauthorized',
+            },
+        ],
+        forbidden: [
+            {
+                key: 'invalid_refresh_token',
+                summary: 'Invalid refresh token',
+                detail: 'Invalid refresh token'
+            },
+            {
+                key: 'invalid_refresh_token',
+                summary: 'Invalid refresh token',
+                detail: 'Invalid refresh token'
+            }
+        ]
     })
     async signOut(@Req() req: Request) {
         const payloadToken = req['user'];

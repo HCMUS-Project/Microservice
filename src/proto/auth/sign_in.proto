@@ -1,18 +1,32 @@
 syntax = "proto3";
 
+import "user_token.proto";
+
 package signIn;
 
 service SignInService {
   rpc SignIn (SignInRequest) returns (SignInResponse);
+  rpc ChangePassword (ChangePasswordRequest) returns (ChangePasswordResponse);
 }
 
 message SignInRequest {
   string email = 1;
   string password = 2;
   string domain = 3;
+  optional userToken.Role role = 4;
 }
 
 message SignInResponse {
     string access_token = 1;
     string refresh_token = 2;
+}
+
+message ChangePasswordRequest {
+  userToken.User user = 1;
+  string password = 2;
+  string new_password = 3;
+}
+
+message ChangePasswordResponse {
+  string result = 1;
 }

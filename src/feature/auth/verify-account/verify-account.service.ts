@@ -46,6 +46,10 @@ export class AuthServiceVerifyAccount implements OnModuleInit {
                 throw new UserNotFoundException();
             } else if (errorDetails.error == 'USER_ALREADY_VERIFIED') {
                 throw new ForbiddenException('User already verified', 'Forbidden');
+            } else if (errorDetails.error == 'TENANT_NOT_FOUND') {
+                throw new UserNotFoundException('Tenant not found');
+            } else if (errorDetails.error == 'TENANT_ALREADY_VERIFIED') {
+                throw new ForbiddenException('Tenant already verified', 'Forbidden');
             } else if (errorDetails.error == 'OTP_EXPIRED') {
                 throw new ForbiddenException('Otp already expired', 'Forbidden');
             } else if (errorDetails.error == 'OTP_INVALID') {
@@ -77,6 +81,10 @@ export class AuthServiceVerifyAccount implements OnModuleInit {
                 throw new UserNotFoundException();
             } else if (errorDetails.error == 'USER_ALREADY_VERIFIED') {
                 throw new ForbiddenException('User already verified', 'Forbidden');
+            }if (errorDetails.error == 'TENANT_NOT_FOUND') {
+                throw new UserNotFoundException('Tenant not found');
+            } else if (errorDetails.error == 'TENANT_ALREADY_VERIFIED') {
+                throw new ForbiddenException('Tenant already verified', 'Forbidden');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,

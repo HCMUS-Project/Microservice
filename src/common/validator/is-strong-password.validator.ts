@@ -9,6 +9,12 @@ import {
 @ValidatorConstraint({ name: 'isStrongPassword', async: false })
 export class IsStrongPasswordValidator implements ValidatorConstraintInterface {
     validate(password: string, args: ValidationArguments) {
+        // Check if the password is not undefined or empty
+        if (!password) {
+            // Initialize missing requirements to handle the error message properly
+            args.constraints[0].missingRequirements = ['non-empty password'];
+            return false;
+        }
         const { minLength, minLowercase, minNumbers, minSymbols, minUppercase } =
             args.constraints[0];
         const lowercaseRegex = /[a-z]/g;
@@ -48,7 +54,11 @@ export class IsStrongPasswordValidator implements ValidatorConstraintInterface {
 
     defaultMessage(args: ValidationArguments) {
         const missingRequirements = args.constraints[0].missingRequirements;
-        return `Password must have ${missingRequirements.join(', ')}.`;
+       
+        if (missingRequirements && missingRequirements.length > 0) {
+            return `${args.property} must have ${missingRequirements.join(', ')}.`;
+        }
+        return 'invalid password validation setup.';
     }
 }
 

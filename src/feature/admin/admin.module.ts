@@ -7,7 +7,7 @@ import {TenantController} from './tenant/tenant.controller';
 
 @Module({
     imports: [ClientsModule],
-    controllers: [],
+    controllers: [TenantController],
     providers: [
         {
             provide: 'GRPC_ADMIN_SERVICE_TENANT',

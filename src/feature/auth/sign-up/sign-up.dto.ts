@@ -7,10 +7,12 @@ import {
     IsMobilePhone,
     IsNotEmpty,
     IsNumber,
+    IsOptional,
     IsString,
     Min,
 } from 'class-validator';
 import { Gender } from 'src/common/enums/gender.enum';
+import {Role} from 'src/common/enums/role.enum';
 import { IsStrongPassword } from 'src/common/validator/is-strong-password.validator';
 import { SignUpRequest } from 'src/proto_build/auth/signUp/SignUpRequest';
 
@@ -48,4 +50,16 @@ export class SignUpRequestDto implements SignUpRequest {
     @IsNotEmpty()
     @ApiProperty()
     device: string;
+
+    @IsNumber()
+    @IsEnum(Role, {
+        message: 'Must be a valid type: 0, 1, 2',
+    })
+    @IsOptional()
+    @ApiProperty({
+        enum: Role,
+        enumName: 'Role Type',
+        example: Role.TENANT,
+    })
+    role: Role;
 }
