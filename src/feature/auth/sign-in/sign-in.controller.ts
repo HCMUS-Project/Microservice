@@ -43,7 +43,6 @@ Sign In within a domain.
 `,
     })
     @ApiBodyExample(SignInRequestDTO, {
-        domain: '30shine.com',
         email: 'nguyenvukhoi150402@gmail.com',
         password: 'A@a123456',
         role: 2,

@@ -12,7 +12,7 @@ import {
     Min,
 } from 'class-validator';
 import { Gender } from 'src/common/enums/gender.enum';
-import {Role} from 'src/common/enums/role.enum';
+import { Role } from 'src/common/enums/role.enum';
 import { IsStrongPassword } from 'src/common/validator/is-strong-password.validator';
 import { SignUpRequest } from 'src/proto_build/auth/signUp/SignUpRequest';
 
@@ -27,7 +27,7 @@ export class SignUpRequestDto implements SignUpRequest {
     @ApiProperty()
     username: string;
 
-    @IsString()
+    @IsString() 
     @IsMobilePhone(
         'vi-VN',
         { strictMode: false },
@@ -42,14 +42,9 @@ export class SignUpRequestDto implements SignUpRequest {
     password: string;
 
     @IsFQDN()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     domain: string;
-
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
-    device: string;
 
     @IsNumber()
     @IsEnum(Role, {
@@ -62,4 +57,14 @@ export class SignUpRequestDto implements SignUpRequest {
         example: Role.TENANT,
     })
     role: Role;
+
+    @IsString()
+    @IsOptional()
+    @ApiProperty()
+    companyName: string;
+
+    @IsString()
+    @IsOptional()
+    @ApiProperty()
+    companyAddress: string;
 }

@@ -11,7 +11,7 @@ export class VerifyAccountRequestDto implements VerifyAccountRequest {
     email: string;
 
     @IsFQDN()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     domain: string;
 
@@ -40,7 +40,7 @@ export class SendMailRequestDto implements SendMailRequest {
     email: string;
 
     @IsFQDN()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     domain: string;
 

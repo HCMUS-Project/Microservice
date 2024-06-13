@@ -42,9 +42,9 @@ Sign Up within a domain.
         username: 'nguyenvukhoi150402',
         phone: '84931056895',
         password: 'A@a123456',
-        domain: '30shine.com',
-        device: 'web',
         role: 2,
+        companyName: 'Cong ty 30 shine',
+        companyAddress: 'O dau con lau moi noi',
     })
     @ApiResponseExample('create', 'Sign Up', { result: 'success' }, '/api/auth/sign-up')
     @ApiErrorResponses('/api/auth/sign-up', '/api/auth/sign-up', {

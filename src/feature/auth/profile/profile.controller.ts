@@ -94,13 +94,16 @@ Get Profile of User or Tenant within a domain using an access token.
                                     email: 'nguyenvukhoi150402@gmail.com',
                                     phone: '84931056895',
                                     gender: 'unknown',
-                                    address: '123 abc, phuong X, quan Y, thanh pho Z',
+                                    address: 'anh yeu em',
                                     age: 18,
                                     avatar: 'none',
                                     name: 'Nguyen Van A',
                                     stage: 'new',
-                                    createdAt: 'undefined',
+                                    companyName: 'Cong ty 30 shine',
+                                    companyAddress: 'O dau con lau moi noi',
+                                    createdAt: 'Thu Jun 13 2024 17:12:35 GMT+0700 (Indochina Time)',
                                     isVerify: 'true',
+                                    domain: '',
                                 },
                             },
                         },
@@ -192,7 +195,12 @@ Update Profile within a domain using an access token. This operation is restrict
 `,
     })
     @ApiBodyExample(UpdateProfileDto, { address: 'something' })
-    @ApiResponseExample('update', 'update Profile', { result: 'success' }, '/api/auth/update-profile')
+    @ApiResponseExample(
+        'update',
+        'update Profile',
+        { result: 'success' },
+        '/api/auth/update-profile',
+    )
     @ApiErrorResponses('/api/auth/update-profile', '/api/auth/update-profile', {
         badRequest: {
             summary: 'Validation Error',
@@ -289,8 +297,11 @@ Update Profile Tenant within a domain using an access token. This operation is r
                 avatar: 'none',
                 name: 'Nguyen Van A',
                 stage: 'new',
-                createdAt: 'undefined',
+                companyName: 'Cong ty 30 shine',
+                companyAddress: 'O dau con lau moi noi',
+                createdAt: 'Thu Jun 13 2024 17:12:35 GMT+0700 (Indochina Time)',
                 isVerify: 'true',
+                domain: '',
             },
         },
         '/api/auth/update-profile-tenant',

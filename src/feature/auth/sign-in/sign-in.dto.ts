@@ -19,7 +19,7 @@ export class SignInRequestDTO implements SignInRequest {
     password: string;
 
     @IsFQDN()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     domain: string;
 

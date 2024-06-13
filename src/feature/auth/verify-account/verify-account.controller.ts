@@ -38,9 +38,8 @@ Verify an account of User or Tenant.
 `,
     })
     @ApiBodyExample(VerifyAccountRequestDto, {
-        domain: '30shine.com',
         email: 'nguyenvukhoi150402@gmail.com',
-        otp: '812276',
+        otp: '007987',
         role: 2,
     })
     @ApiResponseExample(
@@ -107,7 +106,6 @@ Send OTP to email of User or Tenant.
 `,
     })
     @ApiBodyExample(SendMailRequestDto, {
-        domain: '30shine.com',
         email: 'nguyenvukhoi150402@gmail.com',
         role: 2,
     })

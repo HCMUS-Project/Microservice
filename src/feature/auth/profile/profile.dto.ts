@@ -1,5 +1,6 @@
 import {
     IsEnum,
+    IsFQDN,
     IsInt,
     IsJWT,
     IsMobilePhone,
@@ -120,6 +121,21 @@ export class UpdateTenantProfile implements UpdateTenantProfileRequest {
     @IsOptional()
     @ApiProperty()
     avatar: string;
+
+    @IsString()
+    @IsOptional()
+    @ApiProperty()
+    companyName: string;
+
+    @IsString()
+    @IsOptional()
+    @ApiProperty()
+    companyAddress: string;
+
+    @IsFQDN()
+    @IsOptional()
+    @ApiProperty()
+    domain: string;
 }
 
 export class UpdateTenantProfileRequestDTO extends UpdateTenantProfile {
