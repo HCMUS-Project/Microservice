@@ -69,6 +69,14 @@ async function bootstrap() {
             description: 'Enter JWT access token for Tenant',
             in: 'header',
         })
+        .addSecurity('JWT-access-token-admin', {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+            name: 'JWT Access Token Admin',
+            description: 'Enter JWT access token for Admin',
+            in: 'header',
+        })
         .addSecurity('JWT-refresh-token', {
             type: 'http',
             scheme: 'bearer',

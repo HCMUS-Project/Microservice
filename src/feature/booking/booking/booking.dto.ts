@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
+    ArrayMinSize,
     IsArray,
     IsBase64,
     IsDateString,
@@ -20,14 +21,15 @@ import {
     ValidateNested,
     isArray,
 } from 'class-validator';
-import {StatusBooking} from 'src/common/enums/statusBooking.enum';
+import { StatusBooking } from 'src/common/enums/statusBooking.enum';
 import { IsBase64DataURI } from 'src/common/validator/is-base-64-dataURI.validator';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
 import { CreateBookingRequest } from 'src/proto_build/booking/booking/CreateBookingRequest';
-import {DeleteBookingRequest} from 'src/proto_build/booking/booking/DeleteBookingRequest';
+import { DeleteBookingRequest } from 'src/proto_build/booking/booking/DeleteBookingRequest';
+import { FindAllBookingRequest } from 'src/proto_build/booking/booking/FindAllBookingRequest';
 import { FindOneRequest } from 'src/proto_build/booking/booking/FindOneRequest';
 import { FindSlotBookingsRequest } from 'src/proto_build/booking/booking/FindSlotBookingsRequest';
-import {UpdateStatusBookingRequest} from 'src/proto_build/booking/booking/UpdateStatusBookingRequest';
+import { UpdateStatusBookingRequest } from 'src/proto_build/booking/booking/UpdateStatusBookingRequest';
 
 export class CreateBooking implements CreateBookingRequest {
     @IsDateString()
@@ -54,6 +56,11 @@ export class CreateBooking implements CreateBookingRequest {
     @IsOptional()
     @ApiProperty()
     note: string = 'Default note';
+
+    @IsUUID()
+    @IsOptional()
+    @ApiProperty()
+    voucher: string;
 }
 
 export class CreateBookingRequestDTO extends CreateBooking {
@@ -96,15 +103,19 @@ export class FindSlotBookings implements FindSlotBookingsRequest {
     // @ApiProperty()
     // employee: string;
 
-    // @IsDateString()
-    // @IsOptional()
-    // @ApiProperty()
-    // startTime: string;
+    @Matches(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, {
+        message: 'startTime must be a valid time in the format HH:mm (24-hour format)',
+    })
+    @IsOptional()
+    @ApiProperty()
+    startTime: string;
 
-    // @IsDateString()
-    // @IsOptional()
-    // @ApiProperty()
-    // endTime: string;
+    @Matches(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, {
+        message: 'endTime must be a valid time in the format HH:mm (24-hour format)',
+    })
+    @IsOptional()
+    @ApiProperty()
+    endTime: string;
 }
 
 export class FindSlotBookingsRequestDTO extends FindSlotBookings {
@@ -147,6 +158,49 @@ export class DeleteBooking implements DeleteBookingRequest {
 }
 
 export class DeleteBookingRequestDTO extends DeleteBooking {
+    @IsObject()
+    @IsNotEmpty()
+    @ApiProperty()
+    user: UserDto;
+}
+
+export class FindAllBooking implements FindAllBookingRequest {
+    @IsArray()
+    @IsUUID('all', { each: true })
+    @IsOptional()
+    @Transform(({ value }) => (Array.isArray(value) ? value : Array(value)))
+    @ApiProperty()
+    services: string[];
+
+    @IsArray()
+    @IsOptional()
+    @IsEnum(StatusBooking, { each: true })
+    @Transform(({ value }) => (Array.isArray(value) ? value : Array(value)))
+    @ApiProperty()
+    status: StatusBooking[];
+
+    @IsArray()
+    @ArrayMinSize(2)
+    @IsDateString({ strict: false }, { each: true })
+    @IsOptional()
+    @Transform(({ value }) => (Array.isArray(value) ? value : Array(value)))
+    @ApiProperty()
+    date: string[];
+
+    @IsInt()
+    @IsPositive()
+    @IsOptional()
+    @ApiProperty()
+    page: number;
+
+    @IsInt()
+    @IsPositive()
+    @IsOptional()
+    @ApiProperty()
+    limit: number;
+}
+
+export class FindAllBookingRequestDTO extends FindAllBooking {
     @IsObject()
     @IsNotEmpty()
     @ApiProperty()

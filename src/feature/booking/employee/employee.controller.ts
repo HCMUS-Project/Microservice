@@ -53,6 +53,7 @@ import {
     ApiQueryExamples,
     ApiResponseExample,
 } from 'src/common/decorator/swagger.decorator';
+import { query } from 'express';
 
 @Controller('/booking/employee')
 @ApiTags('booking/employee')
@@ -168,18 +169,24 @@ Create an Employee within a domain using an access token. This operation is rest
 
     @Get('find')
     @ApiEndpoint({
-        summary: `Find one employee by Id`,
+        summary: `Find one employee by Id and domain`,
         details: `
 ## Description
 Find an employee within a domain.
 ## Requirements
 `,
     })
-    @ApiParamExamples([
+    @ApiQueryExamples([
         {
             name: 'id',
             description: 'ID of an employee',
             example: 'edcc4096-3d88-4815-8e38-a87938b1e49d',
+            required: false,
+        },
+        {
+            name: 'domain',
+            description: 'domain of service',
+            example: '30shine.com',
             required: true,
         },
     ])
@@ -200,15 +207,15 @@ Find an employee within a domain.
             lastName: 'Hoai',
             email: 'volehoai@gmail.com',
         },
-        '/api/booking/employee/find/edcc4096-3d88-4815-8e38-a87938b1e49d',
+        '/api/booking/employee/find/?domain=30shine.com&id=53f49d2f-436b-465f-b541-538e90c32a7f',
     )
     @ApiErrorResponses(
-        '/api/booking/employee/find/:id',
-        '/api/booking/employee/find/edcc4096-3d88-4815-8e38-a87938b1e49e',
+        '/api/booking/employee/find',
+        '/api/booking/employee/find/?domain=30shine.com&id=53f49d2f-436b-465f-b541-538e90c32a7f',
         {
             badRequest: {
                 summary: 'Validation Error',
-                detail: 'id must be a UUID',
+                detail: 'domain should not be empty, domain must be a URL address',
             },
 
             unauthorized: [
@@ -246,10 +253,15 @@ Find an employee within a domain.
             ],
         },
     )
-    async findOneEmployee(@Req() req: Request, @Param() params: FindOne) {
-        return await this.bookingEmployeeService.findOneEmployee({
-            ...params,
-        } as FindOneEmployeeRequestDTO);
+    async findOneEmployee(@Req() req: Request, @Query() query: FindOne) {
+        if (query.id !== undefined)
+            return await this.bookingEmployeeService.findOneEmployee({
+                id: query.id,
+            } as FindOneEmployeeRequestDTO);
+        else
+            return await this.bookingEmployeeService.findEmployee({
+                domain: query.domain,
+            } as FindEmployeeRequestDTO);
     }
 
     @Get('search')

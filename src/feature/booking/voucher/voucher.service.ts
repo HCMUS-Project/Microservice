@@ -180,7 +180,7 @@ export class BookingVoucherService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'VOUCHER_NOT_FOUND') {
-                    
+                throw new ForbiddenException('Voucher not found');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,

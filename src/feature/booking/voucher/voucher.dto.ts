@@ -40,7 +40,7 @@ export class CreateVoucher implements CreateVoucherRequest {
     @IsPositive()
     @IsNotEmpty()
     @ApiProperty()
-    maxDiscountValue: number;
+    maxDiscount: number;
 
     @IsPositive()
     @IsNotEmpty()
@@ -55,7 +55,7 @@ export class CreateVoucher implements CreateVoucherRequest {
     @IsDateString()
     @IsNotEmpty()
     @ApiProperty()
-    expiredTime: string;
+    expiredAt: string;
 }
 
 export class CreateVoucherRequestDTO extends CreateVoucher {
@@ -88,7 +88,7 @@ export class EditVoucher implements EditVoucherRequest {
     // @IsNotEmpty()
     @IsOptional()
     @ApiProperty()
-    maxDiscountValue: number;
+    maxDiscount: number;
 
     @IsPositive()
     // @IsNotEmpty()
@@ -106,7 +106,7 @@ export class EditVoucher implements EditVoucherRequest {
     // @IsNotEmpty()
     @IsOptional()
     @ApiProperty()
-    expiredTime: string;
+    expiredAt: string;
 }
 
 export class EditVoucherRequestDTO extends EditVoucher {

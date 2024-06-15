@@ -14,6 +14,7 @@ import { UserNotFoundException } from 'src/common/exceptions/exceptions';
 import {
     CreateBookingRequestDTO,
     DeleteBookingRequestDTO,
+    FindAllBookingRequestDTO,
     FindOneRequestDTO,
     FindSlotBookingsRequestDTO,
     UpdateStatusBookingRequestDTO,
@@ -22,6 +23,7 @@ import { CreateBookingResponse } from 'src/proto_build/booking/booking/CreateBoo
 import { FindOneResponse } from 'src/proto_build/booking/booking/FindOneResponse';
 import { FindSlotBookingsResponse } from 'src/proto_build/booking/booking/FindSlotBookingsResponse';
 import { DeleteBookingResponse } from 'src/proto_build/booking/booking/DeleteBookingResponse';
+import {FindAllBookingResponse} from 'src/proto_build/booking/booking/FindAllBookingResponse';
 
 interface BookingService {
     createBooking(data: CreateBookingRequestDTO): Observable<CreateBookingResponse>;
@@ -29,6 +31,7 @@ interface BookingService {
     findSlotBookings(data: FindSlotBookingsRequestDTO): Observable<FindSlotBookingsResponse>;
     updateStatusBooking(data: UpdateStatusBookingRequestDTO): Observable<FindOneResponse>;
     deleteBooking(data: DeleteBookingRequestDTO): Observable<DeleteBookingResponse>;
+    findAllBooking(data: FindAllBookingRequestDTO): Observable<FindAllBookingResponse>;
 }
 
 @Injectable()
@@ -175,6 +178,25 @@ export class BookingBookingsService implements OnModuleInit {
             } else if (errorDetails.error == 'BOOKING_CANNOT_DELETE') {
                 throw new ForbiddenException('Booking cant delete becasue not PENDING');
             } else {
+                throw new NotFoundException(errorDetails, 'Not found');
+            }
+        }
+    }
+
+    async findAllBooking(data: FindAllBookingRequestDTO): Promise<FindAllBookingResponse> {
+        try {
+            // console.log(this.iProductService.createProduct(data));
+            const findAllBookingResponse: FindAllBookingResponse = await firstValueFrom(
+                this.iBookingService.findAllBooking(data),
+            );
+            return findAllBookingResponse;
+        } catch (e) {
+            // console.log(e)
+            const errorDetails = JSON.parse(e.details);
+            // console.log(errorDetails);
+            if (errorDetails.error == 'PERMISSION_DENIED') {
+                throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
+            }  else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }
         }

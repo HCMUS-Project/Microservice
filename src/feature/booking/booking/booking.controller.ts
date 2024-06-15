@@ -34,6 +34,8 @@ import {
     CreateBookingRequestDTO,
     DeleteBooking,
     DeleteBookingRequestDTO,
+    FindAllBooking,
+    FindAllBookingRequestDTO,
     FindOne,
     FindOneRequestDTO,
     FindSlotBookings,
@@ -49,6 +51,7 @@ import {
     ApiQueryExamples,
     ApiResponseExample,
 } from 'src/common/decorator/swagger.decorator';
+import { StatusBooking } from 'src/common/enums/statusBooking.enum';
 
 @Controller('/booking/bookings')
 @ApiTags('booking/bookings')
@@ -79,6 +82,7 @@ Create a Booking within a domain using an access token. This operation is restri
         service: 'c2a4917c-b3ab-4ebf-aac3-563ab102e671',
         startTime: '2024-05-26T11:30:00.000Z',
         employee: 'acfcd78d-54a8-408c-b720-a0f63941f64b',
+        voucher: '2b5c2642-ef6c-4fb2-8aef-025a38d18e1a',
     })
     @ApiResponseExample(
         'create',
@@ -144,6 +148,116 @@ Create a Booking within a domain using an access token. This operation is restri
             user: userData,
             ...data,
         } as CreateBookingRequestDTO);
+    }
+
+    @Get('find/all')
+    @UseGuards(AccessTokenGuard)
+    @ApiBearerAuth('JWT-access-token-user')
+    @ApiBearerAuth('JWT-access-token-tenant')
+    @ApiEndpoint({
+        summary: `Find all Booking by Query`,
+        details: `
+## Description
+Find all Booking within a domain using an access token.
+## Requirements
+- **Access Token**: Must provide a valid access token.
+`,
+    })
+    @ApiQueryExamples([
+        {
+            name: 'page',
+            description: 'Page',
+            required: false,
+            example: 1,
+        },
+        {
+            name: 'limit',
+            description: 'Limit of page',
+            required: false,
+            example: 10,
+        },
+        {
+            name: 'services',
+            description: 'Array of services ids',
+            required: false,
+            isArray: true,
+            example: '',
+        },
+        {
+            name: 'date',
+            description: 'Array of date.',
+            required: false,
+            isArray: true,
+            example: '',
+        },
+        {
+            name: 'status',
+            description: 'Array of status booking',
+            required: false,
+            isArray: true,
+            enum: StatusBooking,
+            example: 'status=SUCCESS&status=PENDING',
+        },
+    ])
+    @ApiResponseExample(
+        'read',
+        'find Bookings by query',
+        {},
+        '/api/booking/bookings/find/all?status=SUCCESS&status=PENDING',
+    )
+    @ApiErrorResponses(
+        '/api/booking/employee/find/all/',
+        '/api/booking/bookings/find/all?status=SUCCESS&status=PENDING',
+        {
+            badRequest: {
+                summary: 'Validation Error',
+                detail: 'id must be a UUID',
+            },
+
+            unauthorized: [
+                {
+                    key: 'token_not_verified',
+                    summary: 'Token not verified',
+                    detail: 'Unauthorized',
+                    error: null,
+                },
+                {
+                    key: 'token_not_found',
+                    summary: 'Token not found',
+                    detail: 'Access Token not found',
+                    error: 'Unauthorized',
+                },
+                {
+                    key: 'unauthorized_role',
+                    summary: 'Role not verified',
+                    detail: 'Unauthorized Role',
+                    error: 'Unauthorized',
+                },
+            ],
+            forbidden: [
+                {
+                    key: 'forbidden_resource',
+                    summary: 'Forbidden resource',
+                    detail: 'Forbidden resource',
+                },
+            ],
+        },
+    )
+    async findAllBooking(@Req() req: Request, @Query() query: FindAllBooking) {
+        const payloadToken = req['user'];
+        // const header = req.headers;
+        const userData = {
+            email: payloadToken.email,
+            domain: payloadToken.domain,
+            role: payloadToken.role,
+            accessToken: payloadToken.accessToken,
+        } as UserDto;
+        // console.log(userData, dataCategory)
+        console.log(query)
+        return await this.bookingBookingsService.findAllBooking({
+            user: userData,
+            ...query,
+        } as FindAllBookingRequestDTO);
     }
 
     @Get('find/:id')
@@ -285,18 +399,18 @@ Find available Slots Booking within a domain using an access token.
         //     required: false,
         //     example: '626da565-3d8f-4019-8e13-07b43e06c1c5',
         // },
-        // {
-        //     name: 'startTime',
-        //     description: 'Datetime',
-        //     required: false,
-        //     example: '2024-05-11T08:00:00.000Z',
-        // },
-        // {
-        //     name: 'endTime',
-        //     description: 'Datetime',
-        //     required: false,
-        //     example: '2024-05-11T09:00:00.000Z',
-        // },
+        {
+            name: 'startTime',
+            description: 'Time in range',
+            required: false,
+            example: '08:00',
+        },
+        {
+            name: 'endTime',
+            description: 'Time in range',
+            required: false,
+            example: '09:00',
+        },
     ])
     @ApiResponseExample(
         'read',
@@ -455,11 +569,11 @@ Find available Slots Booking within a domain using an access token.
                 },
             ],
         },
-        '/api/booking/bookings/search?date=2024-05-26&service=c2a4917c-b3ab-4ebf-aac3-563ab102e671',
+        '/api/booking/bookings/search?date=2024-06-20&service=9a41866a-1022-438f-8096-950224b0a610&startTime=10:00&endTime=15:00',
     )
     @ApiErrorResponses(
         '/api/booking/bookings/search?date=&service=',
-        '/api/booking/bookings/search?date=2024-05-26&service=c2a4917c-b3ab-4ebf-aac3-563ab102e671',
+        '/api/booking/bookings/search?date=2024-06-20&service=9a41866a-1022-438f-8096-950224b0a610&startTime=10:00&endTime=15:00',
         {
             badRequest: {
                 summary: 'Validation Error',
