@@ -190,12 +190,14 @@ export class FindAllBooking implements FindAllBookingRequest {
     @IsInt()
     @IsPositive()
     @IsOptional()
+    @Transform(({ value }) => parseInt(value, 10))
     @ApiProperty()
     page: number;
 
     @IsInt()
     @IsPositive()
     @IsOptional()
+    @Transform(({ value }) => parseInt(value, 10))
     @ApiProperty()
     limit: number;
 }
