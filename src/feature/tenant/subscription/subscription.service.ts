@@ -4,19 +4,29 @@ import { ClientGrpc } from '@nestjs/microservices';
 import { ForbiddenException, UserNotFoundException } from 'src/common/exceptions/exceptions';
 import { SubscriptionResponse } from 'src/proto_build/tenant/subscription/SubscriptionResponse';
 import {
+    CancelSubscriptionRequestDTO,
     CreateSubscriptionRequestDTO,
-    DeleteSubscriptionRequestDTO,
-    FindSubscriptionByTenantIdRequestDTO,
-    UpdateSubscriptionRequestDTO,
+    FindAllSubscriptionByQueryAdminRequestDTO,
+    FindAllSubscriptionByQueryRequestDTO,
+    FindPlansRequestDTO,
+    UpdateSubscriptionStageByAdminRequestDTO,
 } from './subscription.dto';
+import { FindAllSubscriptionResponse } from 'src/proto_build/tenant/subscription/FindAllSubscriptionResponse';
+import { FindPlansResponse } from 'src/proto_build/tenant/subscription/FindPlansResponse';
 
 interface SubscriptionService {
     createSubscription(data: CreateSubscriptionRequestDTO): Observable<SubscriptionResponse>;
-    findSubscriptionByTenantId(
-        data: FindSubscriptionByTenantIdRequestDTO,
+    findAllSubscriptionByQuery(
+        data: FindAllSubscriptionByQueryRequestDTO,
+    ): Observable<FindAllSubscriptionResponse>;
+    findAllSubscriptionByQueryAdmin(
+        data: FindAllSubscriptionByQueryAdminRequestDTO,
+    ): Observable<FindAllSubscriptionResponse>;
+    findPlans(data: FindPlansRequestDTO): Observable<FindPlansResponse>;
+    updateSubscriptionStageByAdmin(
+        data: UpdateSubscriptionStageByAdminRequestDTO,
     ): Observable<SubscriptionResponse>;
-    updateSubscription(data: UpdateSubscriptionRequestDTO): Observable<SubscriptionResponse>;
-    deleteSubscription(data: DeleteSubscriptionRequestDTO): Observable<SubscriptionResponse>;
+    cancelSubscription(data: CancelSubscriptionRequestDTO): Observable<SubscriptionResponse>;
 }
 
 @Injectable()
@@ -49,24 +59,26 @@ export class TenantSubscriptionService implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            } else if (errorDetails.error == 'SUBSCRIPTION_ALREADY_EXISTS') {
-                throw new ForbiddenException('Subscription already exists', 'Forbidden');
-            } else if (errorDetails.error == 'INVALID_TENANT_ID') {
-                throw new ForbiddenException('Invalid tenant id', 'Forbidden');
+            } else if (errorDetails.error == 'EXISTING_SUBSCRIPTION_NOT_CANCELLED') {
+                throw new ForbiddenException('Existing subscription not cancelled', 'Forbidden');
+            } else if (errorDetails.error == 'PLAN_NOT_FOUND') {
+                throw new ForbiddenException('Plan not found', 'Forbidden');
+            } else if (errorDetails.error == 'TENANT_NOT_FOUND') {
+                throw new ForbiddenException('Tenant not found', 'Forbidden');
             } else {
                 throw new NotFoundException(e, 'Not found');
             }
         }
     }
 
-    async findSubscriptionByTenantId(
-        data: FindSubscriptionByTenantIdRequestDTO,
-    ): Promise<SubscriptionResponse> {
+    async findAllSubscriptionByQuery(
+        data: FindAllSubscriptionByQueryRequestDTO,
+    ): Promise<FindAllSubscriptionResponse> {
         try {
-            const subscriptionResponse: SubscriptionResponse = await firstValueFrom(
-                this.iSubscriptionService.findSubscriptionByTenantId(data),
+            const subscriptions: FindAllSubscriptionResponse = await firstValueFrom(
+                this.iSubscriptionService.findAllSubscriptionByQuery(data),
             );
-            return subscriptionResponse;
+            return subscriptions;
         } catch (e) {
             // console.log(e);
             let errorDetails: { error?: string };
@@ -77,8 +89,9 @@ export class TenantSubscriptionService implements OnModuleInit {
                 throw new NotFoundException(String(e), 'Error not recognized');
             }
             // console.log(errorDetails);
-            if (errorDetails.error == 'SUBSCRIPTION_NOT_FOUND') {
-                throw new ForbiddenException('Subscription not found');
+
+            if (errorDetails.error == 'PERMISSION_DENIED') {
+                throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -88,15 +101,72 @@ export class TenantSubscriptionService implements OnModuleInit {
         }
     }
 
-    async updateSubscription(data: UpdateSubscriptionRequestDTO): Promise<SubscriptionResponse> {
+    async findAllSubscriptionByQueryAdmin(
+        data: FindAllSubscriptionByQueryAdminRequestDTO,
+    ): Promise<FindAllSubscriptionResponse> {
+        try {
+            const subscriptions: FindAllSubscriptionResponse = await firstValueFrom(
+                this.iSubscriptionService.findAllSubscriptionByQueryAdmin(data),
+            );
+            return subscriptions;
+        } catch (e) {
+            // console.log(e);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
+            // console.log(errorDetails);
+
+            if (errorDetails.error == 'PERMISSION_DENIED') {
+                throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
+            } else {
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
+            }
+        }
+    }
+
+    async findPlans(data: FindPlansRequestDTO): Promise<FindPlansResponse> {
         try {
             // console.log(data)
+            const planResponse: FindPlansResponse = await firstValueFrom(
+                this.iSubscriptionService.findPlans(data),
+            );
+            return planResponse;
+        } catch (e) {
+            // console.log(e);
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
+            // console.log(errorDetails);
+
+            throw new NotFoundException(
+                `Unhandled error type: ${errorDetails.error}`,
+                'Error not recognized',
+            );
+        }
+    }
+
+    async updateSubscriptionStageByAdmin(
+        data: UpdateSubscriptionStageByAdminRequestDTO,
+    ): Promise<SubscriptionResponse> {
+        try {
+            // console.log(this.iSubscriptionService.createTenant(data));
             const subscriptionResponse: SubscriptionResponse = await firstValueFrom(
-                this.iSubscriptionService.updateSubscription(data),
+                this.iSubscriptionService.updateSubscriptionStageByAdmin(data),
             );
             return subscriptionResponse;
         } catch (e) {
-            // console.log(e);
+            // console.log(e)
             let errorDetails: { error?: string };
             try {
                 errorDetails = JSON.parse(e.details);
@@ -108,20 +178,17 @@ export class TenantSubscriptionService implements OnModuleInit {
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'SUBSCRIPTION_NOT_FOUND') {
-                throw new ForbiddenException('Subscription not found');
+                throw new ForbiddenException('Subscription not found', 'Forbidden');
             } else {
-                throw new NotFoundException(
-                    `Unhandled error type: ${errorDetails.error}`,
-                    'Error not recognized',
-                );
+                throw new NotFoundException(e, 'Not found');
             }
         }
     }
 
-    async deleteSubscription(data: DeleteSubscriptionRequestDTO): Promise<SubscriptionResponse> {
+    async cancelSubscription(data: CancelSubscriptionRequestDTO): Promise<SubscriptionResponse> {
         try {
             const subscriptionResponse: SubscriptionResponse = await firstValueFrom(
-                this.iSubscriptionService.deleteSubscription(data),
+                this.iSubscriptionService.cancelSubscription(data),
             );
             return subscriptionResponse;
         } catch (e) {
