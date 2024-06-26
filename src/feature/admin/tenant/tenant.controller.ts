@@ -27,6 +27,8 @@ import { UserDto } from 'src/feature/commonDTO/user.dto';
 import {
     GetTenant,
     GetTenantRequestDTO,
+    SetTenantDomain,
+    SetTenantDomainRequestDTO,
     SetTenantStage,
     SetTenantStageRequestDTO,
     Verify,
@@ -148,7 +150,6 @@ Verify a Tenant within a domain using an access token. This operation is restric
 `,
     })
     @ApiBodyExample(Verify, {
-        domain: '30shine.com',
         email: 'nguyenvukhoi150402@gmail.com',
         isVerify: true,
     })
@@ -173,7 +174,7 @@ Verify a Tenant within a domain using an access token. This operation is restric
     @ApiErrorResponses('/api/admin/tenant/verify', '/api/admin/tenant/verify', {
         badRequest: {
             summary: 'Validation Error',
-            detail: 'domain should not be empty, domain must be a URL address, email should not be empty, email must be an email, isVerify should not be empty, isVerify must be a boolean value',
+            detail: 'email should not be empty, email must be an email, isVerify should not be empty, isVerify must be a boolean value',
         },
         unauthorized: [
             {
@@ -274,13 +275,13 @@ Set Tenant stage within a domain using an access token. This operation is restri
     @ApiResponseExample(
         'update',
         'set Tenant Stage from Admin site',
-        { domain: '30shine.com', email: 'nguyenvukhoi150402@gmail.com', stage: 'good' },
+        { email: 'nguyenvukhoi150402@gmail.com', stage: 'good' },
         '/api/admin/tenant/stage/set',
     )
     @ApiErrorResponses('/api/admin/tenant/stage/set', '/api/admin/tenant/stage/set', {
         badRequest: {
             summary: 'Validation Error',
-            detail: 'domain should not be empty, domain must be a URL address, email should not be empty, email must be an email, stage should not be empty, stage must be a string',
+            detail: 'email should not be empty, email must be an email, stage should not be empty, stage must be a string',
         },
         unauthorized: [
             {
@@ -336,5 +337,116 @@ Set Tenant stage within a domain using an access token. This operation is restri
             ...data,
             user: userData,
         } as SetTenantStageRequestDTO);
+    }
+
+    @Post('domain/set')
+    @UseGuards(AccessTokenGuard, RolesGuard)
+    @Roles(Role.ADMIN)
+    @ApiBearerAuth('JWT-access-token-admin')
+    @ApiOperation({
+        summary: 'Set tenant domain',
+        description: `
+## Description
+Set Tenant domain within a domain using an access token. This operation is restricted to admin accounts only.
+        
+## Requirements
+- **Access Token**: Must provide a valid admin access token.
+- **Permissions**: Requires admin-level permissions.
+`,
+    })
+    @ApiBodyExample(SetTenantDomain, {
+        email: 'nguyenvukhoi150402@gmail.com',
+        domain: '30shinee.com',
+    })
+    @ApiResponseExample(
+        'update',
+        'set Tenant Domain from Admin site',
+        {
+            tenant: {
+                email: 'nguyenvukhoi150402@gmail.com',
+                username: 'nguyenvukhoi150402',
+                role: '2',
+                domain: '30shinee.com',
+                isDeleted: false,
+                isActive: true,
+                isVerified: true,
+                isRejected: false,
+                createdAt: 'undefined',
+            },
+            tenantProfile: {
+                username: 'nguyenvukhoi150402',
+                email: 'nguyenvukhoi150402@gmail.com',
+                phone: '84931056895',
+                gender: 'unknown',
+                address: 'anh yeu em',
+                age: 18,
+                avatar: 'none',
+                name: 'Nguyen Van A',
+                stage: 'something',
+                createdAt: 'undefined',
+                isVerify: true,
+            },
+        },
+        '/api/admin/tenant/domain/set',
+    )
+    @ApiErrorResponses('/api/admin/tenant/domain/set', '/api/admin/tenant/domain/set', {
+        badRequest: {
+            summary: 'Validation Error',
+            detail: 'email should not be empty, email must be an email, domain should not be empty, domain must be a URL address',
+        },
+        unauthorized: [
+            {
+                key: 'token_not_verified',
+                summary: 'Token not verified',
+                detail: 'Unauthorized',
+                error: null,
+            },
+            {
+                key: 'token_not_found',
+                summary: 'Token not found',
+                detail: 'Access Token not found',
+                error: 'Unauthorized',
+            },
+            {
+                key: 'unauthorized_role',
+                summary: 'Role not verified',
+                detail: 'Unauthorized Role',
+                error: 'Unauthorized',
+            },
+        ],
+        forbidden: [
+            {
+                key: 'forbidden_resource',
+                summary: 'Forbidden resource',
+                detail: 'Forbidden resource',
+            },
+            {
+                key: 'not_found',
+                summary: 'Tenant not found',
+                detail: 'Tenant not found',
+            },
+            {
+                key: 'not_updated',
+                summary: 'Tenant not updated',
+                detail: 'Tenant not updated',
+            },
+        ],
+    })
+    async setTenantDomain(@Req() req: Request, @Body() data: SetTenantDomain) {
+        // console.log(req['user'], req.headers, req.body)
+        // return 'success'
+        const payloadToken = req['user'];
+        // const header = req.headers;
+        const userData = {
+            email: payloadToken.email,
+            domain: payloadToken.domain,
+            role: payloadToken.role,
+            accessToken: payloadToken.accessToken,
+        } as UserDto;
+
+        return await this.adminServiceTenant.setTenantDomain({
+            ...data,
+            user: userData,
+        } as SetTenantDomainRequestDTO);
     }
 }

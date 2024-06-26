@@ -21,6 +21,7 @@ import {VerifyRequest} from 'src/proto_build/admin/tenant/VerifyRequest';
 import {SetTenantStageRequest} from 'src/proto_build/admin/tenant/SetTenantStageRequest';
 import {Type} from 'class-transformer';
 import {ToBoolean} from 'src/common/decorator/toBoolean.decorator';
+import {SetTenantDomainRequest} from 'src/proto_build/admin/tenant/SetTenantDomainRequest';
 
 export class GetTenant implements GetTenantRequest {
     @IsBoolean()
@@ -39,11 +40,6 @@ export class GetTenantRequestDTO extends GetTenant {
 }
 
 export class Verify implements VerifyRequest {
-    @IsUrl()
-    @IsNotEmpty()
-    @ApiProperty()
-    domain: string;
-
     @IsEmail()
     @IsNotEmpty()
     @ApiProperty()
@@ -64,11 +60,6 @@ export class VerifyRequestDTO extends Verify {
 }
 
 export class SetTenantStage implements SetTenantStageRequest {
-    @IsUrl()
-    @IsNotEmpty()
-    @ApiProperty()
-    domain: string;
-
     @IsEmail()
     @IsNotEmpty()
     @ApiProperty()
@@ -81,6 +72,25 @@ export class SetTenantStage implements SetTenantStageRequest {
 }
 
 export class SetTenantStageRequestDTO extends SetTenantStage {
+    @IsObject()
+    @IsNotEmpty()
+    @ApiProperty()
+    user: UserDto;
+}
+
+export class SetTenantDomain implements SetTenantDomainRequest {
+    @IsEmail()
+    @IsNotEmpty()
+    @ApiProperty()
+    email: string;
+
+    @IsUrl()
+    @IsNotEmpty()
+    @ApiProperty()
+    domain: string;
+}
+
+export class SetTenantDomainRequestDTO extends SetTenantDomain {
     @IsObject()
     @IsNotEmpty()
     @ApiProperty()
