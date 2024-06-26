@@ -55,7 +55,12 @@ export class CreateVoucher implements CreateVoucherRequest {
     @IsDateString()
     @IsNotEmpty()
     @ApiProperty()
-    expiredAt: string;
+    expireAt: string;
+
+    @IsDateString()
+    @IsOptional()
+    @ApiProperty()
+    startAt: string;
 }
 
 export class CreateVoucherRequestDTO extends CreateVoucher {
@@ -107,6 +112,12 @@ export class EditVoucher implements EditVoucherRequest {
     @IsOptional()
     @ApiProperty()
     expiredAt: string;
+
+    @IsDateString()
+    // @IsNotEmpty()
+    @IsOptional()
+    @ApiProperty()
+    startAt: string;
 }
 
 export class EditVoucherRequestDTO extends EditVoucher {
@@ -130,7 +141,14 @@ export class DeleteVoucherRequestDTO extends DeleteVoucher {
     user: UserDto;
 }
 
-export class FindAllVouchersRequestDTO implements FindAllVouchersRequest {
+export class FindAllVouchers implements FindAllVouchersRequest {
+    @IsUUID()
+    @IsOptional()
+    @ApiProperty()
+    service: string;
+}
+
+export class FindAllVouchersRequestDTO extends FindAllVouchers {
     @IsObject()
     @IsNotEmpty()
     @ApiProperty()

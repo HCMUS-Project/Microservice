@@ -54,9 +54,13 @@ export class CreateVoucher implements CreateVoucherRequest {
 
     @IsDateString()
     @IsNotEmpty()
-    @IsNotEmpty()
     @ApiProperty()
     expireAt: string;
+
+    @IsDateString()
+    @IsOptional()
+    @ApiProperty()
+    startAt: string;
 }
 
 export class CreateVoucherDTO extends CreateVoucher {
@@ -155,6 +159,11 @@ export class UpdateVoucher implements UpdateVoucherRequest {
     @IsNotEmpty()
     @ApiProperty()
     expireAt: string;
+
+    @IsDateString()
+    @IsOptional()
+    @ApiProperty()
+    startAt: string;
 }
 
 export class UpdateVoucherRequestDTO extends UpdateVoucher {

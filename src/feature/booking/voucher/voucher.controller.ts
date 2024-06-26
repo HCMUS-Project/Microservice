@@ -9,7 +9,7 @@ import {
     Inject,
     UseGuards,
     Req,
-    Query,
+    Query, 
 } from '@nestjs/common';
 import {
     ApiBearerAuth,
@@ -36,6 +36,7 @@ import {
     DeleteVoucherRequestDTO,
     EditVoucher,
     EditVoucherRequestDTO,
+    FindAllVouchers,
     FindAllVouchersRequestDTO,
     FindOneVoucher,
     FindOneVoucherRequestDTO,
@@ -48,7 +49,7 @@ import {
     ApiParamExamples,
     ApiResponseExample,
 } from 'src/common/decorator/swagger.decorator';
-import { UpdateVoucher } from 'src/feature/ecommerce/voucher/voucher.dto';
+import { UpdateVoucher } from 'src/feature/ecommerce/voucher/voucher.dto'; 
 
 @Controller('/booking/voucher')
 @ApiTags('booking/voucher')
@@ -226,7 +227,7 @@ Return all vouchers within a domain using an access token.
             },
         ],
     })
-    async findAllVouchers(@Req() req: Request) {
+    async findAllVouchers(@Req() req: Request, @Query() query: FindAllVouchers) {
         const payloadToken = req['user'];
         // const header = req.headers;
         const userData = {
@@ -237,6 +238,7 @@ Return all vouchers within a domain using an access token.
         } as UserDto;
         // console.log(userData, dataCategory)
         return await this.bookingVoucherService.findAllVouchers({
+            ...query,
             user: userData,
         } as FindAllVouchersRequestDTO);
     }
