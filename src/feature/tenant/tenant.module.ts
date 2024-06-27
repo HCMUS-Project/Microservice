@@ -16,6 +16,8 @@ import { BannerController } from './banner/banner.controller';
 import { TenantBannerService } from './banner/banner.service';
 import { VNPayController } from './vnpayConfig/vnpayConfig.controller';
 import { TenantVNPayConfigService } from './vnpayConfig/vnpayConfig.service';
+import {CustomersController} from './customers/customers.controller';
+import {TenantCustomersService} from './customers/customers.service';
 
 @Module({
     imports: [ClientsModule],
@@ -27,6 +29,7 @@ import { TenantVNPayConfigService } from './vnpayConfig/vnpayConfig.service';
         PolicyAndTermController,
         BannerController,
         VNPayController,
+        CustomersController
     ],
     providers: [
         {
@@ -58,6 +61,10 @@ import { TenantVNPayConfigService } from './vnpayConfig/vnpayConfig.service';
             useClass: TenantVNPayConfigService,
         },
         {
+            provide: 'GRPC_TENANT_SERVICE_CUSTOMERS',
+            useClass: TenantCustomersService,
+        },
+        {
             provide: 'GRPC_TENANT_SERVICE',
             useFactory: (configService: ConfigService) => {
                 return ClientProxyFactory.create({
@@ -73,6 +80,7 @@ import { TenantVNPayConfigService } from './vnpayConfig/vnpayConfig.service';
                             'tenantProfile',
                             'themeConfig',
                             'vnpayConfig',
+                            'customers'
                         ],
                         protoPath: join(__dirname, '../../../src/proto/tenant/tenantService.proto'),
                         url: configService.get<string>('TENANT_SERVICE_URL'),

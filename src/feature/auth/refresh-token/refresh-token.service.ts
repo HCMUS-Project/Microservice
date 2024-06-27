@@ -22,7 +22,7 @@ export class AuthServiceRefreshToken implements OnModuleInit {
 
     async refreshToken(data: RefreshTokenRequestDTO): Promise<RefreshTokenResponse> {
         try {
-            console.log(data);
+            // console.log(data);
             const refreshTokenResponse: RefreshTokenResponse = await firstValueFrom(
                 this.iRefreshTokenService.refreshToken(data),
             );
