@@ -12,6 +12,8 @@ service BookingService {
     rpc UpdateStatusBooking(UpdateStatusBookingRequest) returns (FindOneResponse);
     rpc DeleteBooking(DeleteBookingRequest) returns (DeleteBookingResponse);
     rpc FindAllBooking(FindAllBookingRequest) returns(FindAllBookingResponse);
+    rpc GetBookingsReportOfListUsers(GetBookingsReportOfListUsersRequest) returns (GetBookingsReportOfListUsersResponse) {}
+    rpc GetBookingsValueByDateType(GetBookingsValueByDateTypeRequest) returns (GetBookingsValueByDateTypeResponse) {}
 }
 
 message Emp{
@@ -110,4 +112,41 @@ message FindAllBookingRequest{
 
 message FindAllBookingResponse{
     repeated FindOneResponse bookings = 1;
+}
+
+message GetBookingsReportOfListUsersRequest{
+    userToken.User user = 1;
+    repeated string emails = 2;
+}
+
+message BookingReportOfUser{
+    string email = 1;
+    int32 total_booking = 2;
+}
+ 
+message GetBookingsReportOfListUsersResponse{
+    repeated BookingReportOfUser report_booking = 1;
+}
+
+enum DateType {
+    WEEK = 0;
+    MONTH = 1;
+    YEAR = 2;
+}
+
+message BookingReportByDate {
+    string type = 1;
+    int32 total_bookings = 2;
+    int32 total_value = 3;
+}
+
+message GetBookingsValueByDateTypeRequest {
+    userToken.User user = 1;
+    DateType type = 2;
+}
+
+message GetBookingsValueByDateTypeResponse {
+    int32 value = 1;
+    int32 total = 2;
+    repeated BookingReportByDate report = 3;
 }

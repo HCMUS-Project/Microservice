@@ -28,7 +28,7 @@ async function bootstrap() {
     const bodyParser = require('body-parser');
 
     // Increase the limit to 300KB
-    app.use(bodyParser.json({ limit: '1mb' }));
+    app.use(bodyParser.json({ limit: '10mb' }));
 
     // Set default prefix for all routes
     app.setGlobalPrefix('api');

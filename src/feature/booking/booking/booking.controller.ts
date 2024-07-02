@@ -40,6 +40,8 @@ import {
     FindOneRequestDTO,
     FindSlotBookings,
     FindSlotBookingsRequestDTO,
+    GetBookingsValueByDateType,
+    GetBookingsValueByDateTypeRequestDTO,
     UpdateStatusBooking,
     UpdateStatusBookingRequestDTO,
 } from './booking.dto';
@@ -253,7 +255,7 @@ Find all Booking within a domain using an access token.
             accessToken: payloadToken.accessToken,
         } as UserDto;
         // console.log(userData, dataCategory)
-        console.log(query)
+        console.log(query);
         return await this.bookingBookingsService.findAllBooking({
             user: userData,
             ...query,
@@ -629,6 +631,113 @@ Find available Slots Booking within a domain using an access token.
             user: userData,
             ...query,
         } as FindSlotBookingsRequestDTO);
+    }
+
+    @Get('tenant/report')
+    @UseGuards(AccessTokenGuard, RolesGuard)
+    @Roles(Role.TENANT)
+    @ApiBearerAuth('JWT-access-token-tenant')
+    @ApiEndpoint({
+        summary: `Get Report of User in Tenant`,
+        details: `
+## Description
+Find all Orders of User for Tenant to visualize by Query within a domain using an access token. This operation is restricted to user accounts only.
+        
+## Requirements
+- **Access Token**: Must provide a valid tenant access token.
+- **Permissions**: Requires tenant-level permissions.
+- **type**: Must is a valid type 
+`,
+    })
+    @ApiQueryExamples([
+        {
+            name: 'type',
+            description: 'Get Report of User in Tenant by type',
+            example: 'YEAR',
+            required: true,
+        },
+    ])
+    @ApiResponseExample(
+        'read',
+        'find all Bookings of all Users within Domain type date',
+        {
+            report: [
+                {
+                    type: 'Thursday',
+                    totalBookings: 2,
+                    totalValue: 165000,
+                },
+                {
+                    type: 'Tuesday',
+                    totalBookings: 1,
+                    totalValue: 70000,
+                },
+                {
+                    type: 'Monday',
+                    totalBookings: 1,
+                    totalValue: 70000,
+                },
+            ],
+            value: 305000,
+            total: 4,
+        },
+        '/api/booking/bookings/tenant/report?type=WEEK',
+    )
+    @ApiErrorResponses(
+        '/api/booking/bookings/tenant/report?type ',
+        '/api/booking/bookings/tenant/report?type=WEEK',
+        {
+            badRequest: {
+                summary: 'Validation Error',
+                detail: 'Invalid type: . Must be one of: WEEK, MONTH, YEAR',
+            },
+            unauthorized: [
+                {
+                    key: 'token_not_verified',
+                    summary: 'Token not verified',
+                    detail: 'Unauthorized',
+                    error: null,
+                },
+                {
+                    key: 'token_not_found',
+                    summary: 'Token not found',
+                    detail: 'Access Token not found',
+                    error: 'Unauthorized',
+                },
+                {
+                    key: 'unauthorized_role',
+                    summary: 'Role not verified',
+                    detail: 'Unauthorized Role',
+                    error: 'Unauthorized',
+                },
+            ],
+            forbidden: [
+                {
+                    key: 'forbidden_resource',
+                    summary: 'Forbidden resource',
+                    detail: 'Forbidden resource',
+                },
+            ],
+        },
+    )
+    async getReportOfUsersBytenant(
+        @Req() req: Request,
+        @Query()
+        query: GetBookingsValueByDateType,
+    ) {
+        const payloadToken = req['user'];
+        // const header = req.headers;
+        const userData = {
+            email: payloadToken.email,
+            domain: payloadToken.domain,
+            role: payloadToken.role,
+            accessToken: payloadToken.accessToken,
+        } as UserDto;
+        // console.log(userData, dataCategory)
+        return await this.bookingBookingsService.getBookingsValueByDateType({
+            user: userData,
+            ...query,
+        } as GetBookingsValueByDateTypeRequestDTO);
     }
 
     @Post('update')

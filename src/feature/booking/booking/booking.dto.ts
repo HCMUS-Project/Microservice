@@ -21,14 +21,18 @@ import {
     ValidateNested,
     isArray,
 } from 'class-validator';
+import {DateTypeEnum} from 'src/common/enums/dateType.enum';
 import { StatusBooking } from 'src/common/enums/statusBooking.enum';
+import { BadRequestException } from 'src/common/exceptions/exceptions';
 import { IsBase64DataURI } from 'src/common/validator/is-base-64-dataURI.validator';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
 import { CreateBookingRequest } from 'src/proto_build/booking/booking/CreateBookingRequest';
+import {DateType} from 'src/proto_build/booking/booking/DateType';
 import { DeleteBookingRequest } from 'src/proto_build/booking/booking/DeleteBookingRequest';
 import { FindAllBookingRequest } from 'src/proto_build/booking/booking/FindAllBookingRequest';
 import { FindOneRequest } from 'src/proto_build/booking/booking/FindOneRequest';
 import { FindSlotBookingsRequest } from 'src/proto_build/booking/booking/FindSlotBookingsRequest';
+import { GetBookingsValueByDateTypeRequest } from 'src/proto_build/booking/booking/GetBookingsValueByDateTypeRequest';
 import { UpdateStatusBookingRequest } from 'src/proto_build/booking/booking/UpdateStatusBookingRequest';
 
 export class CreateBooking implements CreateBookingRequest {
@@ -203,6 +207,40 @@ export class FindAllBooking implements FindAllBookingRequest {
 }
 
 export class FindAllBookingRequestDTO extends FindAllBooking {
+    @IsObject()
+    @IsNotEmpty()
+    @ApiProperty()
+    user: UserDto;
+}
+
+const dateTypeMaping: Record<DateTypeEnum, number> = {
+    [DateTypeEnum.WEEK]: 0,
+    [DateTypeEnum.MONTH]: 1,
+    [DateTypeEnum.YEAR]: 2,
+};
+
+export class GetBookingsValueByDateType implements GetBookingsValueByDateTypeRequest {
+    @IsNotEmpty()
+    @Transform(({ value }) => {
+        const numValue = dateTypeMaping[value as DateTypeEnum];
+        if (numValue === undefined) {
+            throw new BadRequestException(
+                `Invalid type: ${value}. Must be one of: ${Object.keys(DateTypeEnum).join(', ')}`,
+                'Bad request',
+            );
+        }
+        return numValue;
+    })
+    @ApiProperty({
+        enum: DateTypeEnum,
+        enumName: 'DateTypeEnum',
+        description: 'DateTypeEnum of the subscription',
+        example: DateTypeEnum.WEEK,
+    })
+    type: DateType;
+}
+
+export class GetBookingsValueByDateTypeRequestDTO extends GetBookingsValueByDateType {
     @IsObject()
     @IsNotEmpty()
     @ApiProperty()

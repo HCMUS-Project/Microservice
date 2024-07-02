@@ -17,13 +17,15 @@ import {
     FindAllBookingRequestDTO,
     FindOneRequestDTO,
     FindSlotBookingsRequestDTO,
+    GetBookingsValueByDateTypeRequestDTO,
     UpdateStatusBookingRequestDTO,
 } from './booking.dto';
 import { CreateBookingResponse } from 'src/proto_build/booking/booking/CreateBookingResponse';
 import { FindOneResponse } from 'src/proto_build/booking/booking/FindOneResponse';
 import { FindSlotBookingsResponse } from 'src/proto_build/booking/booking/FindSlotBookingsResponse';
 import { DeleteBookingResponse } from 'src/proto_build/booking/booking/DeleteBookingResponse';
-import {FindAllBookingResponse} from 'src/proto_build/booking/booking/FindAllBookingResponse';
+import { FindAllBookingResponse } from 'src/proto_build/booking/booking/FindAllBookingResponse';
+import { GetBookingsValueByDateTypeResponse } from 'src/proto_build/booking/booking/GetBookingsValueByDateTypeResponse';
 
 interface BookingService {
     createBooking(data: CreateBookingRequestDTO): Observable<CreateBookingResponse>;
@@ -32,6 +34,9 @@ interface BookingService {
     updateStatusBooking(data: UpdateStatusBookingRequestDTO): Observable<FindOneResponse>;
     deleteBooking(data: DeleteBookingRequestDTO): Observable<DeleteBookingResponse>;
     findAllBooking(data: FindAllBookingRequestDTO): Observable<FindAllBookingResponse>;
+    getBookingsValueByDateType(
+        data: GetBookingsValueByDateTypeRequestDTO,
+    ): Observable<GetBookingsValueByDateTypeResponse>;
 }
 
 @Injectable()
@@ -196,7 +201,28 @@ export class BookingBookingsService implements OnModuleInit {
             // console.log(errorDetails);
             if (errorDetails.error == 'PERMISSION_DENIED') {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
-            }  else {
+            } else {
+                throw new NotFoundException(errorDetails, 'Not found');
+            }
+        }
+    }
+
+    async getBookingsValueByDateType(
+        data: GetBookingsValueByDateTypeRequestDTO,
+    ): Promise<GetBookingsValueByDateTypeResponse> {
+        try {
+            // console.log(this.iProductService.createProduct(data));
+            const response: GetBookingsValueByDateTypeResponse = await firstValueFrom(
+                this.iBookingService.getBookingsValueByDateType(data),
+            );
+            return response;
+        } catch (e) {
+            // console.log(e)
+            const errorDetails = JSON.parse(e.details);
+            // console.log(errorDetails);
+            if (errorDetails.error == 'PERMISSION_DENIED') {
+                throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
+            } else {
                 throw new NotFoundException(errorDetails, 'Not found');
             }
         }
