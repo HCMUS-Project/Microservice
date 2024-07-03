@@ -34,8 +34,10 @@ import {
     CreateServiceRequestDTO,
     DeleteService,
     DeleteServiceRequestDTO,
+    FindBestSellerServiceRequestDTO,
     FindOne,
     FindOneRequestDTO,
+    FindRecommendedServiceRequestDTO,
     FindServices,
     FindServicesRequestDTO,
     UpdateService,
@@ -49,6 +51,11 @@ import {
     ApiQueryExamples,
     ApiResponseExample,
 } from 'src/common/decorator/swagger.decorator';
+import {
+    FindRecommendedServiceResponse,
+    FindRecommendedServiceResponse__Output,
+} from 'src/proto_build/booking/services/FindRecommendedServiceResponse';
+import { FindRecommendedProductResponse } from 'src/proto_build/e_commerce/product/FindRecommendedProductResponse';
 
 @Controller('/booking/services')
 @ApiTags('booking/services')
@@ -410,15 +417,6 @@ Find Services by condition within a domain.
         },
     )
     async findServices(@Req() req: Request, @Query() data: FindServices) {
-        // const payloadToken = req['user'];
-        // // const header = req.headers;
-        // const userData = {
-        //     email: payloadToken.email,
-        //     domain: payloadToken.domain,
-        //     role: payloadToken.role,
-        //     accessToken: payloadToken.accessToken,
-        // } as UserDto;
-        // console.log(userData, dataCategory)
         if (data.id === undefined) {
             return await this.bookingServicesService.findServices({
                 // user: userData,
@@ -430,6 +428,194 @@ Find Services by condition within a domain.
                 id: data.id,
             } as FindOneRequestDTO);
         }
+    }
+
+    @Get('find/best')
+    @ApiEndpoint({
+        summary: `Find BestSeller Services`,
+        details: `
+## Description
+Return all Services has top 5 Solding all the times within a domain.  
+
+## Requirement
+- Use only **domain** to find all Services.
+`,
+    })
+    @ApiQueryExamples([
+        {
+            name: 'domain',
+            description: 'domain of Service',
+            example: '30shine.com',
+            required: true,
+        },
+    ])
+    @ApiResponseExample(
+        'read',
+        'find Services by top Sold all the times',
+        {},
+        '/api/booking/services/find/best?domain=30shine.com',
+    )
+    @ApiErrorResponses(
+        '/api/booking/services/find/recommend',
+        '/api/booking/services/find/recommend',
+        {
+            badRequest: {
+                summary: 'Validation Error',
+                detail: 'domain should not be empty, domain must be a URL address',
+            },
+        },
+    )
+    async findBestSeller(@Req() req: Request, @Query() data: FindBestSellerServiceRequestDTO) {
+        return await this.bookingServicesService.findBestSellerServices({
+            ...data,
+        } as FindBestSellerServiceRequestDTO);
+    }
+
+    @Get('find/recommend')
+    @ApiEndpoint({
+        summary: `Find Recommend Services`,
+        details: `
+## Description
+Return all Services has top 5 Rating all the times within a domain.  
+
+## Requirement
+-Use only **domain** to find all Services.
+`,
+    })
+    @ApiQueryExamples([
+        {
+            name: 'domain',
+            description: 'domain of Product',
+            example: '30shine.com',
+            required: true,
+        },
+    ])
+    @ApiResponseExample(
+        'read',
+        'find Services by top 5 Rating all the times',
+        {
+            services: [
+                {
+                    images: [
+                        'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.serviceBooking/service/fe061e54-9ab8-4340-a0b3-8df8752c064d',
+                        'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.serviceBooking/service/7d1cead3-f1d4-4b94-95ad-75133da7351f',
+                        'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.serviceBooking/service/1e80b5d5-cd78-4943-91ad-809ec1b8c2c1',
+                    ],
+                    id: '26c34f30-c01e-4c77-8477-1788dad56389',
+                    name: 'Combo haircut, dye hair',
+                    description: 'This is combo haircut and dye hair description',
+                    price: 390000,
+                    rating: 3.5,
+                    views: 0,
+                    numberRating: 0,
+                    domain: '30shine.com',
+                    timeService: {
+                        startTime: '13:00',
+                        endTime: '21:00',
+                        duration: 30,
+                        breakStart: '17:00',
+                        breakEnd: '18:00',
+                    },
+                    createdAt: {
+                        low: 1678259737,
+                        high: 399,
+                        unsigned: false,
+                    },
+                },
+                {
+                    images: [
+                        'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.serviceBooking/service/ca956d2f-de3b-48e2-8ce2-e8da3a2dfc46',
+                        'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.serviceBooking/service/875a9c6a-864f-44a3-be9f-3f049e7e202c',
+                    ],
+                    id: '575edb45-8716-4862-96e7-b2958c554210',
+                    name: 'Haircut',
+                    description: 'This is haircut description',
+                    price: 100000,
+                    rating: 2,
+                    views: 0,
+                    numberRating: 0,
+                    domain: '30shine.com',
+                    timeService: {
+                        startTime: '08:00',
+                        endTime: '21:00',
+                        duration: 30,
+                        breakStart: '12:00',
+                        breakEnd: '13:00',
+                    },
+                    createdAt: {
+                        low: 1678095395,
+                        high: 399,
+                        unsigned: false,
+                    },
+                },
+                {
+                    images: [
+                        'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.serviceBooking/service/73043a45-5ed1-4754-b2d2-43fd69123095',
+                    ],
+                    id: '6fa19656-c583-4252-8a90-4c7285a2f7a3',
+                    name: 'Dye hair',
+                    description: 'This is dye hair description',
+                    price: 300000,
+                    rating: 0,
+                    views: 0,
+                    numberRating: 0,
+                    domain: '30shine.com',
+                    timeService: {
+                        startTime: '10:00',
+                        endTime: '21:00',
+                        duration: 30,
+                        breakStart: '12:00',
+                        breakEnd: '13:00',
+                    },
+                    createdAt: {
+                        low: 1678140713,
+                        high: 399,
+                        unsigned: false,
+                    },
+                },
+                {
+                    images: [
+                        'https://dpbostudfzvnyulolxqg.supabase.co/storage/v1/object/public/datn.serviceBooking/service/f9b7dc07-4e68-4123-b2a5-1dc7d965fef6',
+                    ],
+                    id: '277a1d5c-aba5-4fd7-b088-73e8c25befc3',
+                    name: 'Curl hair',
+                    description: 'This is curl hair description',
+                    price: 300000,
+                    rating: 0,
+                    views: 0,
+                    numberRating: 0,
+                    domain: '30shine.com',
+                    timeService: {
+                        startTime: '10:00',
+                        endTime: '21:00',
+                        duration: 30,
+                        breakStart: '12:00',
+                        breakEnd: '13:00',
+                    },
+                    createdAt: {
+                        low: 1678186215,
+                        high: 399,
+                        unsigned: false,
+                    },
+                },
+            ],
+        },
+        '/api/booking/services/find/recommend?domain=30shine.com',
+    )
+    @ApiErrorResponses(
+        '/api/booking/services/find/recommend',
+        '/api/booking/services/find/recommend',
+        {
+            badRequest: {
+                summary: 'Validation Error',
+                detail: 'domain should not be empty, domain must be a URL address',
+            },
+        },
+    )
+    async findBestRecommend(@Req() req: Request, @Query() data: FindRecommendedServiceRequestDTO) {
+        return await this.bookingServicesService.findRecommendedServices({
+            ...data,
+        } as FindRecommendedServiceRequestDTO);
     }
 
     @Delete('delete/:id')

@@ -8,7 +8,9 @@ import {
 import {
     CreateServiceRequestDTO,
     DeleteServiceRequestDTO,
+    FindBestSellerServiceRequestDTO,
     FindOneRequestDTO,
+    FindRecommendedServiceRequestDTO,
     FindServicesRequestDTO,
     UpdateServiceRequestDTO,
 } from './services.dto';
@@ -20,6 +22,8 @@ import { DeleteServiceResponse } from 'src/proto_build/booking/services/DeleteSe
 import { ClientGrpc } from '@nestjs/microservices';
 import { UserNotFoundException } from 'src/common/exceptions/exceptions';
 import { UpdateServiceResponse } from 'src/proto_build/booking/services/UpdateServiceResponse';
+import { FindBestSellerServiceResponse } from 'src/proto_build/booking/services/FindBestSellerServiceResponse';
+import { FindRecommendedServiceResponse } from 'src/proto_build/booking/services/FindRecommendedServiceResponse';
 
 interface ServicesService {
     createService(data: CreateServiceRequestDTO): Observable<CreateServiceResponse>;
@@ -27,6 +31,12 @@ interface ServicesService {
     findServices(data: FindServicesRequestDTO): Observable<FindServicesResponse>;
     deleteService(data: DeleteServiceRequestDTO): Observable<DeleteServiceResponse>;
     updateService(data: UpdateServiceRequestDTO): Observable<UpdateServiceResponse>;
+    findBestSellerServices(
+        data: FindBestSellerServiceRequestDTO,
+    ): Observable<FindBestSellerServiceResponse>;
+    findRecommendedServices(
+        data: FindRecommendedServiceRequestDTO,
+    ): Observable<FindRecommendedServiceResponse>;
 }
 
 @Injectable()
@@ -187,6 +197,60 @@ export class BookingServicesService implements OnModuleInit {
                     'Error not recognized',
                 );
             }
+        }
+    }
+
+    async findBestSellerServices(
+        data: FindBestSellerServiceRequestDTO,
+    ): Promise<FindBestSellerServiceResponse> {
+        try {
+            // console.log(this.iProductService.createProduct(data));
+            const response: FindBestSellerServiceResponse = await firstValueFrom(
+                this.iServicesService.findBestSellerServices(data),
+            );
+            return response;
+        } catch (e) {
+            // console.log(e)
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
+            // console.log(errorDetails);
+
+            throw new NotFoundException(
+                `Unhandled error type: ${errorDetails.error}`,
+                'Error not recognized',
+            );
+        }
+    }
+
+    async findRecommendedServices(
+        data: FindRecommendedServiceRequestDTO,
+    ): Promise<FindRecommendedServiceResponse> {
+        try {
+            // console.log(this.iProductService.createProduct(data));
+            const response: FindRecommendedServiceResponse = await firstValueFrom(
+                this.iServicesService.findRecommendedServices(data),
+            );
+            return response;
+        } catch (e) {
+            // console.log(e)
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
+            // console.log(errorDetails);
+
+            throw new NotFoundException(
+                `Unhandled error type: ${errorDetails.error}`,
+                'Error not recognized',
+            );
         }
     }
 }

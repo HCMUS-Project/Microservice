@@ -24,7 +24,9 @@ import { IsBase64DataURI } from 'src/common/validator/is-base-64-dataURI.validat
 import { UserDto } from 'src/feature/commonDTO/user.dto';
 import { CreateServiceRequest } from 'src/proto_build/booking/services/CreateServiceRequest';
 import { DeleteServiceRequest } from 'src/proto_build/booking/services/DeleteServiceRequest';
+import { FindBestSellerServiceRequest } from 'src/proto_build/booking/services/FindBestSellerServiceRequest';
 import { FindOneRequest } from 'src/proto_build/booking/services/FindOneRequest';
+import { FindRecommendedServiceRequest } from 'src/proto_build/booking/services/FindRecommendedServiceRequest';
 import { FindServicesRequest } from 'src/proto_build/booking/services/FindServicesRequest';
 import { ServiceTime } from 'src/proto_build/booking/services/ServiceTime';
 import { UpdateServiceRequest } from 'src/proto_build/booking/services/UpdateServiceRequest';
@@ -143,13 +145,20 @@ export class FindServices implements FindServicesRequest {
     @IsOptional()
     @ApiProperty()
     name: string;
+
+    @IsNumber()
+    @Type(() => Number)
+    @Min(0)
+    @IsOptional()
+    @ApiProperty()
+    rating: number;
 }
 
 export class FindServicesRequestNotId implements FindServicesRequest {
     @IsUrl()
     @IsNotEmpty()
     @ApiProperty()
-    domain: string; 
+    domain: string;
 
     @IsPositive()
     @Type(() => Number)
@@ -167,6 +176,13 @@ export class FindServicesRequestNotId implements FindServicesRequest {
     @IsOptional()
     @ApiProperty()
     name: string;
+
+    @IsNumber()
+    @Type(() => Number)
+    @Min(0)
+    @IsOptional()
+    @ApiProperty()
+    rating: number;
 }
 
 export class FindServicesRequestDTO extends FindServicesRequestNotId {}
@@ -225,4 +241,18 @@ export class UpdateServiceRequestDTO extends UpdateService {
     @IsNotEmpty()
     @ApiProperty()
     user: UserDto;
+}
+
+export class FindBestSellerServiceRequestDTO implements FindBestSellerServiceRequest {
+    @IsUrl()
+    @IsNotEmpty()
+    @ApiProperty()
+    domain: string;
+}
+
+export class FindRecommendedServiceRequestDTO implements FindRecommendedServiceRequest {
+    @IsUrl()
+    @IsNotEmpty()
+    @ApiProperty()
+    domain: string;
 }
