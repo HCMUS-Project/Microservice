@@ -73,19 +73,36 @@ Get a Tenant information within a domain using an access token. This operation i
         {
             tenant: [
                 {
-                    email: 'nguyenvukhoi150402@gmail.com',
-                    username: 'nguyenvukhoi150402',
-                    role: '2',
-                    domain: '30shine.com',
-                    isActive: false,
-                    isVerified: true,
-                    isRejected: false,
+                    tenant: {
+                        email: 'nhinhihcbdethuong@gmail.com',
+                        username: 'nhinhihcbdethuong',
+                        role: '2',
+                        domain: '',
+                        isDeleted: false,
+                        isActive: false,
+                        isVerified: false,
+                        isRejected: false,
+                        createdAt: 'undefined',
+                    },
+                    tenantProfile: {
+                        username: 'nhinhihcbdethuong',
+                        email: 'nhinhihcbdethuong@gmail.com',
+                        phone: '0931056895',
+                        gender: 'unknown',
+                        address: '123 abc, phuong X, quan Y, thanh pho Z',
+                        age: 18,
+                        avatar: 'none',
+                        name: 'Nguyen Van A',
+                        stage: 'new',
+                        createdAt: 'undefined',
+                        isVerify: false,
+                    },
                 },
             ],
         },
-        '/api/admin/tenant/get',
+        '/api/admin/tenant/get?type=false',
     )
-    @ApiErrorResponses('/api/admin/tenant/get', '/api/admin/tenant/get', {
+    @ApiErrorResponses('/api/admin/tenant/get?type=false', '/api/admin/tenant/get?type=false', {
         badRequest: {
             summary: 'Validation Error',
             detail: '',
@@ -127,7 +144,7 @@ Get a Tenant information within a domain using an access token. This operation i
             role: payloadToken.role,
             accessToken: payloadToken.accessToken,
         } as UserDto;
-        console.log(data, userData);
+        // console.log(data, userData);
         return await this.adminServiceTenant.getTenant({
             ...data,
             user: userData,
