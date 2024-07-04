@@ -136,6 +136,11 @@ export class UpdateTenantProfile implements UpdateTenantProfileRequest {
     @IsOptional()
     @ApiProperty()
     domain: string;
+
+    @IsString()
+    @IsOptional()
+    @ApiProperty()
+    description: string;
 }
 
 export class UpdateTenantProfileRequestDTO extends UpdateTenantProfile {

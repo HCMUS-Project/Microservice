@@ -26,10 +26,21 @@ import {SetTenantDomainRequest} from 'src/proto_build/admin/tenant/SetTenantDoma
 export class GetTenant implements GetTenantRequest {
     @IsBoolean()
     @IsOptional()
-    // @Type(() => Boolean)
     @ToBoolean()
     @ApiProperty()
-    type: boolean;
+    isActive: boolean;
+
+    @IsBoolean()
+    @IsOptional()
+    @ToBoolean()
+    @ApiProperty()
+    isVerified: boolean;
+
+    @IsBoolean()
+    @IsOptional()
+    @ToBoolean()
+    @ApiProperty()
+    isRejected: boolean;
 }
 
 export class GetTenantRequestDTO extends GetTenant {

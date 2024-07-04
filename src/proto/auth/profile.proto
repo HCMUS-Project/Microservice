@@ -9,6 +9,7 @@ service ProfileService {
     rpc UpdateProfile (UpdateProfileRequest) returns (UpdateProfileResponse);
     rpc GetTenantProfile (GetTenantProfileRequest) returns (GetTenantProfileResponse);
     rpc UpdateTenantProfile (UpdateTenantProfileRequest) returns (UpdateTenantProfileResponse);
+    rpc GetAllUserProfile(GetAllUserProfileRequest) returns (GetAllUserProfileResponse);
 }
 
 message GetProfileRequest {
@@ -42,7 +43,8 @@ message TenantProfile {
     string company_address = 11;
     string created_at = 12;
     string is_verify = 13;
-    string domain = 14;
+    string description = 14;
+    string domain = 15;
 }
 
 
@@ -80,8 +82,17 @@ message UpdateTenantProfileRequest {
     optional string company_name = 9;
     optional string company_address = 10;
     optional string domain = 11;
+    optional string description = 12;
 }
 
 message UpdateTenantProfileResponse {
     TenantProfile tenantprofile = 1;
+}
+
+message GetAllUserProfileRequest{
+    userToken.User user = 1;
+}
+
+message GetAllUserProfileResponse{
+    repeated GetProfileResponse users = 1;
 }
