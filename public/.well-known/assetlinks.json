@@ -16,23 +16,7 @@
         "namespace": "android_app",
         "package_name": "com.example.dummy_project",
         "sha256_cert_fingerprints":
-        ["7B:33:86:6E:92:9C:02:48:0F:FD:70:F5:E1:B5:05:74:81:47:B7:EA:88:C4:84:8A:1B:6F:EE:BF:85:70:79:FA"]
-      }
-    },
-    {
-      "relation": ["delegate_permission/common.get_login_creds"],
-      "target": {
-        "namespace": "web",
-        "site": "https://nvukhoi.id.vn"
-      }
-    },
-    {
-      "relation": ["delegate_permission/common.get_login_creds"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "com.example.dummy_project",
-        "sha256_cert_fingerprints":
-        ["7B:33:86:6E:92:9C:02:48:0F:FD:70:F5:E1:B5:05:74:81:47:B7:EA:88:C4:84:8A:1B:6F:EE:BF:85:70:79:FA"]
+        ["0A:B6:B4:C3:03:C6:45:75:F3:96:29:CB:2F:CF:66:B3:99:A9:EB:FD:82:DE:E1:07:47:95:EF:AF:60:02:73:D4"]
       }
     }
   ]
