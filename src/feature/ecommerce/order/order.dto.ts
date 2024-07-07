@@ -155,6 +155,11 @@ export class CancelOrder implements CancelOrderRequest {
     @IsNotEmpty()
     @ApiProperty()
     id: string;
+
+    @IsString()
+    @IsOptional()
+    @ApiProperty()
+    noteCancel: string;
 }
 export class CancelOrderRequestDTO extends CancelOrder {
     @IsObject()

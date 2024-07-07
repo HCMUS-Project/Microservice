@@ -10,6 +10,7 @@ import {
     UseGuards,
     Req,
     Query,
+    Put,
 } from '@nestjs/common';
 import {
     ApiBearerAuth,
@@ -663,7 +664,7 @@ Update an Order stage within a domain using an access token. This operation is r
         } as UpdateStageOrderRequestDTO);
     }
 
-    @Patch('cancel/:id')
+    @Put('cancel')
     @UseGuards(AccessTokenGuard)
     @ApiBearerAuth('JWT-access-token-user')
     @ApiBearerAuth('JWT-access-token-tenant')
@@ -746,7 +747,7 @@ Change Stage of an Order to CANCELLED within a domain using an access token.
             ],
         },
     )
-    async cancelOrder(@Req() req: Request, @Param() data: CancelOrder) {
+    async cancelOrder(@Req() req: Request, @Body() data: CancelOrder) {
         const payloadToken = req['user'];
         // const header = req.headers;
         const userData = {
@@ -755,7 +756,7 @@ Change Stage of an Order to CANCELLED within a domain using an access token.
             role: payloadToken.role,
             accessToken: payloadToken.accessToken,
         } as UserDto;
-        // console.log(userData, dataCategory)
+        // console.log(data)
         return await this.ecommerceOrderService.cancelOrder({
             user: userData,
             ...data,

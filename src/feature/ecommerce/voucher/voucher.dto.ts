@@ -18,6 +18,7 @@ import { UserDto } from 'src/feature/commonDTO/user.dto';
 import { CheckVoucherByCodeRequest } from 'src/proto_build/e_commerce/voucher/CheckVoucherByCodeRequest';
 import { CreateVoucherRequest } from 'src/proto_build/e_commerce/voucher/CreateVoucherRequest';
 import { DeleteVoucherRequest } from 'src/proto_build/e_commerce/voucher/DeleteVoucherRequest';
+import {FindAllVouchersByTenantRequest} from 'src/proto_build/e_commerce/voucher/FindAllVouchersByTenantRequest';
 import { FindAllVouchersRequest } from 'src/proto_build/e_commerce/voucher/FindAllVouchersRequest';
 import { FindVoucherByIdRequest } from 'src/proto_build/e_commerce/voucher/FindVoucherByIdRequest';
 import { UpdateVoucherRequest } from 'src/proto_build/e_commerce/voucher/UpdateVoucherRequest';
@@ -181,6 +182,13 @@ export class DeleteVoucher implements DeleteVoucherRequest {
 }
 
 export class DeleteVoucherRequestDTO extends DeleteVoucher {
+    @IsObject()
+    @IsNotEmpty()
+    @ApiProperty()
+    user: UserDto;
+}
+
+export class FindAllVouchersByTenantRequestDTO implements FindAllVouchersByTenantRequest {
     @IsObject()
     @IsNotEmpty()
     @ApiProperty()

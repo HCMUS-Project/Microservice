@@ -35,6 +35,7 @@ import {
     DeleteVoucherRequestDTO,
     FindVoucherByCodeRequestDTO,
     FindVoucher,
+    FindAllVouchersByTenantRequestDTO,
 } from './voucher.dto';
 import { AccessTokenGuard } from 'src/common/guards/token/accessToken.guard';
 import { RolesGuard } from 'src/common/guards/role/role.guard';
@@ -266,6 +267,107 @@ Return all Vouchers within a domain.
                 ...data,
             } as FindVoucherByIdRequestDTO);
         }
+    }
+
+    @Get('find/tenant')
+    @UseGuards(AccessTokenGuard, RolesGuard)
+    @Roles(Role.TENANT)
+    @ApiBearerAuth('JWT-access-token-tenant')
+    @ApiEndpoint({
+        summary: `Find Vouchers By Tenant`,
+        details: `
+## Description
+Return all Vouchers within a domain.  
+
+## Requirement
+- **Access Token**: Must provide a valid tenant access token.
+- **Permissions**: Requires tenant-level permissions.
+`,
+    })
+    @ApiResponseReadExample('Vouchers', {
+        getAll: {
+            data: {
+                vouchers: [
+                    {
+                        id: '384589ac-108a-4972-bbed-49771df4c7cb',
+                        type: 'ecommerce',
+                        domain: '30shine.com',
+                        voucherName: 'giam gia 30%',
+                        voucherCode: 'GIAM30',
+                        maxDiscount: 30000,
+                        minAppValue: 50000,
+                        discountPercent: 0.3,
+                        expireAt: 'Tue May 21 2024 00:29:45 GMT+0700 (Indochina Time)',
+                        createdAt: 'Thu May 16 2024 17:05:02 GMT+0700 (Indochina Time)',
+                        updatedAt: 'Thu May 16 2024 17:07:17 GMT+0700 (Indochina Time)',
+                    },
+                    {
+                        id: '0bd91aad-69f2-4187-8141-9d04bd344f16',
+                        type: 'ecommerce',
+                        domain: '30shine.com',
+                        voucherName: 'giam gia 60%',
+                        voucherCode: 'GIAM60',
+                        maxDiscount: 60000,
+                        minAppValue: 2000000,
+                        discountPercent: 0.6,
+                        expireAt: 'Sat Jun 01 2024 00:29:45 GMT+0700 (Indochina Time)',
+                        createdAt: 'Tue May 28 2024 16:46:06 GMT+0700 (Indochina Time)',
+                        updatedAt: 'Tue May 28 2024 16:46:06 GMT+0700 (Indochina Time)',
+                    },
+                ],
+            },
+            path: '/api/ecommerce/voucher/find?domain=30shine.com',
+        },
+        findOne: {
+            data: {
+                voucher: {
+                    id: '384589ac-108a-4972-bbed-49771df4c7cb',
+                    type: 'ecommerce',
+                    domain: '30shine.com',
+                    voucherName: 'giam gia 30%',
+                    voucherCode: 'GIAM30',
+                    maxDiscount: 30000,
+                    minAppValue: 50000,
+                    discountPercent: 0.3,
+                    expireAt: 'Tue May 21 2024 00:29:45 GMT+0700 (Indochina Time)',
+                    createdAt: 'Thu May 16 2024 17:05:02 GMT+0700 (Indochina Time)',
+                    updatedAt: 'Thu May 16 2024 17:07:17 GMT+0700 (Indochina Time)',
+                },
+            },
+            path: '/api/ecommerce/voucher/find?domain=30shine.com&id=384589ac-108a-4972-bbed-49771df4c7cb',
+        },
+    })
+    @ApiErrorResponses(
+        '/api/ecommerce/voucher/find?domain=&id=&code=x',
+        '/api/ecommerce/voucher/find?domain=30shine.com&id=384589ac-108a-4972-bbed-49771df4c7cc',
+        {
+            badRequest: {
+                summary: 'Validation Error',
+                detail: 'id must be a UUID, domain should not be empty, domain must be a URL address',
+            },
+            unauthorized: [
+                {
+                    key: 'not_found',
+                    summary: 'Voucher not found',
+                    detail: 'Voucher not found',
+                    error: 'Unauthorized',
+                },
+            ],
+        },
+    )
+    async findAllVouchersByTenant(@Req() req: Request) {
+        const payloadToken = req['user'];
+        // const header = req.headers;
+        const userData = {
+            email: payloadToken.email,
+            domain: payloadToken.domain,
+            role: payloadToken.role,
+            accessToken: payloadToken.accessToken,
+        } as UserDto;
+        // console.log(userData, dataCategory)
+        return await this.ecommerceVoucherService.findAllVouchersByTenant({
+            user: userData,
+        } as FindAllVouchersByTenantRequestDTO);
     }
 
     @Post('update')

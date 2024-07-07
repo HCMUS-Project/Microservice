@@ -9,6 +9,7 @@ import { CreateVoucherRequest } from 'src/proto_build/e_commerce/voucher/CreateV
 import {
     CreateVoucherDTO,
     DeleteVoucherRequestDTO,
+    FindAllVouchersByTenantRequestDTO,
     FindAllVouchersRequestDTO,
     FindVoucherByCodeRequestDTO,
     FindVoucherByIdRequestDTO,
@@ -25,6 +26,9 @@ interface VoucherService {
     createVoucher(data: CreateVoucherDTO): Observable<VoucherResponse>;
     findAllVouchers(data: FindAllVouchersRequestDTO): Observable<FindAllVouchersResponse>;
     findVoucherById(data: FindVoucherByIdRequestDTO): Observable<VoucherResponse>;
+    findAllVouchersByTenant(
+        data: FindAllVouchersByTenantRequestDTO,
+    ): Observable<FindAllVouchersResponse>;
     checkVoucherByCode(data: FindVoucherByCodeRequestDTO): Observable<VoucherResponse>;
     updateVoucher(data: UpdateVoucherRequestDTO): Observable<VoucherResponse>;
     deleteVoucher(data: DeleteVoucherRequestDTO): Observable<VoucherResponse>;
@@ -92,6 +96,36 @@ export class EcommerceVoucherService implements OnModuleInit {
                 `Unhandled error type: ${errorDetails.error}`,
                 'Error not recognized',
             );
+        }
+    }
+
+    async findAllVouchersByTenant(
+        data: FindAllVouchersByTenantRequestDTO,
+    ): Promise<FindAllVouchersResponse> {
+        try {
+            // console.log(this.iProductService.createProduct(data));
+            const response: FindAllVouchersResponse = await firstValueFrom(
+                this.iVoucherService.findAllVouchersByTenant(data),
+            );
+            return response;
+        } catch (e) {
+            // console.log(e)
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
+            // console.log(errorDetails);
+            if (errorDetails.error == 'PERMISSION_DENIED') {
+                throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
+            } else {
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
+            }
         }
     }
 
