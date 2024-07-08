@@ -12,6 +12,7 @@ import {
     CreateVoucherRequestDTO,
     DeleteVoucherRequestDTO,
     EditVoucherRequestDTO,
+    FindAllVouchersByTenantRequestDTO,
     FindAllVouchersRequestDTO,
     FindOneVoucherRequestDTO,
 } from './voucher.dto';
@@ -27,6 +28,9 @@ interface VoucherService {
     deleteVoucher(data: DeleteVoucherRequestDTO): Observable<DeleteVoucherResponse>;
     findAllVouchers(data: FindAllVouchersRequestDTO): Observable<FindAllVouchersResponse>;
     findOneVoucher(data: FindOneVoucherRequestDTO): Observable<FindOneVoucherResponse>;
+    findAllVouchersByTenant(
+        data: FindAllVouchersByTenantRequestDTO,
+    ): Observable<FindAllVouchersResponse>;
 }
 
 @Injectable()
@@ -153,6 +157,36 @@ export class BookingVoucherService implements OnModuleInit {
                 throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else if (errorDetails.error == 'SERVICE_NOT_FOUND') {
                 throw new ForbiddenException('Service not found');
+            } else {
+                throw new NotFoundException(
+                    `Unhandled error type: ${errorDetails.error}`,
+                    'Error not recognized',
+                );
+            }
+        }
+    }
+
+    async findAllVouchersByTenant(
+        data: FindAllVouchersByTenantRequestDTO,
+    ): Promise<FindAllVouchersResponse> {
+        try {
+            // console.log(this.iProductService.createProduct(data));
+            const response: FindAllVouchersResponse = await firstValueFrom(
+                this.iVoucherService.findAllVouchersByTenant(data),
+            );
+            return response;
+        } catch (e) {
+            // console.log(e)
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
+            // console.log(errorDetails);
+            if (errorDetails.error == 'PERMISSION_DENIED') {
+                throw new UserNotFoundException('Unauthorized Role', 'Unauthorized');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,

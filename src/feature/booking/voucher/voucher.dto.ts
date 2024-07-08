@@ -17,6 +17,7 @@ import { UserDto } from 'src/feature/commonDTO/user.dto';
 import { CreateVoucherRequest } from 'src/proto_build/booking/voucher/CreateVoucherRequest';
 import { DeleteVoucherRequest } from 'src/proto_build/booking/voucher/DeleteVoucherRequest';
 import { EditVoucherRequest } from 'src/proto_build/booking/voucher/EditVoucherRequest';
+import { FindAllVouchersByTenantRequest } from 'src/proto_build/booking/voucher/FindAllVouchersByTenantRequest';
 import { FindAllVouchersRequest } from 'src/proto_build/booking/voucher/FindAllVouchersRequest';
 import { FindOneVoucherRequest } from 'src/proto_build/booking/voucher/FindOneVoucherRequest';
 
@@ -163,6 +164,13 @@ export class FindOneVoucher implements FindOneVoucherRequest {
 }
 
 export class FindOneVoucherRequestDTO extends FindOneVoucher {
+    @IsObject()
+    @IsNotEmpty()
+    @ApiProperty()
+    user: UserDto;
+}
+
+export class FindAllVouchersByTenantRequestDTO implements FindAllVouchersByTenantRequest {
     @IsObject()
     @IsNotEmpty()
     @ApiProperty()

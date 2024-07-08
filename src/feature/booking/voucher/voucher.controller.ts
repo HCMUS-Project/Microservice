@@ -9,7 +9,7 @@ import {
     Inject,
     UseGuards,
     Req,
-    Query, 
+    Query,
 } from '@nestjs/common';
 import {
     ApiBearerAuth,
@@ -37,6 +37,7 @@ import {
     EditVoucher,
     EditVoucherRequestDTO,
     FindAllVouchers,
+    FindAllVouchersByTenantRequestDTO,
     FindAllVouchersRequestDTO,
     FindOneVoucher,
     FindOneVoucherRequestDTO,
@@ -48,8 +49,9 @@ import {
     ApiErrorResponses,
     ApiParamExamples,
     ApiResponseExample,
+    ApiResponseReadExample,
 } from 'src/common/decorator/swagger.decorator';
-import { UpdateVoucher } from 'src/feature/ecommerce/voucher/voucher.dto'; 
+import { UpdateVoucher } from 'src/feature/ecommerce/voucher/voucher.dto';
 
 @Controller('/booking/voucher')
 @ApiTags('booking/voucher')
@@ -152,9 +154,9 @@ Create a voucher within a domain using an access token. This operation is restri
     }
 
     @Get('find/all')
-    @UseGuards(AccessTokenGuard)
+    @UseGuards(AccessTokenGuard, RolesGuard)
+    @Roles(Role.USER)
     @ApiBearerAuth('JWT-access-token-user')
-    @ApiBearerAuth('JWT-access-token-tenant')
     @ApiEndpoint({
         summary: `Find all Vouchers`,
         details: `
@@ -241,6 +243,101 @@ Return all vouchers within a domain using an access token.
             ...query,
             user: userData,
         } as FindAllVouchersRequestDTO);
+    }
+
+    @Get('find/all/tenant')
+    @UseGuards(AccessTokenGuard, RolesGuard)
+    @Roles(Role.TENANT)
+    @ApiBearerAuth('JWT-access-token-tenant')
+    @ApiEndpoint({
+        summary: `Find all Vouchers by tenant`,
+        details: `
+## Description
+Return all vouchers by tenant within a domain using an access token.  
+        
+## Requirements
+- **Access Token**: Must provide a valid access token. 
+`,
+    })
+    @ApiResponseExample(
+        'read',
+        'find all vouchers',
+        {
+            vouchers: [
+                {
+                    id: 'f21142ef-cece-4f14-83c1-eed2d485000a',
+                    type: 'booking',
+                    serviceId: '2489bc57-5382-46a3-a03b-4276335261db',
+                    voucherName: 'Giam gia 50%',
+                    voucherCode: 'GIAM50',
+                    maxDiscountValue: 50000,
+                    minAppValue: 500000,
+                    discountPercent: 50,
+                    expiredTime: 'Fri May 31 2024 12:51:38 GMT+0700 (Indochina Time)',
+                    createdAt: 'Fri May 24 2024 15:41:43 GMT+0700 (Indochina Time)',
+                },
+                {
+                    id: 'dc479988-a135-41f7-8c75-206768808957',
+                    type: 'booking',
+                    serviceId: '2489bc57-5382-46a3-a03b-4276335261db',
+                    voucherName: 'Giam gia 70%',
+                    voucherCode: 'GIAM70',
+                    maxDiscountValue: 70000,
+                    minAppValue: 700000,
+                    discountPercent: 70,
+                    expiredTime: 'Fri May 31 2024 12:51:38 GMT+0700 (Indochina Time)',
+                    createdAt: 'Fri May 24 2024 15:53:06 GMT+0700 (Indochina Time)',
+                },
+            ],
+        },
+        '/api/ecommerce/voucher/find/all/tenant',
+    )
+    @ApiErrorResponses(
+        '/api/ecommerce/voucher/find/all/tenant',
+        '/api/ecommerce/voucher/find/all/tenant',
+        {
+            unauthorized: [
+                {
+                    key: 'token_not_verified',
+                    summary: 'Token not verified',
+                    detail: 'Unauthorized',
+                    error: null,
+                },
+                {
+                    key: 'token_not_found',
+                    summary: 'Token not found',
+                    detail: 'Access Token not found',
+                    error: 'Unauthorized',
+                },
+                {
+                    key: 'unauthorized_role',
+                    summary: 'Role not verified',
+                    detail: 'Unauthorized Role',
+                    error: 'Unauthorized',
+                },
+            ],
+            forbidden: [
+                {
+                    key: 'forbidden_resource',
+                    summary: 'Forbidden resource',
+                    detail: 'Forbidden resource',
+                },
+            ],
+        },
+    )
+    async findAllVouchersByTenant(@Req() req: Request) {
+        const payloadToken = req['user'];
+        // const header = req.headers;
+        const userData = {
+            email: payloadToken.email,
+            domain: payloadToken.domain,
+            role: payloadToken.role,
+            accessToken: payloadToken.accessToken,
+        } as UserDto;
+        // console.log(userData, dataCategory)
+        return await this.bookingVoucherService.findAllVouchersByTenant({
+            user: userData,
+        } as FindAllVouchersByTenantRequestDTO);
     }
 
     @Get('find/:id')
