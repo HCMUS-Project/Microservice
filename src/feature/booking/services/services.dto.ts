@@ -21,6 +21,7 @@ import {
     isArray,
 } from 'class-validator';
 import { IsBase64DataURI } from 'src/common/validator/is-base-64-dataURI.validator';
+import { IsEitherUrlOrBase64DataURI } from 'src/common/validator/is-either-base-64-dataURI-or-URL.validator';
 import { UserDto } from 'src/feature/commonDTO/user.dto';
 import { CreateServiceRequest } from 'src/proto_build/booking/services/CreateServiceRequest';
 import { DeleteServiceRequest } from 'src/proto_build/booking/services/DeleteServiceRequest';
@@ -231,7 +232,11 @@ export class UpdateService implements UpdateServiceRequest {
 
     @IsArray()
     @IsNotEmpty()
-    @IsBase64DataURI({ each: true, message: 'Each image must be a valid Base64 data URI.' })
+    // @IsBase64DataURI({ each: true, message: 'Each image must be a valid Base64 data URI.' })
+    @IsEitherUrlOrBase64DataURI({
+        each: true,
+        message: 'image must be either a valid Base64 data URI or an valid URL.',
+    })
     @ApiProperty()
     images: string[];
 }

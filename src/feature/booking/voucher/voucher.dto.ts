@@ -102,8 +102,9 @@ export class EditVoucher implements EditVoucherRequest {
     @ApiProperty()
     minAppValue: number;
 
-    @IsNotEmpty()
+    // @IsNotEmpty()
     // @IsPositive()
+    @IsNumber()
     @IsOptional()
     @ApiProperty()
     discountPercent: number;
@@ -112,7 +113,7 @@ export class EditVoucher implements EditVoucherRequest {
     // @IsNotEmpty()
     @IsOptional()
     @ApiProperty()
-    expiredAt: string;
+    expireAt: string;
 
     @IsDateString()
     // @IsNotEmpty()

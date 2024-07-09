@@ -128,36 +128,41 @@ export class UpdateVoucher implements UpdateVoucherRequest {
     id: string;
 
     @IsString()
-    @IsNotEmpty()
+    // @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     voucherName: string;
 
     @IsString()
-    @IsNotEmpty()
+    // @IsNotEmpty()
+    @IsOptional()
     @Matches(/^[A-Z0-9]*$/, { message: 'Voucher code must be uppercase and contain no spaces' })
     @ApiProperty()
     voucherCode: string;
 
     @IsPositive()
-    @IsNotEmpty()
+    // @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     maxDiscount: number;
 
     @IsNumber()
-    @IsNotEmpty()
+    // @IsNotEmpty()
+    @IsOptional()
     @Min(0)
     @ApiProperty()
     minAppValue: number;
 
     @IsNumber()
-    @IsNotEmpty()
+    // @IsNotEmpty()
+    @IsOptional()
     @Min(0)
     @Max(1)
     @ApiProperty()
     discountPercent: number;
 
     @IsDateString()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty()
     expireAt: string;
 
