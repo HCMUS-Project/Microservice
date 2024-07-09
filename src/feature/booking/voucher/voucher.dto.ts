@@ -120,6 +120,12 @@ export class EditVoucher implements EditVoucherRequest {
     @IsOptional()
     @ApiProperty()
     startAt: string;
+
+    // For consistant with create
+    @IsUUID()
+    @IsOptional()
+    @ApiProperty()
+    serviceId: string;
 }
 
 export class EditVoucherRequestDTO extends EditVoucher {
