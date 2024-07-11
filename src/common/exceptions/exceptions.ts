@@ -31,6 +31,12 @@ export class UserNotFoundException extends UnauthorizedException {
     }
 }
 
+export class AdminNotFoundException extends UnauthorizedException {
+    constructor(message = 'Admin not found', error?: string) {
+        super(message, error);
+    }
+}
+
 /**
  * Represents a custom exception that is thrown when a password is invalid.
  * Extends the UnauthorizedException class from the '@nestjs/common' module.

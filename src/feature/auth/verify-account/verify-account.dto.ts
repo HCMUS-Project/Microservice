@@ -3,6 +3,7 @@ import { IsEmail, IsEnum, IsFQDN, IsNotEmpty, IsNumber, IsNumberString, IsOption
 import {Role} from 'src/common/enums/role.enum';
 import { SendMailRequest } from 'src/proto_build/auth/verifyAccount/SendMailRequest';
 import { VerifyAccountRequest } from 'src/proto_build/auth/verifyAccount/VerifyAccountRequest';
+import { ForgotPasswordRequest } from 'src/proto_build/auth/verifyAccount/ForgotPasswordRequest';
 
 export class VerifyAccountRequestDto implements VerifyAccountRequest {
     @IsEmail()
@@ -55,4 +56,38 @@ export class SendMailRequestDto implements SendMailRequest {
         example: Role.TENANT,
     })
     role: Role;
+}
+
+export class ForgotPasswordDto implements ForgotPasswordRequest {
+    @IsEmail()
+    @IsNotEmpty()
+    @ApiProperty()
+    email: string;
+
+    @IsFQDN()
+    @IsOptional()
+    @ApiProperty()
+    domain: string;
+
+    @IsNumber()
+    @IsEnum(Role, {
+        message: 'Must be a valid type: 0, 1, 2',
+    })
+    @IsOptional()
+    @ApiProperty({
+        enum: Role,
+        enumName: 'Role Type',
+        example: Role.TENANT,
+    })
+    role: Role;
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty()
+    newpassword: string;
+
+    @IsNumberString()
+    @IsNotEmpty()
+    @ApiProperty()
+    otp: string;
 }

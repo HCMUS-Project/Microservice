@@ -9,7 +9,7 @@ import {
     ApiTags,
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { SendMailRequestDto, VerifyAccountRequestDto } from './verify-account.dto';
+import { ForgotPasswordDto, SendMailRequestDto, VerifyAccountRequestDto } from './verify-account.dto';
 import {
     ApiBodyExample,
     ApiEndpoint,
@@ -149,5 +149,15 @@ Send OTP to email of User or Tenant.
     })
     async sendMailOtp(@Body() data: SendMailRequestDto) {
         return await this.authServiceVerifyAccount.sendMailOtp(data);
+    }
+
+    @Post('forgot-password')
+    async forgotPassword(@Body() data: ForgotPasswordDto) {
+        return await this.authServiceVerifyAccount.forgotPassword(data);
+    }
+
+    @Post('send-mail-forgot-password')
+    async sendMailForgotPassword(@Body() data: SendMailRequestDto) {
+        return await this.authServiceVerifyAccount.sendMailForgotPassword(data);
     }
 }
