@@ -67,30 +67,36 @@ Create a subscription within a domain using an access token. This operation is r
     })
     @ApiBodyExample(CreateSubscription, {
         tenantId: 'd4d98d4c-d2f4-4d91-a6e7-2555715ce144',
-        planName: 'SILVER',
+        planName: 'GOLD',
+        paymentMethod: 'cc377299-a4cd-4c73-9282-ae2c071ae967',
+        paymentCallbackUrl:
+            'http://localhost:3000/api/payment/url/return?domain=saas-30shine.vercel.app/payment/payment-success/result?message=success&status=success',
     })
     @ApiResponseExample(
         'create',
         'create Subcription',
         {
             subscription: {
-                id: 'd74d947a-e4e3-466f-b141-1795ff57153d',
+                id: 'c890e1c8-caa8-4ee2-9ac6-327462e1663f',
                 tenantId: 'd4d98d4c-d2f4-4d91-a6e7-2555715ce144',
-                totalValue: 1140000,
+                totalValue: 2160000,
                 stage: 'PENDING',
                 plan: {
-                    name: 'SILVER',
-                    pricePerMonth: 190000,
-                    limitOfMonth: 6,
-                    limitOfServices: 10,
-                    limitOfEmployees: 20,
-                    limitOfProducts: 10,
-                    feePercentPerTransaction: 0.03999999910593033,
+                    name: 'GOLD',
+                    pricePerMonth: 180000,
+                    limitOfMonth: 12,
+                    limitOfServices: 15,
+                    limitOfEmployees: 30,
+                    limitOfProducts: 15,
+                    feePercentPerTransaction: 0.029999999329447746,
                 },
-                nextBilling: '2024-12-25T12:08:14.355Z',
-                createdAt: '2024-06-25T12:08:14.357Z',
-                updatedAt: '2024-06-25T12:08:14.357Z',
+                nextBilling: '2025-07-10T08:59:40.175Z',
+                createdAt: '2024-07-10T08:59:40.176Z',
+                updatedAt: '2024-07-10T08:59:40.176Z',
+                domain: '30shine.com',
             },
+            paymentUrl:
+                'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=216000000&vnp_Command=pay&vnp_CreateDate=20240710155940&vnp_CurrCode=VND&vnp_IpAddr=1.1.1.1&vnp_Locale=vn&vnp_OrderInfo=Payment+for+Tenant+Subscription&vnp_OrderType=210000&vnp_ReturnUrl=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fpayment%2Furl%2Freturn&vnp_TmnCode=0TE7HT3V&vnp_TxnRef=410302-1720601980189&vnp_Version=2.1.0&vnp_SecureHash=b9c8d5858c358d6dd620813476164d36b74e1949836bfd990ff314c7aeb905b470c75091567d66d3d1cfbbc12db9054995c0a51c6a526a7d4934e5b59ad1a019',
         },
         '/api/tenant/subscription/create',
     )
