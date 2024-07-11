@@ -3,13 +3,20 @@ import { Inject, Injectable, NotFoundException, OnModuleInit } from '@nestjs/com
 import { ClientGrpc } from '@nestjs/microservices';
 import { ForbiddenException, UserNotFoundException } from 'src/common/exceptions/exceptions';
 import { PolicyAndTermResponse } from 'src/proto_build/tenant/policyAndTerm/PolicyAndTermResponse';
-import { GetAllBookingsOrdersNumbersRequestDTO } from './customers.dto.';
+import {
+    GetAllBookingsOrdersNumbersRequestDTO,
+    GetUsersReportByDateRequestDTO,
+} from './customers.dto.';
 import { GetAllBookingsOrdersNumbersResponse } from 'src/proto_build/tenant/customers/GetAllBookingsOrdersNumbersResponse';
+import { GetUsersReportByDateResponse } from 'src/proto_build/tenant/customers/GetUsersReportByDateResponse';
 
 interface CustomersService {
     getAllBookingsOrdersNumbers(
         data: GetAllBookingsOrdersNumbersRequestDTO,
     ): Observable<GetAllBookingsOrdersNumbersResponse>;
+    getUsersReportByDate(
+        data: GetUsersReportByDateRequestDTO,
+    ): Observable<GetUsersReportByDateResponse>;
 }
 
 @Injectable()
@@ -50,6 +57,33 @@ export class TenantCustomersService implements OnModuleInit {
             } else {
                 throw new NotFoundException(e, 'Not found');
             }
+        }
+    }
+
+    async getUsersReportByDate(
+        data: GetUsersReportByDateRequestDTO,
+    ): Promise<GetUsersReportByDateResponse> {
+        try {
+            // console.log(data);
+            const response: GetUsersReportByDateResponse = await firstValueFrom(
+                this.iCustomersService.getUsersReportByDate(data),
+            );
+            return response;
+        } catch (e) {
+            // console.log(e)
+            let errorDetails: { error?: string };
+            try {
+                errorDetails = JSON.parse(e.details);
+            } catch (parseError) {
+                console.error('Error parsing details:', parseError);
+                throw new NotFoundException(String(e), 'Error not recognized');
+            }
+            // console.log(errorDetails);
+
+            throw new NotFoundException(
+                `Unhandled error type: ${errorDetails.error}`,
+                'Error not recognized',
+            );
         }
     }
 }
