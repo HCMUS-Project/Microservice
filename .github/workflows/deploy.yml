@@ -21,7 +21,7 @@ jobs:
         eval "$(ssh-agent -s)"
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ssh_key
         chmod 600 ssh_key
-        sshpass -p ${{ secrets.SSH_PASSWORD }} -P ${{ secrets.SSH_PASSPHRASE }} -e ssh-add ssh_key
+        sshpass -p ${{ secrets.SSH_PASSWORD }} -P ${{ secrets.SSH_PASSPHRASE }} ssh-add ssh_key
 
     - name: Copy files to VPS
       env:
