@@ -16,17 +16,30 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
     
-    - name: multiple command
-      uses: appleboy/ssh-action@v1.0.3
+    - name: Input otp and out
+      uses: step-security/wait-for-secrets@v1
+      id: get-otp
       with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USERNAME }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        passphrase: ${{ secrets.SSH_PASSPHRASE }}
-        # password: ${{ secrets.SSH_PASSWORD }}
-        script: |
-          whoami
-          ls -al
+        secrets: |
+          DUMMY_SECRET: 
+            name: 'Dummy secret'
+            description: 'Dummy secret to demo wait-for-secrets'
+    - run: |
+        echo ${{ steps.get-otp.outputs.DUMMY_SECRET }}
+    
+    # - name: multiple command
+    #   uses: appleboy/ssh-action@v1.0.3
+    #   with:
+    #     host: ${{ secrets.SSH_HOST }}
+    #     username: ${{ secrets.SSH_USERNAME }}
+    #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+    #     passphrase: ${{ secrets.SSH_PASSPHRASE }}
+    #     password: ${{ secrets.SSH_PASSWORD }}
+    #     script: |
+    #       whoami
+    #       ls -al
+
+    
     
     # - name: Install sshpass
     #   run: sudo apt-get update && sudo apt-get install -y sshpass
