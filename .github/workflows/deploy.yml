@@ -8,6 +8,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
     - name: Checkout code
@@ -21,6 +24,7 @@ jobs:
         SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
         VPS_IP: ${{ vars.VPS_IP }}
         DEST_PATH: ${{ vars.PATH }}
+        TWO_FACTOR_TOKEN: ${{ secrets.TWO_FACTOR_TOKEN }}
       run: |
         sshpass -p ${{ env.SSH_PASSWORD }} scp -o StrictHostKeyChecking=no -r . root@${{ env.VPS_IP }}:${{ env.DEST_PATH }}
 
@@ -29,5 +33,6 @@ jobs:
         SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
         VPS_IP: ${{ vars.VPS_IP }}
         PROJECT_PATH: ${{ vars.PROJECT_PATH }}
+        TWO_FACTOR_TOKEN: ${{ secrets.TWO_FACTOR_TOKEN }}
       run: |
         sshpass -p ${{ env.SSH_PASSWORD }} ssh -o StrictHostKeyChecking=no root@${{ env.VPS_IP }} "cd ${{ env.PROJECT_PATH }} && docker-compose up -d --build"
