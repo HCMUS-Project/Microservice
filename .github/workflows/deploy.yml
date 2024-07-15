@@ -17,11 +17,13 @@ jobs:
       run: sudo apt-get install -y sshpass
 
     - name: Set up SSH
+      env:
+        VPS_IP: ${{ vars.VPS_IP }}
       run: |
-        eval "$(ssh-agent -s)"
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ssh_key
-        chmod 600 ssh_key
-        sshpass -p ${{ secrets.SSH_PASSWORD }} -P ${{ secrets.SSH_PASSPHRASE }} ssh-add ssh_key
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ env.VPS_IP }} >> ~/.ssh/known_hosts
 
     - name: Copy files to VPS
       env:
