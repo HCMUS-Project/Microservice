@@ -71,6 +71,7 @@ Sign Up within a domain.
         ],
     })
     async signUp(@Body() data: SignUpRequestDto) {
+        console.log(data)
         return await this.authServiceSignUp.signUp(data);
     }
 }
