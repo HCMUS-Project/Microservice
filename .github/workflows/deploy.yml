@@ -1,0 +1,25 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main  # Change to your specific branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: Copy files to VPS
+      run: scp -r -o StrictHostKeyChecking=no . admin@${{ vars.VPS_IP }}:${{ vars.PATH }}
+
+    - name: Deploy on VPS
+      run: ssh -o StrictHostKeyChecking=no admin@${{ vars.VPS_IP }} 'cd ${{ vars.PROJECT_PATH }} docker-compose up -d --build'
