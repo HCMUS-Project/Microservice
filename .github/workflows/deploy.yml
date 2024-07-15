@@ -30,11 +30,11 @@ jobs:
         VPS_IP: ${{ vars.VPS_IP }}
         DEST_PATH: ${{ vars.PATH }}
       run: |
-        scp -o StrictHostKeyChecking=no -r . admin@${{ env.VPS_IP }}:${{ env.DEST_PATH }}
+        sshpass -e scp -o StrictHostKeyChecking=no -r . admin@${{ env.VPS_IP }}:${{ env.DEST_PATH }}
 
     - name: Deploy on VPS
       env:
         VPS_IP: ${{ vars.VPS_IP }}
         PROJECT_PATH: ${{ vars.PROJECT_PATH }}
       run: |
-        ssh -o StrictHostKeyChecking=no admin@${{ env.VPS_IP }} "cd ${{ env.PROJECT_PATH }} && docker-compose up -d --build"
+        sshpass -e ssh -o StrictHostKeyChecking=no admin@${{ env.VPS_IP }} "cd ${{ env.PROJECT_PATH }} && docker-compose up -d --build"
