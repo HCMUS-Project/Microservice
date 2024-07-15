@@ -12,11 +12,17 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+    
+    - name: Install sshpass
+      run: sudo apt-get install -y sshpass
 
     - name: Set up SSH
-      uses: webfactory/ssh-agent@v0.5.3
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      env:
+        SSHPASS: ${{ secrets.SSH_PASSPHRASE }}
+      run: |
+        sudo apt-get install -y sshpass
+        eval "$(ssh-agent -s)"
+        ssh-add <(echo "$SSHPASS" | sshpass -P "Enter passphrase for " ssh-add <(echo "${{ secrets.SSH_PRIVATE_KEY }}"))
 
     - name: Copy files to VPS
       run: scp -r -o StrictHostKeyChecking=no . admin@${{ vars.VPS_IP }}:${{ vars.PATH }}
