@@ -16,23 +16,35 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
     
-    - name: Install sshpass
-      run: sudo apt-get update && sudo apt-get install -y sshpass
+    - name: multiple command
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        password: ${{ secrets.SSH_PASSWORD }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE }}
+        script: |
+          whoami
+          ls -al
+    
+    # - name: Install sshpass
+    #   run: sudo apt-get update && sudo apt-get install -y sshpass
 
-    - name: Copy files to VPS
-      env:
-        SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
-        VPS_IP: ${{ vars.VPS_IP }}
-        DEST_PATH: ${{ vars.PATH }}
-        TWO_FACTOR_TOKEN: ${{ secrets.TWO_FACTOR_TOKEN }}
-      run: |
-        sshpass -p ${{ env.SSH_PASSWORD }} scp -o StrictHostKeyChecking=no -r . root@${{ env.VPS_IP }}:${{ env.DEST_PATH }}
+    # - name: Copy files to VPS
+    #   env:
+    #     SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+    #     VPS_IP: ${{ vars.VPS_IP }}
+    #     DEST_PATH: ${{ vars.PATH }}
+    #     TWO_FACTOR_TOKEN: ${{ secrets.TWO_FACTOR_TOKEN }}
+    #   run: |
+    #     sshpass -p ${{ env.SSH_PASSWORD }} scp -o StrictHostKeyChecking=no -r . root@${{ env.VPS_IP }}:${{ env.DEST_PATH }}
 
-    - name: Deploy on VPS
-      env:
-        SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
-        VPS_IP: ${{ vars.VPS_IP }}
-        PROJECT_PATH: ${{ vars.PROJECT_PATH }}
-        TWO_FACTOR_TOKEN: ${{ secrets.TWO_FACTOR_TOKEN }}
-      run: |
-        sshpass -p ${{ env.SSH_PASSWORD }} ssh -o StrictHostKeyChecking=no root@${{ env.VPS_IP }} "cd ${{ env.PROJECT_PATH }} && docker-compose up -d --build"
+    # - name: Deploy on VPS
+    #   env:
+    #     SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+    #     VPS_IP: ${{ vars.VPS_IP }}
+    #     PROJECT_PATH: ${{ vars.PROJECT_PATH }}
+    #     TWO_FACTOR_TOKEN: ${{ secrets.TWO_FACTOR_TOKEN }}
+    #   run: |
+    #     sshpass -p ${{ env.SSH_PASSWORD }} ssh -o StrictHostKeyChecking=no root@${{ env.VPS_IP }} "cd ${{ env.PROJECT_PATH }} && docker-compose up -d --build"
