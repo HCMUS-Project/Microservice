@@ -4,6 +4,7 @@ import {Role} from 'src/common/enums/role.enum';
 import { SendMailRequest } from 'src/proto_build/auth/verifyAccount/SendMailRequest';
 import { VerifyAccountRequest } from 'src/proto_build/auth/verifyAccount/VerifyAccountRequest';
 import { ForgotPasswordRequest } from 'src/proto_build/auth/verifyAccount/ForgotPasswordRequest';
+import {IsStrongPassword} from 'src/common/validator/is-strong-password.validator';
 
 export class VerifyAccountRequestDto implements VerifyAccountRequest {
     @IsEmail()
@@ -81,9 +82,8 @@ export class ForgotPasswordDto implements ForgotPasswordRequest {
     })
     role: Role;
 
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
+    @IsStrongPassword()
+    @ApiProperty() 
     newpassword: string;
 
     @IsNumberString()

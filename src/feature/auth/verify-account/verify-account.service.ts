@@ -8,7 +8,11 @@ import {
     UserNotFoundException,
 } from 'src/common/exceptions/exceptions';
 
-import { ForgotPasswordDto, SendMailRequestDto, VerifyAccountRequestDto } from './verify-account.dto';
+import {
+    ForgotPasswordDto,
+    SendMailRequestDto,
+    VerifyAccountRequestDto,
+} from './verify-account.dto';
 import { VerifyAccountResponse } from 'src/proto_build/auth/verifyAccount/VerifyAccountResponse';
 import { SendMailResponse } from 'src/proto_build/auth/verifyAccount/SendMailResponse';
 import { ForgotPasswordResponse } from 'src/proto_build/auth/verifyAccount/ForgotPasswordResponse';
@@ -85,10 +89,13 @@ export class AuthServiceVerifyAccount implements OnModuleInit {
                 throw new UserNotFoundException();
             } else if (errorDetails.error == 'USER_ALREADY_VERIFIED') {
                 throw new ForbiddenException('User already verified', 'Forbidden');
-            }if (errorDetails.error == 'TENANT_NOT_FOUND') {
+            }
+            if (errorDetails.error == 'TENANT_NOT_FOUND') {
                 throw new UserNotFoundException('Tenant not found');
             } else if (errorDetails.error == 'TENANT_ALREADY_VERIFIED') {
                 throw new ForbiddenException('Tenant already verified', 'Forbidden');
+            } else if (errorDetails.error == 'DOMAIN_IS_UNDEFINED') {
+                throw new ForbiddenException('Domain is undefined', 'Forbidden');
             } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
@@ -113,7 +120,7 @@ export class AuthServiceVerifyAccount implements OnModuleInit {
                 console.error('Error parsing details:', parseError);
                 throw new NotFoundException(String(e), 'Error not recognized');
             }
-            
+
             if (errorDetails.error == 'USER_NOT_FOUND') {
                 throw new UserNotFoundException();
             } else if (errorDetails.error == 'USER_ALREADY_VERIFIED') {
@@ -128,8 +135,7 @@ export class AuthServiceVerifyAccount implements OnModuleInit {
                 throw new ForbiddenException('Otp invalid', 'Forbidden');
             } else if (errorDetails.error == 'ADMIN_NOT_FOUND') {
                 throw new AdminNotFoundException();
-            }
-            else {
+            } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
                     'Error not recognized',
@@ -154,14 +160,13 @@ export class AuthServiceVerifyAccount implements OnModuleInit {
             }
             if (errorDetails.error == 'USER_NOT_FOUND') {
                 throw new UserNotFoundException();
-            } 
-            else if (errorDetails.error == 'TENANT_NOT_FOUND') {
+            } else if (errorDetails.error == 'TENANT_NOT_FOUND') {
                 throw new UserNotFoundException('Tenant not found');
-            } 
-            else if (errorDetails.error == 'ADMIN_NOT_FOUND') {
+            } else if (errorDetails.error == 'ADMIN_NOT_FOUND') {
                 throw new UserNotFoundException('Admin not found');
-            }
-            else {
+            } else if (errorDetails.error == 'DOMAIN_IS_UNDEFINED') {
+                throw new ForbiddenException('Domain is undefined', 'Forbidden');
+            } else {
                 throw new NotFoundException(
                     `Unhandled error type: ${errorDetails.error}`,
                     'Error not recognized',
