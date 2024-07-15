@@ -21,10 +21,20 @@ jobs:
         SSHPASS: ${{ secrets.SSH_PASSPHRASE }}
       run: |
         eval "$(ssh-agent -s)"
-        ssh-add <(echo "$SSHPASS" | sshpass -P "Enter passphrase for " ssh-add <(echo "${{ secrets.SSH_PRIVATE_KEY }}"))
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ssh_key
+        chmod 600 ssh_key
+        sshpass -e ssh-add ssh_key
 
     - name: Copy files to VPS
-      run: scp -r -o StrictHostKeyChecking=no . admin@${{ vars.VPS_IP }}:${{ vars.PATH }}
+      env:
+        VPS_IP: ${{ vars.VPS_IP }}
+        DEST_PATH: ${{ vars.PATH }}
+      run: |
+        scp -o StrictHostKeyChecking=no -r . admin@${{ env.VPS_IP }}:${{ env.DEST_PATH }}
 
     - name: Deploy on VPS
-      run: ssh -o StrictHostKeyChecking=no admin@${{ vars.VPS_IP }} 'cd ${{ vars.PROJECT_PATH }} docker-compose up -d --build'
+      env:
+        VPS_IP: ${{ vars.VPS_IP }}
+        PROJECT_PATH: ${{ vars.PROJECT_PATH }}
+      run: |
+        ssh -o StrictHostKeyChecking=no admin@${{ env.VPS_IP }} "cd ${{ env.PROJECT_PATH }} && docker-compose up -d --build"
