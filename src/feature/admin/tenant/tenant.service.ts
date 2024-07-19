@@ -42,6 +42,7 @@ export class AdminServiceTenant implements OnModuleInit {
 
     async getTenant(data: GetTenantRequestDTO): Promise<GetTenantResponse> {
         try {
+            console.log(data)
             const response: GetTenantResponse = await firstValueFrom(
                 this.iTenantService.getTenant(data),
             );
