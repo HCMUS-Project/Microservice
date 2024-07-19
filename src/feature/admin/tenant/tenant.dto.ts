@@ -15,13 +15,13 @@ import {
 } from 'class-validator';
 import { UserDto } from '../../commonDTO/user.dto';
 import { Gender } from 'src/common/enums/gender.enum';
-import { ApiProperty } from '@nestjs/swagger';
-import {GetTenantRequest} from 'src/proto_build/admin/tenant/GetTenantRequest';
-import {VerifyRequest} from 'src/proto_build/admin/tenant/VerifyRequest';
-import {SetTenantStageRequest} from 'src/proto_build/admin/tenant/SetTenantStageRequest';
+import { ApiProperty } from '@nestjs/swagger'; 
 import {Type} from 'class-transformer';
-import {ToBoolean} from 'src/common/decorator/toBoolean.decorator';
-import {SetTenantDomainRequest} from 'src/proto_build/admin/tenant/SetTenantDomainRequest';
+import {ToBoolean} from 'src/common/decorator/toBoolean.decorator'; 
+import {GetTenantRequest} from 'src/proto_build/admin/managetenant/GetTenantRequest';
+import {VerifyRequest} from 'src/proto_build/admin/managetenant/VerifyRequest';
+import {SetTenantStageRequest} from 'src/proto_build/admin/managetenant/SetTenantStageRequest';
+import {SetTenantDomainRequest} from 'src/proto_build/admin/managetenant/SetTenantDomainRequest';
 
 export class GetTenant implements GetTenantRequest {
     @IsBoolean()

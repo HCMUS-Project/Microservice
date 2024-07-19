@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-import "tenant.proto"; 
+import "manage_tenant.proto"; 
 
 
 package admin;

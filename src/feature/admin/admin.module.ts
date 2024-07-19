@@ -19,7 +19,7 @@ import {TenantController} from './tenant/tenant.controller';
                 return ClientProxyFactory.create({
                     transport: Transport.GRPC,
                     options: {
-                        package: ['admin', 'tenant'], // ['hero', 'hero2']
+                        package: ['admin', 'managetenant'], // ['hero', 'hero2']
                         protoPath: join(__dirname, '../../../src/proto/admin/admin.proto'),
                         url: configService.get<string>('ADMIN_SERVICE_URL'),
                         loader: {

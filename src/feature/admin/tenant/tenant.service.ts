@@ -17,13 +17,13 @@ import {
     SetTenantDomainRequestDTO,
     SetTenantStageRequestDTO,
     VerifyRequestDTO,
-} from './tenant.dto';
-import { GetTenantResponse } from 'src/proto_build/admin/tenant/GetTenantResponse';
-import { VerifyResponse } from 'src/proto_build/admin/tenant/VerifyResponse';
-import { SetTenantStageResponse } from 'src/proto_build/admin/tenant/SetTenantStageResponse';
-import { FullTenantProfileResponse } from 'src/proto_build/admin/tenant/FullTenantProfileResponse';
+} from './tenant.dto'; 
+import {GetTenantResponse} from 'src/proto_build/admin/managetenant/GetTenantResponse';
+import {VerifyResponse} from 'src/proto_build/admin/managetenant/VerifyResponse';
+import {SetTenantStageResponse} from 'src/proto_build/admin/managetenant/SetTenantStageResponse';
+import {FullTenantProfileResponse} from 'src/proto_build/admin/managetenant/FullTenantProfileResponse';
 
-interface TenantService {
+interface ManageTenantService {
     getTenant(data: GetTenantRequestDTO): Observable<GetTenantResponse>;
     verify(data: VerifyRequestDTO): Observable<VerifyResponse>;
     setTenantStage(data: SetTenantStageRequestDTO): Observable<SetTenantStageResponse>;
@@ -32,12 +32,12 @@ interface TenantService {
 
 @Injectable()
 export class AdminServiceTenant implements OnModuleInit {
-    private iTenantService: TenantService;
+    private iTenantService: ManageTenantService;
 
     constructor(@Inject('GRPC_ADMIN_SERVICE') private client: ClientGrpc) {}
 
     onModuleInit() {
-        this.iTenantService = this.client.getService<TenantService>('TenantService');
+        this.iTenantService = this.client.getService<ManageTenantService>('ManageTenantService');
     }
 
     async getTenant(data: GetTenantRequestDTO): Promise<GetTenantResponse> {
