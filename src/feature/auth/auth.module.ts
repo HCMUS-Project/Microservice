@@ -74,6 +74,8 @@ import { ConfigService } from '@nestjs/config';
                             arrays: true,
                             // includeDirs: [join(__dirname, '../../../src/proto/')],
                         },
+                        maxReceiveMessageLength: 1024 * 1024 * 100,
+                        maxSendMessageLength: 1024 * 1024 * 100,
                     },
                 });
             },

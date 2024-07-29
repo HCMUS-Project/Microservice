@@ -3,7 +3,7 @@ import { ClientProxyFactory, ClientsModule, Transport } from '@nestjs/microservi
 import { join } from 'path';
 import { ConfigService } from '@nestjs/config';
 import { AdminServiceTenant } from './tenant/tenant.service';
-import {TenantController} from './tenant/tenant.controller';
+import { TenantController } from './tenant/tenant.controller';
 
 @Module({
     imports: [ClientsModule],
@@ -28,6 +28,8 @@ import {TenantController} from './tenant/tenant.controller';
                             arrays: true,
                             // includeDirs: [join(__dirname, '../../../src/proto/')],
                         },
+                        maxReceiveMessageLength: 1024 * 1024 * 100,
+                        maxSendMessageLength: 1024 * 1024 * 100,
                     },
                 });
             },

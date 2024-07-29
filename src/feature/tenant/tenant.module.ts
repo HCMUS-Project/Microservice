@@ -16,8 +16,8 @@ import { BannerController } from './banner/banner.controller';
 import { TenantBannerService } from './banner/banner.service';
 import { VNPayController } from './vnpayConfig/vnpayConfig.controller';
 import { TenantVNPayConfigService } from './vnpayConfig/vnpayConfig.service';
-import {CustomersController} from './customers/customers.controller';
-import {TenantCustomersService} from './customers/customers.service';
+import { CustomersController } from './customers/customers.controller';
+import { TenantCustomersService } from './customers/customers.service';
 
 @Module({
     imports: [ClientsModule],
@@ -29,7 +29,7 @@ import {TenantCustomersService} from './customers/customers.service';
         PolicyAndTermController,
         BannerController,
         VNPayController,
-        CustomersController
+        CustomersController,
     ],
     providers: [
         {
@@ -80,7 +80,7 @@ import {TenantCustomersService} from './customers/customers.service';
                             'tenantProfile',
                             'themeConfig',
                             'vnpayConfig',
-                            'customers'
+                            'customers',
                         ],
                         protoPath: join(__dirname, '../../../src/proto/tenant/tenantService.proto'),
                         url: configService.get<string>('TENANT_SERVICE_URL'),
@@ -89,6 +89,8 @@ import {TenantCustomersService} from './customers/customers.service';
                             objects: true,
                             arrays: true,
                         },
+                        maxReceiveMessageLength: 1024 * 1024 * 100,
+                        maxSendMessageLength: 1024 * 1024 * 100,
                     },
                 });
             },

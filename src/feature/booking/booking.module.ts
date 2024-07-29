@@ -68,6 +68,8 @@ import { ReviewController } from './review/review.controller';
                             objects: true,
                             arrays: true,
                         },
+                        maxReceiveMessageLength: 1024 * 1024 * 100,
+                        maxSendMessageLength: 1024 * 1024 * 100,
                     },
                 });
             },
