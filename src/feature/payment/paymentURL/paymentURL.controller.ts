@@ -132,8 +132,14 @@ Create Payment Url within a domain using an access token. This operation is rest
     }
 
     @Get('return')
+    /**
+     * Retrieves the payment URL and redirects the user to the corresponding page.
+     * @param data - The query parameters containing payment data.
+     * @param reply - The Fastify reply object used to send the redirect response.
+     * @returns An object containing the payment message and status.
+     */
     async getPaymentUrl(@Query() data: any, @Res() reply: FastifyReply) {
-        // console.log(data);
+        this.logger.debug('getPaymentUrl', { props: { data } });
         const resultCallback = await this.paymentURLService.callbackVnpay(data);
         let addHttpDomain = resultCallback.urlRedirect;
         if (!addHttpDomain.startsWith('http')) {
@@ -152,5 +158,22 @@ Create Payment Url within a domain using an access token. This operation is rest
             message: resultCallback.message,
             status: resultCallback.status,
         };
+    }
+
+    @Get('ipn')
+    /**
+     * Handles the callback for IPN (Instant Payment Notification) from Vnpay.
+     * @param data - The data received from the callback.
+     * @param reply - The Fastify reply object used to send the response.
+     */
+    async callbackIpnVnpay(@Query() data: any, @Res() reply: FastifyReply) {
+        this.logger.debug('callbackVnpay', { props: { data } });
+
+        const resultCallback = await this.paymentURLService.callbackVnpay(data, true);
+
+        reply.status(HttpStatus.OK).send({
+            RspCode: resultCallback.rspCode,
+            Message: resultCallback.rspMessage,
+        });
     }
 }
