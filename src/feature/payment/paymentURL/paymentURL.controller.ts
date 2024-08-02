@@ -158,13 +158,21 @@ Create Payment Url within a domain using an access token. This operation is rest
                     resultCallback.status,
             },
         });
-        reply.redirect(
-            addHttpDomain +
-                '/result?message=' +
-                resultCallback.message +
-                '&status=' +
-                resultCallback.status,
-        );
+        try {
+            reply.redirect(
+                addHttpDomain +
+                    '/result?message=' +
+                    resultCallback.message +
+                    '&status=' +
+                    resultCallback.status,
+            );
+        } catch (error) {
+            this.logger.error('getPaymentUrl', {
+                props: {
+                    error,
+                },
+            });
+        }
     }
 
     @Get('ipn')
