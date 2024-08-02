@@ -145,7 +145,19 @@ Create Payment Url within a domain using an access token. This operation is rest
         if (!addHttpDomain.startsWith('http')) {
             addHttpDomain = 'http://' + addHttpDomain;
         }
-        this.logger.debug('getPaymentUrl', { props: { addHttpDomain } });
+        if (addHttpDomain[addHttpDomain.length - 1] === '/')
+            addHttpDomain = addHttpDomain.slice(0, -1);
+
+        this.logger.debug('getPaymentUrl', {
+            props: {
+                domain:
+                    addHttpDomain +
+                    '/result?message=' +
+                    resultCallback.message +
+                    '&status=' +
+                    resultCallback.status,
+            },
+        });
         reply.redirect(
             addHttpDomain +
                 '/result?message=' +
