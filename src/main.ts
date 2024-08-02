@@ -6,8 +6,6 @@ import { ConfigsModule } from './configs/config.module';
 import NestjsLoggerServiceAdapter from './core/logger/modules/logger.adapter';
 import { ExceptionsFilter } from './core/responses/filter/exception.filter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import rateLimit from '@fastify/rate-limit';
-import { Transport } from '@nestjs/microservices';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
