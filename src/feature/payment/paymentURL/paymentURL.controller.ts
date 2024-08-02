@@ -145,19 +145,14 @@ Create Payment Url within a domain using an access token. This operation is rest
         if (!addHttpDomain.startsWith('http')) {
             addHttpDomain = 'http://' + addHttpDomain;
         }
-        reply
-            .status(HttpStatus.FOUND)
-            .redirect(
-                addHttpDomain +
-                    '/result?message=' +
-                    resultCallback.message +
-                    '&status=' +
-                    resultCallback.status,
-            );
-        return {
-            message: resultCallback.message,
-            status: resultCallback.status,
-        };
+        this.logger.debug('getPaymentUrl', { props: { addHttpDomain } });
+        reply.redirect(
+            addHttpDomain +
+                '/result?message=' +
+                resultCallback.message +
+                '&status=' +
+                resultCallback.status,
+        );
     }
 
     @Get('ipn')
@@ -170,7 +165,7 @@ Create Payment Url within a domain using an access token. This operation is rest
         this.logger.debug('callbackVnpay', { props: { data } });
 
         const resultCallback = await this.paymentURLService.callbackVnpay(data, true);
-
+        this.logger.debug('callbackVnpay', { props: { resultCallback } });
         reply.status(HttpStatus.OK).send({
             RspCode: resultCallback.rspCode,
             Message: resultCallback.rspMessage,
