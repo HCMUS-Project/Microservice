@@ -1,14 +1,5 @@
 [
-    {
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "com.example.mobilefinalhcmus.shine",
-        "sha256_cert_fingerprints": [ 
-          "0A:B6:B4:C3:03:C6:45:75:F3:96:29:CB:2F:CF:66:B3:99:A9:EB:FD:82:DE:E1:07:47:95:EF:AF:60:02:73:D4"
-        ]
-      }
-    },
+
     {
       "relation": ["delegate_permission/common.handle_all_urls"],
       "target": {
